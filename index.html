@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apple Inc · AAPL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #000000;
+    --card-bg: #0a0a0a;
+    --frame-border: #2e2e2e;
+    --header-border: #242424;
+    --card-border: rgba(255, 255, 255, 0.09);
+    --divider: #2d3132;
+    --white: #ffffff;
+    --silver: #c7c7c7;
+    --gray: #929292;
+    --dim: #5e5e5e;
+    --faint: #565b5e;
+    --body-text: #e3e2e2;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    font-family: 'Inter', -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+  }
+  /* Hide the scrollbar (still scrollable) */
+  html, body { scrollbar-width: none; -ms-overflow-style: none; }
+  html::-webkit-scrollbar, body::-webkit-scrollbar { width: 0; height: 0; display: none; }
+
+  .frame {
+    width: 395px;
+    background: var(--bg);
+    border: 1px solid var(--frame-border);
+    min-height: 100vh;
+  }
+
+  /* ---------- Header ---------- */
+  header {
+    position: relative;
+    height: 64px;
+    border-bottom: 1px solid var(--header-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px 0 16px;
+  }
+  /* ---------- Site chrome (outside the mobile frame) ---------- */
+  .site-chrome {
+    position: fixed;
+    top: 22px;
+    left: 24px;
+    z-index: 100;
+  }
+  .site-chrome .burger {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--silver);
+    cursor: pointer;
+  }
+  .version-menu {
+    position: absolute;
+    top: 32px;
+    left: 0;
+    background: var(--card-bg);
+    border: 1px solid var(--divider);
+    min-width: 232px;
+    padding: 6px;
+    display: none;
+    z-index: 50;
+  }
+  .version-menu.show { display: block; }
+  .vm-item {
+    padding: 10px 12px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .vm-item:hover { background: rgba(255, 255, 255, 0.04); }
+  .vm-item .vm-name {
+    font-size: 13px;
+    letter-spacing: -0.13px;
+    color: var(--gray);
+  }
+  .vm-item .vm-desc {
+    font-size: 11px;
+    letter-spacing: -0.11px;
+    color: var(--dim);
+  }
+  .vm-item.active .vm-name { color: var(--white); }
+  header .back {
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--silver);
+    cursor: pointer;
+  }
+  header .exit {
+    font-size: 14px;
+    letter-spacing: -0.28px;
+    color: var(--silver);
+    cursor: pointer;
+  }
+
+  .page { padding: 0 20px 60px; }
+
+  /* ---------- Info icon row ---------- */
+  .info-row {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 14px;
+    color: var(--gray);
+  }
+  .info-row svg { cursor: pointer; }
+
+  /* ---------- Title ---------- */
+  .title-block {
+    margin-top: 47px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  h1 {
+    font-size: 18px;
+    font-weight: 400;
+    letter-spacing: -0.36px;
+    line-height: 20.7px;
+    color: var(--white);
+  }
+  .price-stack { text-align: right; }
+  .price-line {
+    margin-top: 2px;
+    font-size: 14px;
+    letter-spacing: -0.28px;
+    color: var(--gray);
+  }
+  .price-line .price { color: var(--white); }
+  .day-change {
+    margin-top: 4px;
+    font-size: 13px;
+    letter-spacing: -0.26px;
+    color: var(--faint);
+  }
+
+  /* ---------- Alert badges ---------- */
+  .badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 18px;
+  }
+  .badge {
+    font-size: 9px;
+    font-weight: 500;
+    line-height: 1.3;
+    padding: 5px 6px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+  .badge.critical { background: rgba(253, 2, 0, 0.15); color: #fd0200; }
+  .badge.soon { background: rgba(253, 173, 0, 0.14); color: #fdad00; }
+  .badge.notable { background: rgba(255, 255, 255, 0.10); color: var(--white); }
+  .badge.ambient { background: rgba(255, 255, 255, 0.10); color: #929292; }
+
+  /* ---------- Section heading ---------- */
+  .memo-head {
+    margin-top: 47px;
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: -0.14px;
+    color: var(--white);
+  }
+
+  /* ---------- Classification / Role ---------- */
+  .meta-grid {
+    margin-top: 15px;
+    display: grid;
+    grid-template-columns: 182.5px 1fr;
+  }
+  .meta-grid .label {
+    font-size: 11px;
+    line-height: 12px;
+    letter-spacing: -0.22px;
+    color: var(--gray);
+    text-transform: capitalize;
+  }
+  .meta-grid .value {
+    margin-top: 17px;
+    font-size: 13px;
+    letter-spacing: -0.28px;
+    line-height: 15px;
+    color: var(--silver);
+  }
+  .meta-grid .value .wt-pct { color: var(--white); }
+  .meta-grid .value .wt-unit { color: var(--white); font-size: 10px; }
+
+  /* ---------- Investment case card ---------- */
+  .case-card {
+    margin-top: 32px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    padding: 20px 22px 28px;
+  }
+  .case-card .card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .kicker {
+    font-size: 10.5px;
+    line-height: 14.7px;
+    letter-spacing: 0.4px;
+    color: var(--gray);
+  }
+  .case-card .date {
+    font-size: 10px;
+    line-height: 15px;
+    letter-spacing: 0.2px;
+    color: var(--gray);
+  }
+  .case-card .section-label { margin-top: 26px; }
+  .case-card p.body {
+    margin-top: 14px;
+    font-size: 14px;
+    line-height: 23.8px;
+    letter-spacing: -0.14px;
+    color: var(--body-text);
+  }
+
+  /* ---------- Metric rows ---------- */
+  .metric-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .metric-label {
+    font-size: 11px;
+    line-height: 12px;
+    letter-spacing: -0.22px;
+    color: var(--gray);
+    text-transform: capitalize;
+  }
+  .plain-metric .metric-value {
+    margin-top: 9px;
+    font-size: 15px;
+    line-height: 20px;
+    letter-spacing: -0.15px;
+    color: var(--white);
+  }
+  .plain-metric .metric-value .soft { color: var(--gray); }
+  .plain-prediction { margin-top: 34px; }
+  .plain-horizon { margin-top: 34px; }
+
+  .row-written {
+    margin-top: 36px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    letter-spacing: -0.14px;
+    color: var(--faint);
+    cursor: pointer;
+  }
+  .row-written .chevron {
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 16px;
+  }
+
+  /* ---------- Notes ---------- */
+  .notes {
+    margin-top: 51px;
+    border-top: 1px solid var(--divider);
+    border-bottom: 1px solid var(--divider);
+    height: 113px;
+    padding-top: 18px;
+  }
+  .notes h2 {
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: -0.14px;
+    color: var(--white);
+  }
+  .notes .placeholder {
+    margin-top: 11px;
+    font-size: 14px;
+    line-height: 21px;
+    letter-spacing: -0.14px;
+    color: var(--dim);
+  }
+
+  /* ---------- Performance ---------- */
+  .performance { margin-top: 49px; }
+  .perf-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    letter-spacing: -0.14px;
+    color: var(--white);
+    cursor: pointer;
+  }
+  .perf-head .chevron {
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--gray);
+  }
+  .perf-rows {
+    margin-top: 33px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .perf-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .perf-row .label {
+    font-size: 12px;
+    letter-spacing: -0.24px;
+    color: var(--gray);
+  }
+  .perf-row .value {
+    font-size: 14px;
+    letter-spacing: -0.28px;
+    color: var(--silver);
+  }
+  .perf-row .value .ccy { color: var(--gray); }
+
+  /* ---------- Research ---------- */
+  .research { margin-top: 78px; }
+  .research h2 {
+    font-size: 15px;
+    font-weight: 400;
+    letter-spacing: -0.3px;
+    color: var(--white);
+  }
+  .research .cards {
+    margin-top: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .fiscal-card {
+    position: relative;
+    background: var(--card-bg);
+    border: 1px solid var(--divider);
+    height: 81px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    text-decoration: none;
+  }
+  .fiscal-card .top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .fiscal-card .top img.logo { height: 15px; display: block; opacity: 0.8; }
+  .fiscal-card .ticker,
+  .fiscal-card .desc {
+    font-size: 12px;
+    letter-spacing: -0.12px;
+    color: var(--gray);
+  }
+  .fiscal-card .desc { line-height: 18px; }
+  .fiscal-card .graphic {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 64px;
+    height: 52px;
+    opacity: 0.55;
+  }
+
+  .prompt-card {
+    background: var(--card-bg);
+    border: 1px solid var(--divider);
+    padding: 16px 16px 0;
+  }
+  .prompt-card .prompt-head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .prompt-card .prompt-head .name {
+    font-size: 12px;
+    letter-spacing: -0.26px;
+    line-height: 15.6px;
+    color: var(--white);
+  }
+  .prompt-card .prompt-head .ticker {
+    font-size: 12px;
+    letter-spacing: -0.26px;
+    color: var(--gray);
+  }
+  .prompt-card .prompt-head .info { color: var(--gray); display: flex; }
+  .prompt-card .prompt-head .copy {
+    margin-left: auto;
+    color: var(--gray);
+    display: flex;
+    cursor: pointer;
+  }
+  .prompt-card .view-prompt {
+    display: inline-block;
+    margin-top: 10px;
+    font-size: 11px;
+    letter-spacing: -0.11px;
+    color: var(--gray);
+    text-decoration: underline;
+    text-underline-position: from-font;
+    cursor: pointer;
+  }
+  .prompt-card .open-in {
+    margin-top: 16px;
+    border-top: 1px solid var(--divider);
+    height: 34px;
+    display: flex;
+    align-items: center;
+    font-size: 11px;
+    line-height: 16.5px;
+    letter-spacing: -0.11px;
+    color: var(--gray);
+  }
+  .prompt-card .open-in .tools {
+    margin-left: 19px;
+    display: flex;
+    gap: 8px;
+  }
+  .prompt-card .open-in .tools a {
+    color: var(--silver);
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .prompt-card .open-in .tools .sep { color: var(--faint); }
+
+  .company-desc {
+    margin-top: 25px;
+    font-size: 14px;
+    line-height: 19.6px;
+    letter-spacing: -0.28px;
+    color: var(--silver);
+    cursor: pointer;
+  }
+
+  /* ---------- Bottom nav ---------- */
+  .bottom-nav {
+    margin-top: 45px;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+  }
+  .bottom-nav a {
+    font-size: 15px;
+    line-height: 18.75px;
+    letter-spacing: -0.3px;
+    color: var(--silver);
+    text-decoration: none;
+    text-transform: capitalize;
+    cursor: pointer;
+  }
+
+  .capital-decision {
+    margin-top: 74px;
+    display: flex;
+    justify-content: flex-end;
+  }
+  .capital-decision a {
+    font-size: 15px;
+    letter-spacing: -0.3px;
+    color: var(--white);
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  /* ---------- Company Profile (Version 2) ---------- */
+  .company-profile { display: none; }
+  .company-profile h2 {
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: -0.14px;
+    color: var(--white);
+  }
+  .cp-card {
+    margin-top: 25px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    padding: 20px 22px;
+    cursor: pointer;
+  }
+  .cp-name {
+    font-size: 14px;
+    letter-spacing: -0.14px;
+    color: var(--white);
+  }
+  .cp-name .ticker {
+    font-size: 12px;
+    letter-spacing: -0.12px;
+    color: var(--gray);
+  }
+  .cp-desc {
+    margin-top: 12px;
+    font-size: 14px;
+    line-height: 19.6px;
+    letter-spacing: -0.28px;
+    color: var(--silver);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  /* ---------- Version 2 — sectioned layout ---------- */
+  .v2 .company-desc { display: none; }
+  .v2 .company-profile { display: block; }
+  .v2 .memo-head,
+  .v2 .notes,
+  .v2 .performance,
+  .v2 .research,
+  .v2 .company-profile {
+    position: relative;
+    margin-top: 76px;
+    padding-top: 36px;
+  }
+  /* Full-bleed faded section hairlines */
+  .v2 .memo-head::before,
+  .v2 .notes::before,
+  .v2 .performance::before,
+  .v2 .research::before,
+  .v2 .company-profile::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -20px;
+    right: -20px;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.13);
+  }
+  .v2 .memo-head { margin-top: 54px; }
+  .v2 .notes {
+    border-top: none;
+    border-bottom: none;
+    height: auto;
+    padding-bottom: 0;
+  }
+  .v2 .research h2 {
+    font-size: 14px;
+    letter-spacing: -0.14px;
+  }
+  .v2 .bottom-nav {
+    margin-top: 76px;
+    gap: 0;
+  }
+  .v2 .bottom-nav a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 19px 0;
+    border-top: 1px solid var(--divider);
+  }
+  .v2 .bottom-nav a:last-child { border-bottom: 1px solid var(--divider); }
+  .v2 .bottom-nav a::after {
+    content: '›';
+    font-size: 15px;
+    font-weight: 300;
+    color: var(--gray);
+  }
+  .v2 .capital-decision { margin-top: 56px; }
+
+  /* ---------- Version 3 — card layout ---------- */
+  .v3 .page {
+    padding: 16px 12px 60px;
+    position: relative;
+  }
+  .v3 .info-row {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 0;
+  }
+
+  .v3 .title-block {
+    margin-top: 0;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    gap: 12px;
+    padding: 0 18px;
+  }
+  .v3 .price-stack { text-align: left; }
+  .v3 .badges {
+    justify-content: flex-start;
+    margin-top: 20px;
+    padding: 0 18px;
+  }
+
+  .v3 .sblock,
+  .v3 .notes,
+  .v3 .performance,
+  .v3 .research,
+  .v3 .company-profile {
+    display: block;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    padding: 24px 18px;
+    margin-top: 16px;
+    height: auto;
+  }
+  .v3 .sblock { margin-top: 44px; }
+  .v3 .memo-head { margin-top: 0; }
+  .v3 .meta-grid { margin-top: 24px; grid-template-columns: 1fr 1fr; }
+  .v3 .case-card {
+    margin-top: 24px;
+    background: rgba(255, 255, 255, 0.03);
+    border: none;
+    border-radius: 10px;
+  }
+  .v3 .notes { padding-bottom: 28px; }
+  .v3 .perf-rows { margin-top: 14px; gap: 0; }
+  .v3 .perf-row { padding: 13px 0; }
+  .v3 .perf-row + .perf-row { border-top: 1px solid rgba(255, 255, 255, 0.07); }
+  .v3 .research h2 {
+    font-size: 14px;
+    letter-spacing: -0.14px;
+  }
+  .v3 .research .cards { margin-top: 20px; }
+  .v3 .fiscal-card,
+  .v3 .prompt-card,
+  .v3 .cp-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: none;
+    border-radius: 10px;
+  }
+  .v3 .prompt-card .open-in { border-top-color: rgba(255, 255, 255, 0.07); }
+  .v3 .company-desc { display: none; }
+  .v3 .cp-card { margin-top: 20px; }
+  .v3 .company-desc { display: none; }
+
+  .v3 .bottom-nav {
+    margin-top: 16px;
+    flex-direction: row;
+    gap: 10px;
+  }
+  .v3 .bottom-nav a {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 18px 0;
+    font-size: 14px;
+    letter-spacing: -0.14px;
+  }
+  .v3 .capital-decision { margin-top: 16px; }
+  .v3 .capital-decision a {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 17px 0;
+    font-size: 14px;
+    letter-spacing: -0.14px;
+  }
+</style>
+</head>
+<body>
+
+<div class="site-chrome">
+  <div class="burger" id="burger" title="Switch version">
+    <svg width="18" height="18" viewBox="0 0 15 15" fill="none">
+      <path d="M1.5 3.5H13.5M1.5 7.5H13.5M1.5 11.5H13.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+    </svg>
+  </div>
+  <div class="version-menu" id="versionMenu">
+    <div class="vm-item active" data-version="1">
+      <span class="vm-name">Version 1</span>
+      <span class="vm-desc">Current layout</span>
+    </div>
+    <div class="vm-item" data-version="2">
+      <span class="vm-name">Version 2</span>
+      <span class="vm-desc">Sectioned layout · row CTAs · company profile</span>
+    </div>
+    <div class="vm-item" data-version="3">
+      <span class="vm-name">Version 3</span>
+      <span class="vm-desc">Card layout · centered header</span>
+    </div>
+  </div>
+</div>
+
+<div class="frame">
+
+  <header>
+    <div class="back">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M10.5 3L5.5 8L10.5 13" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="exit">Exit</div>
+  </header>
+
+  <div class="page">
+
+    <div class="info-row">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <circle cx="7" cy="7" r="6.2" stroke="currentColor" stroke-width="1"/>
+        <path d="M7 6.3V10" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/>
+        <circle cx="7" cy="4.1" r="0.7" fill="currentColor"/>
+      </svg>
+    </div>
+
+    <div class="title-block">
+      <h1 class="t-primary">Apple Inc · AAPL</h1>
+      <div class="price-stack">
+        <p class="price-line">Last Price <span class="price">87.60 CAD</span></p>
+        <p class="day-change">+1.6%</p>
+      </div>
+    </div>
+
+    <div class="badges">
+      <span class="badge soon">Earnings</span>
+      <span class="badge notable">Reverse Split</span>
+      <span class="badge ambient">52 Week High</span>
+      <span class="badge ambient">Stock Split</span>
+    </div>
+
+    <div class="sblock">
+
+    <h2 class="memo-head">Memo</h2>
+
+    <div class="meta-grid">
+      <div>
+        <div class="label">Classification</div>
+        <div class="value">Compounder</div>
+      </div>
+      <div>
+        <div class="label">Role</div>
+        <div class="value">Core Position · <span class="wt-pct">42.20%</span> <span class="wt-unit">WT</span></div>
+      </div>
+    </div>
+
+    <section class="case-card">
+      <div class="card-head">
+        <div class="kicker">Investment Case</div>
+        <div class="date">Jun 27, 2026</div>
+      </div>
+      <div class="kicker section-label">Thesis</div>
+      <p class="body">Apple compounds through a connected installed base that keeps paying. Services are roughly a third of gross profit and grow faster than the hardware they ride on. The market prices a mature device vendor; we back a widening-moat annuity, mispriced on refresh-cycle fears the base has absorbed before. Each cycle deepens switching costs and pulls more of the wallet into services, so the annuity re-rates as the market slowly…</p>
+      <div class="kicker section-label">Kill Criteria</div>
+      <p class="body">Services growth below 6% for two straight quarters, or a forced cut to App Store economics. Either voids the thesis.</p>
+    </section>
+
+    <div class="plain-metric plain-prediction">
+      <div class="metric-label">Prediction</div>
+      <div class="metric-value">60% probability of 20%/yr over 3 years</div>
+    </div>
+
+    <div class="plain-metric plain-horizon">
+      <div class="metric-label">Progress</div>
+      <div class="metric-value">1y 7m <span class="soft">of 3y</span></div>
+    </div>
+
+    <div class="row-written">
+      <span>Written Jun 22, 2026 · 87.60 CAD</span>
+      <span class="chevron">›</span>
+    </div>
+
+    </div>
+
+    <section class="notes">
+      <h2>Notes</h2>
+      <p class="placeholder">Record a thought, a thesis, a question.</p>
+    </section>
+
+    <section class="performance">
+      <div class="perf-head">
+        <span>Performance</span>
+        <span class="chevron">›</span>
+      </div>
+      <div class="perf-rows">
+        <div class="perf-row">
+          <span class="label">Portfolio Value</span>
+          <span class="value">18,950.00 <span class="ccy">CAD</span></span>
+        </div>
+        <div class="perf-row">
+          <span class="label">S&amp;P 500 Equivalent Value</span>
+          <span class="value">15,190.00 <span class="ccy">CAD</span></span>
+        </div>
+        <div class="perf-row">
+          <span class="label">Difference</span>
+          <span class="value">+3,760.00 <span class="ccy">CAD +24.8%</span></span>
+        </div>
+        <div class="perf-row">
+          <span class="label">Unrealized P/L</span>
+          <span class="value">+5,652.00 <span class="ccy">CAD +42.6%</span></span>
+        </div>
+      </div>
+    </section>
+
+    <section class="research">
+      <h2>Research and Analysis</h2>
+      <div class="cards">
+
+        <a class="fiscal-card">
+          <div class="top">
+            <img class="logo" src="assets/fiscal-logo.png" alt="Fiscal.ai">
+            <span class="ticker">· AAPL</span>
+          </div>
+          <div class="desc">Research Apple's financials and filings.</div>
+          <img class="graphic" src="assets/fiscal-graphic.png" alt="">
+        </a>
+
+        <div class="prompt-card">
+          <div class="prompt-head">
+            <span class="name">Research Prompt</span>
+            <span class="ticker">· AAPL</span>
+            <span class="info">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                <circle cx="6" cy="6" r="5.3" stroke="currentColor" stroke-width="1"/>
+                <path d="M6 5.5V8.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
+                <circle cx="6" cy="3.6" r="0.6" fill="currentColor"/>
+              </svg>
+            </span>
+            <span class="copy">
+              <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+                <rect x="4.2" y="4.2" width="7.3" height="7.3" rx="1" stroke="currentColor" stroke-width="1"/>
+                <path d="M8.8 2.8V2.5C8.8 1.94 8.36 1.5 7.8 1.5H2.5C1.94 1.5 1.5 1.94 1.5 2.5V7.8C1.5 8.36 1.94 8.8 2.5 8.8H2.8" stroke="currentColor" stroke-width="1"/>
+              </svg>
+            </span>
+          </div>
+          <span class="view-prompt">View prompt</span>
+          <div class="open-in">
+            <span>Open in</span>
+            <span class="tools">
+              <a>Claude</a><span class="sep">·</span><a>ChatGPT</a><span class="sep">·</span><a>Gemini</a><span class="sep">·</span><a>Perplexity</a>
+            </span>
+          </div>
+        </div>
+
+      </div>
+      <p class="company-desc">Apple Inc., together with its subsidiaries, designs, manufactures and markets smartphones, ... →</p>
+    </section>
+
+    <section class="company-profile">
+      <h2>Company Profile</h2>
+      <div class="cp-card" id="cpCard">
+        <div class="cp-name">Apple Inc. <span class="ticker">· AAPL</span></div>
+        <p class="cp-desc">Apple Inc., together with its subsidiaries, designs, manufactures and markets smartphones, personal computers, tablets, wearables and accessories worldwide. The company offers iPhone, a line of smartphones; Mac, a line of personal computers; iPad, a line of multi-purpose tablets; and wearables, home and accessories comprising AirPods, Apple TV, Apple Watch, Beats products and HomePod. It also provides services including the App Store, Apple Music, Apple Pay and iCloud.</p>
+      </div>
+    </section>
+
+    <nav class="bottom-nav">
+      <a>History</a>
+      <a>Market</a>
+      <a>News</a>
+    </nav>
+
+    <div class="capital-decision">
+      <a>Capital Decision</a>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  var burger = document.getElementById('burger');
+  var menu = document.getElementById('versionMenu');
+  burger.addEventListener('click', function (e) {
+    e.stopPropagation();
+    menu.classList.toggle('show');
+  });
+  document.addEventListener('click', function (e) {
+    if (!menu.contains(e.target)) menu.classList.remove('show');
+  });
+  function setVersion(v) {
+    menu.querySelectorAll('.vm-item').forEach(function (i) {
+      i.classList.toggle('active', i.dataset.version === v);
+    });
+    document.body.classList.toggle('v2', v === '2');
+    document.body.classList.toggle('v3', v === '3');
+    try { localStorage.setItem('stockPageVersion', v); } catch (e) {}
+  }
+  menu.querySelectorAll('.vm-item').forEach(function (item) {
+    item.addEventListener('click', function () {
+      setVersion(item.dataset.version);
+      menu.classList.remove('show');
+    });
+  });
+  try {
+    var saved = localStorage.getItem('stockPageVersion');
+    if (saved) setVersion(saved);
+  } catch (e) {}
+
+  var cpCard = document.getElementById('cpCard');
+  cpCard.addEventListener('click', function () {
+    window.location.href = 'profile.html';
+  });
+</script>
+</body>
+</html>
