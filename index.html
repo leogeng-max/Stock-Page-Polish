@@ -3,924 +3,757 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Apple Inc · AAPL</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg: #000000;
-    --card-bg: #0a0a0a;
-    --frame-border: #2e2e2e;
-    --header-border: #242424;
-    --card-border: rgba(255, 255, 255, 0.09);
-    --divider: #2d3132;
-    --white: #ffffff;
-    --silver: #c7c7c7;
-    --gray: #929292;
-    --dim: #5e5e5e;
-    --faint: #565b5e;
-    --body-text: #e3e2e2;
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    background: var(--bg);
-    font-family: 'Inter', -apple-system, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    display: flex;
-    justify-content: center;
-    min-height: 100vh;
-  }
-  /* Hide the scrollbar (still scrollable) */
-  html, body { scrollbar-width: none; -ms-overflow-style: none; }
-  html::-webkit-scrollbar, body::-webkit-scrollbar { width: 0; height: 0; display: none; }
-
-  .frame {
-    width: 395px;
-    background: var(--bg);
-    border: 1px solid var(--frame-border);
-    min-height: 100vh;
-  }
-
-  /* ---------- Header ---------- */
-  header {
-    position: relative;
-    height: 64px;
-    border-bottom: 1px solid var(--header-border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 20px 0 16px;
-  }
-  /* ---------- Site chrome (outside the mobile frame) ---------- */
-  .site-chrome {
-    position: fixed;
-    top: 22px;
-    left: 24px;
-    z-index: 100;
-  }
-  .site-chrome .burger {
-    width: 20px;
-    height: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--silver);
-    cursor: pointer;
-  }
-  .version-menu {
-    position: absolute;
-    top: 32px;
-    left: 0;
-    background: var(--card-bg);
-    border: 1px solid var(--divider);
-    min-width: 232px;
-    padding: 6px;
-    display: none;
-    z-index: 50;
-  }
-  .version-menu.show { display: block; }
-  .vm-item {
-    padding: 10px 12px;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-  }
-  .vm-item:hover { background: rgba(255, 255, 255, 0.04); }
-  .vm-item .vm-name {
-    font-size: 13px;
-    letter-spacing: -0.13px;
-    color: var(--gray);
-  }
-  .vm-item .vm-desc {
-    font-size: 11px;
-    letter-spacing: -0.11px;
-    color: var(--dim);
-  }
-  .vm-item.active .vm-name { color: var(--white); }
-  header .back {
-    width: 16px;
-    height: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--silver);
-    cursor: pointer;
-  }
-  header .exit {
-    font-size: 14px;
-    letter-spacing: -0.28px;
-    color: var(--silver);
-    cursor: pointer;
-  }
-
-  .page { padding: 0 20px 60px; }
-
-  /* ---------- Info icon row ---------- */
-  .info-row {
-    display: flex;
-    justify-content: flex-end;
-    padding-top: 14px;
-    color: var(--gray);
-  }
-  .info-row svg { cursor: pointer; }
-
-  /* ---------- Title ---------- */
-  .title-block {
-    margin-top: 47px;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-  }
-  h1 {
-    font-size: 18px;
-    font-weight: 400;
-    letter-spacing: -0.36px;
-    line-height: 20.7px;
-    color: var(--white);
-  }
-  .price-stack { text-align: right; }
-  .price-line {
-    margin-top: 2px;
-    font-size: 14px;
-    letter-spacing: -0.28px;
-    color: var(--gray);
-  }
-  .price-line .price { color: var(--white); }
-  .day-change {
-    margin-top: 4px;
-    font-size: 13px;
-    letter-spacing: -0.26px;
-    color: var(--faint);
-  }
-
-  /* ---------- Alert badges ---------- */
-  .badges {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin-top: 18px;
-  }
-  .badge {
-    font-size: 9px;
-    font-weight: 500;
-    line-height: 1.3;
-    padding: 5px 6px;
-    border-radius: 3px;
-    white-space: nowrap;
-  }
-  .badge.critical { background: rgba(253, 2, 0, 0.15); color: #fd0200; }
-  .badge.soon { background: rgba(253, 173, 0, 0.14); color: #fdad00; }
-  .badge.notable { background: rgba(255, 255, 255, 0.10); color: var(--white); }
-  .badge.ambient { background: rgba(255, 255, 255, 0.10); color: #929292; }
-
-  /* ---------- Section heading ---------- */
-  .memo-head {
-    margin-top: 47px;
-    font-size: 14px;
-    font-weight: 400;
-    letter-spacing: -0.14px;
-    color: var(--white);
-  }
-
-  /* ---------- Classification / Role ---------- */
-  .meta-grid {
-    margin-top: 15px;
-    display: grid;
-    grid-template-columns: 182.5px 1fr;
-  }
-  .meta-grid .label {
-    font-size: 11px;
-    line-height: 12px;
-    letter-spacing: -0.22px;
-    color: var(--gray);
-    text-transform: capitalize;
-  }
-  .meta-grid .value {
-    margin-top: 17px;
-    font-size: 13px;
-    letter-spacing: -0.28px;
-    line-height: 15px;
-    color: var(--silver);
-  }
-  .meta-grid .value .wt-pct { color: var(--white); }
-  .meta-grid .value .wt-unit { color: var(--white); font-size: 10px; }
-
-  /* ---------- Investment case card ---------- */
-  .case-card {
-    margin-top: 32px;
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    padding: 20px 22px 28px;
-  }
-  .case-card .card-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-  }
-  .kicker {
-    font-size: 10.5px;
-    line-height: 14.7px;
-    letter-spacing: 0.4px;
-    color: var(--gray);
-  }
-  .case-card .date {
-    font-size: 10px;
-    line-height: 15px;
-    letter-spacing: 0.2px;
-    color: var(--gray);
-  }
-  .case-card .section-label { margin-top: 26px; }
-  .case-card p.body {
-    margin-top: 14px;
-    font-size: 14px;
-    line-height: 23.8px;
-    letter-spacing: -0.14px;
-    color: var(--body-text);
-  }
-
-  /* ---------- Metric rows ---------- */
-  .metric-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .metric-label {
-    font-size: 11px;
-    line-height: 12px;
-    letter-spacing: -0.22px;
-    color: var(--gray);
-    text-transform: capitalize;
-  }
-  .plain-metric .metric-value {
-    margin-top: 9px;
-    font-size: 15px;
-    line-height: 20px;
-    letter-spacing: -0.15px;
-    color: var(--white);
-  }
-  .plain-metric .metric-value .soft { color: var(--gray); }
-  .plain-prediction { margin-top: 34px; }
-  .plain-horizon { margin-top: 34px; }
-
-  .row-written {
-    margin-top: 36px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 14px;
-    letter-spacing: -0.14px;
-    color: var(--faint);
-    cursor: pointer;
-  }
-  .row-written .chevron {
-    font-size: 16px;
-    font-weight: 300;
-    line-height: 16px;
-  }
-
-  /* ---------- Notes ---------- */
-  .notes {
-    margin-top: 51px;
-    border-top: 1px solid var(--divider);
-    border-bottom: 1px solid var(--divider);
-    height: 113px;
-    padding-top: 18px;
-  }
-  .notes h2 {
-    font-size: 14px;
-    font-weight: 400;
-    letter-spacing: -0.14px;
-    color: var(--white);
-  }
-  .notes .placeholder {
-    margin-top: 11px;
-    font-size: 14px;
-    line-height: 21px;
-    letter-spacing: -0.14px;
-    color: var(--dim);
-  }
-
-  /* ---------- Performance ---------- */
-  .performance { margin-top: 49px; }
-  .perf-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 14px;
-    letter-spacing: -0.14px;
-    color: var(--white);
-    cursor: pointer;
-  }
-  .perf-head .chevron {
-    font-size: 14px;
-    font-weight: 300;
-    color: var(--gray);
-  }
-  .perf-rows {
-    margin-top: 33px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-  .perf-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .perf-row .label {
-    font-size: 12px;
-    letter-spacing: -0.24px;
-    color: var(--gray);
-  }
-  .perf-row .value {
-    font-size: 14px;
-    letter-spacing: -0.28px;
-    color: var(--silver);
-  }
-  .perf-row .value .ccy { color: var(--gray); }
-
-  /* ---------- Research ---------- */
-  .research { margin-top: 78px; }
-  .research h2 {
-    font-size: 15px;
-    font-weight: 400;
-    letter-spacing: -0.3px;
-    color: var(--white);
-  }
-  .research .cards {
-    margin-top: 25px;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-  }
-
-  .fiscal-card {
-    position: relative;
-    background: var(--card-bg);
-    border: 1px solid var(--divider);
-    height: 81px;
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 8px;
-    overflow: hidden;
-    cursor: pointer;
-    text-decoration: none;
-  }
-  .fiscal-card .top {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .fiscal-card .top img.logo { height: 15px; display: block; opacity: 0.8; }
-  .fiscal-card .ticker,
-  .fiscal-card .desc {
-    font-size: 12px;
-    letter-spacing: -0.12px;
-    color: var(--gray);
-  }
-  .fiscal-card .desc { line-height: 18px; }
-  .fiscal-card .graphic {
-    position: absolute;
-    right: 16px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 64px;
-    height: 52px;
-    opacity: 0.55;
-  }
-
-  .prompt-card {
-    background: var(--card-bg);
-    border: 1px solid var(--divider);
-    padding: 16px 16px 0;
-  }
-  .prompt-card .prompt-head {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .prompt-card .prompt-head .name {
-    font-size: 12px;
-    letter-spacing: -0.26px;
-    line-height: 15.6px;
-    color: var(--white);
-  }
-  .prompt-card .prompt-head .ticker {
-    font-size: 12px;
-    letter-spacing: -0.26px;
-    color: var(--gray);
-  }
-  .prompt-card .prompt-head .info { color: var(--gray); display: flex; }
-  .prompt-card .prompt-head .copy {
-    margin-left: auto;
-    color: var(--gray);
-    display: flex;
-    cursor: pointer;
-  }
-  .prompt-card .view-prompt {
-    display: inline-block;
-    margin-top: 10px;
-    font-size: 11px;
-    letter-spacing: -0.11px;
-    color: var(--gray);
-    text-decoration: underline;
-    text-underline-position: from-font;
-    cursor: pointer;
-  }
-  .prompt-card .open-in {
-    margin-top: 16px;
-    border-top: 1px solid var(--divider);
-    height: 34px;
-    display: flex;
-    align-items: center;
-    font-size: 11px;
-    line-height: 16.5px;
-    letter-spacing: -0.11px;
-    color: var(--gray);
-  }
-  .prompt-card .open-in .tools {
-    margin-left: 19px;
-    display: flex;
-    gap: 8px;
-  }
-  .prompt-card .open-in .tools a {
-    color: var(--silver);
-    text-decoration: none;
-    cursor: pointer;
-  }
-  .prompt-card .open-in .tools .sep { color: var(--faint); }
-
-  .company-desc {
-    margin-top: 25px;
-    font-size: 14px;
-    line-height: 19.6px;
-    letter-spacing: -0.28px;
-    color: var(--silver);
-    cursor: pointer;
-  }
-
-  /* ---------- Bottom nav ---------- */
-  .bottom-nav {
-    margin-top: 45px;
-    display: flex;
-    flex-direction: column;
-    gap: 40px;
-  }
-  .bottom-nav a {
-    font-size: 15px;
-    line-height: 18.75px;
-    letter-spacing: -0.3px;
-    color: var(--silver);
-    text-decoration: none;
-    text-transform: capitalize;
-    cursor: pointer;
-  }
-
-  .capital-decision {
-    margin-top: 74px;
-    display: flex;
-    justify-content: flex-end;
-  }
-  .capital-decision a {
-    font-size: 15px;
-    letter-spacing: -0.3px;
-    color: var(--white);
-    text-decoration: none;
-    cursor: pointer;
-  }
-
-  /* ---------- Company Profile (Version 2) ---------- */
-  .company-profile { display: none; }
-  .company-profile h2 {
-    font-size: 14px;
-    font-weight: 400;
-    letter-spacing: -0.14px;
-    color: var(--white);
-  }
-  .cp-card {
-    margin-top: 25px;
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    padding: 20px 22px;
-    cursor: pointer;
-  }
-  .cp-name {
-    font-size: 14px;
-    letter-spacing: -0.14px;
-    color: var(--white);
-  }
-  .cp-name .ticker {
-    font-size: 12px;
-    letter-spacing: -0.12px;
-    color: var(--gray);
-  }
-  .cp-desc {
-    margin-top: 12px;
-    font-size: 14px;
-    line-height: 19.6px;
-    letter-spacing: -0.28px;
-    color: var(--silver);
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-  /* ---------- Version 2 — sectioned layout ---------- */
-  .v2 .company-desc { display: none; }
-  .v2 .company-profile { display: block; }
-  .v2 .memo-head,
-  .v2 .notes,
-  .v2 .performance,
-  .v2 .research,
-  .v2 .company-profile {
-    position: relative;
-    margin-top: 76px;
-    padding-top: 36px;
-  }
-  /* Full-bleed faded section hairlines */
-  .v2 .memo-head::before,
-  .v2 .notes::before,
-  .v2 .performance::before,
-  .v2 .research::before,
-  .v2 .company-profile::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -20px;
-    right: -20px;
-    height: 1px;
-    background: rgba(255, 255, 255, 0.13);
-  }
-  .v2 .memo-head { margin-top: 54px; }
-  .v2 .notes {
-    border-top: none;
-    border-bottom: none;
-    height: auto;
-    padding-bottom: 0;
-  }
-  .v2 .research h2 {
-    font-size: 14px;
-    letter-spacing: -0.14px;
-  }
-  .v2 .bottom-nav {
-    margin-top: 76px;
-    gap: 0;
-  }
-  .v2 .bottom-nav a {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 19px 0;
-    border-top: 1px solid var(--divider);
-  }
-  .v2 .bottom-nav a:last-child { border-bottom: 1px solid var(--divider); }
-  .v2 .bottom-nav a::after {
-    content: '›';
-    font-size: 15px;
-    font-weight: 300;
-    color: var(--gray);
-  }
-  .v2 .capital-decision { margin-top: 56px; }
-
-  /* ---------- Version 3 — card layout ---------- */
-  .v3 .page {
-    padding: 16px 12px 60px;
-    position: relative;
-  }
-  .v3 .info-row {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    padding: 0;
-  }
-
-  .v3 .title-block {
-    margin-top: 0;
-    flex-direction: column;
-    align-items: flex-start;
-    text-align: left;
-    gap: 12px;
-    padding: 0 18px;
-  }
-  .v3 .price-stack { text-align: left; }
-  .v3 .badges {
-    justify-content: flex-start;
-    margin-top: 20px;
-    padding: 0 18px;
-  }
-
-  .v3 .sblock,
-  .v3 .notes,
-  .v3 .performance,
-  .v3 .research,
-  .v3 .company-profile {
-    display: block;
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: 14px;
-    padding: 24px 18px;
-    margin-top: 16px;
-    height: auto;
-  }
-  .v3 .sblock { margin-top: 44px; }
-  .v3 .memo-head { margin-top: 0; }
-  .v3 .meta-grid { margin-top: 24px; grid-template-columns: 1fr 1fr; }
-  .v3 .case-card {
-    margin-top: 24px;
-    background: rgba(255, 255, 255, 0.03);
-    border: none;
-    border-radius: 10px;
-  }
-  .v3 .notes { padding-bottom: 28px; }
-  .v3 .perf-rows { margin-top: 14px; gap: 0; }
-  .v3 .perf-row { padding: 13px 0; }
-  .v3 .perf-row + .perf-row { border-top: 1px solid rgba(255, 255, 255, 0.07); }
-  .v3 .research h2 {
-    font-size: 14px;
-    letter-spacing: -0.14px;
-  }
-  .v3 .research .cards { margin-top: 20px; }
-  .v3 .fiscal-card,
-  .v3 .prompt-card,
-  .v3 .cp-card {
-    background: rgba(255, 255, 255, 0.03);
-    border: none;
-    border-radius: 10px;
-  }
-  .v3 .prompt-card .open-in { border-top-color: rgba(255, 255, 255, 0.07); }
-  .v3 .company-desc { display: none; }
-  .v3 .cp-card { margin-top: 20px; }
-  .v3 .company-desc { display: none; }
-
-  .v3 .bottom-nav {
-    margin-top: 16px;
-    flex-direction: row;
-    gap: 10px;
-  }
-  .v3 .bottom-nav a {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: 12px;
-    padding: 18px 0;
-    font-size: 14px;
-    letter-spacing: -0.14px;
-  }
-  .v3 .capital-decision { margin-top: 16px; }
-  .v3 .capital-decision a {
-    display: flex;
-    width: 100%;
-    align-items: center;
-    justify-content: center;
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: 12px;
-    padding: 17px 0;
-    font-size: 14px;
-    letter-spacing: -0.14px;
-  }
-</style>
+<title>KSTL · Kestrel Systems</title>
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
-<div class="site-chrome">
-  <div class="burger" id="burger" title="Switch version">
-    <svg width="18" height="18" viewBox="0 0 15 15" fill="none">
-      <path d="M1.5 3.5H13.5M1.5 7.5H13.5M1.5 11.5H13.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
-    </svg>
-  </div>
-  <div class="version-menu" id="versionMenu">
-    <div class="vm-item active" data-version="1">
-      <span class="vm-name">Version 1</span>
-      <span class="vm-desc">Current layout</span>
-    </div>
-    <div class="vm-item" data-version="2">
-      <span class="vm-name">Version 2</span>
-      <span class="vm-desc">Sectioned layout · row CTAs · company profile</span>
-    </div>
-    <div class="vm-item" data-version="3">
-      <span class="vm-name">Version 3</span>
-      <span class="vm-desc">Card layout · centered header</span>
-    </div>
-  </div>
-</div>
-
 <div class="frame">
 
-  <header>
-    <div class="back">
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-        <path d="M10.5 3L5.5 8L10.5 13" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </div>
-    <div class="exit">Exit</div>
-  </header>
-
-  <div class="page">
-
-    <div class="info-row">
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-        <circle cx="7" cy="7" r="6.2" stroke="currentColor" stroke-width="1"/>
-        <path d="M7 6.3V10" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/>
-        <circle cx="7" cy="4.1" r="0.7" fill="currentColor"/>
-      </svg>
-    </div>
-
-    <div class="title-block">
-      <h1 class="t-primary">Apple Inc · AAPL</h1>
-      <div class="price-stack">
-        <p class="price-line">Last Price <span class="price">87.60 CAD</span></p>
-        <p class="day-change">+1.6%</p>
+  <!-- Sticky header (status bar + app bar) -->
+  <div class="sticky-header" id="stickyHeader">
+    <!-- Status bar -->
+    <div class="statusbar">
+      <div class="statusbar__time">9:41</div>
+      <div class="statusbar__icons">
+        <svg width="18" height="12" viewBox="0 0 18 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0" y="7" width="3" height="5" rx="0.5" fill="white"/>
+          <rect x="4.5" y="5" width="3" height="7" rx="0.5" fill="white"/>
+          <rect x="9" y="3" width="3" height="9" rx="0.5" fill="white"/>
+          <rect x="13.5" y="0" width="3" height="12" rx="0.5" fill="white"/>
+        </svg>
+        <svg width="16" height="12" viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8 10.2C8.6 10.2 9.1 9.7 9.1 9.1C9.1 8.5 8.6 8 8 8C7.4 8 6.9 8.5 6.9 9.1C6.9 9.7 7.4 10.2 8 10.2Z" fill="white"/>
+          <path d="M4.8 6.8C5.7 5.9 6.8 5.5 8 5.5C9.2 5.5 10.3 5.9 11.2 6.8" stroke="white" stroke-width="1.2" stroke-linecap="round" fill="none"/>
+          <path d="M2 4.1C3.5 2.6 5.6 1.7 8 1.7C10.4 1.7 12.5 2.6 14 4.1" stroke="white" stroke-width="1.2" stroke-linecap="round" fill="none"/>
+        </svg>
+        <svg width="25" height="12" viewBox="0 0 25 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0.5" y="0.5" width="21" height="11" rx="2.5" stroke="white" stroke-opacity="0.4"/>
+          <rect x="2" y="2" width="18" height="8" rx="1.5" fill="white"/>
+          <rect x="22.5" y="4" width="1.5" height="4" rx="0.7" fill="white" fill-opacity="0.4"/>
+        </svg>
       </div>
     </div>
 
-    <div class="badges">
-      <span class="badge soon">Earnings</span>
-      <span class="badge notable">Reverse Split</span>
-      <span class="badge ambient">52 Week High</span>
-      <span class="badge ambient">Stock Split</span>
-    </div>
-
-    <div class="sblock">
-
-    <h2 class="memo-head">Memo</h2>
-
-    <div class="meta-grid">
-      <div>
-        <div class="label">Classification</div>
-        <div class="value">Compounder</div>
+    <!-- App bar -->
+    <div class="appbar">
+      <div class="appbar__market">
+        <div class="dot dot--green"></div>
+        <span id="marketClock">09:14:26 ET</span>
       </div>
-      <div>
-        <div class="label">Role</div>
-        <div class="value">Core Position · <span class="wt-pct">42.20%</span> <span class="wt-unit">WT</span></div>
-      </div>
-    </div>
-
-    <section class="case-card">
-      <div class="card-head">
-        <div class="kicker">Investment Case</div>
-        <div class="date">Jun 27, 2026</div>
-      </div>
-      <div class="kicker section-label">Thesis</div>
-      <p class="body">Apple compounds through a connected installed base that keeps paying. Services are roughly a third of gross profit and grow faster than the hardware they ride on. The market prices a mature device vendor; we back a widening-moat annuity, mispriced on refresh-cycle fears the base has absorbed before. Each cycle deepens switching costs and pulls more of the wallet into services, so the annuity re-rates as the market slowly…</p>
-      <div class="kicker section-label">Kill Criteria</div>
-      <p class="body">Services growth below 6% for two straight quarters, or a forced cut to App Store economics. Either voids the thesis.</p>
-    </section>
-
-    <div class="plain-metric plain-prediction">
-      <div class="metric-label">Prediction</div>
-      <div class="metric-value">60% probability of 20%/yr over 3 years</div>
-    </div>
-
-    <div class="plain-metric plain-horizon">
-      <div class="metric-label">Progress</div>
-      <div class="metric-value">1y 7m <span class="soft">of 3y</span></div>
-    </div>
-
-    <div class="row-written">
-      <span>Written Jun 22, 2026 · 87.60 CAD</span>
-      <span class="chevron">›</span>
-    </div>
-
-    </div>
-
-    <section class="notes">
-      <h2>Notes</h2>
-      <p class="placeholder">Record a thought, a thesis, a question.</p>
-    </section>
-
-    <section class="performance">
-      <div class="perf-head">
-        <span>Performance</span>
-        <span class="chevron">›</span>
-      </div>
-      <div class="perf-rows">
-        <div class="perf-row">
-          <span class="label">Portfolio Value</span>
-          <span class="value">18,950.00 <span class="ccy">CAD</span></span>
+      <div class="appbar__nav">
+        <div class="appbar__left">
+          <div class="appbar__back"><img src="assets/icon-back.svg" alt=""></div>
+          <div class="appbar__ticker">KSTL · <span id="headerPrice">87.00</span> USD<span class="chg" id="headerChg">+1.45%</span></div>
         </div>
-        <div class="perf-row">
-          <span class="label">S&amp;P 500 Equivalent Value</span>
-          <span class="value">15,190.00 <span class="ccy">CAD</span></span>
-        </div>
-        <div class="perf-row">
-          <span class="label">Difference</span>
-          <span class="value">+3,760.00 <span class="ccy">CAD +24.8%</span></span>
-        </div>
-        <div class="perf-row">
-          <span class="label">Unrealized P/L</span>
-          <span class="value">+5,652.00 <span class="ccy">CAD +42.6%</span></span>
-        </div>
+        <div class="appbar__actions"><img src="assets/icon-header-actions.svg" alt=""></div>
       </div>
-    </section>
-
-    <section class="research">
-      <h2>Research and Analysis</h2>
-      <div class="cards">
-
-        <a class="fiscal-card">
-          <div class="top">
-            <img class="logo" src="assets/fiscal-logo.png" alt="Fiscal.ai">
-            <span class="ticker">· AAPL</span>
-          </div>
-          <div class="desc">Research Apple's financials and filings.</div>
-          <img class="graphic" src="assets/fiscal-graphic.png" alt="">
-        </a>
-
-        <div class="prompt-card">
-          <div class="prompt-head">
-            <span class="name">Research Prompt</span>
-            <span class="ticker">· AAPL</span>
-            <span class="info">
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                <circle cx="6" cy="6" r="5.3" stroke="currentColor" stroke-width="1"/>
-                <path d="M6 5.5V8.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
-                <circle cx="6" cy="3.6" r="0.6" fill="currentColor"/>
-              </svg>
-            </span>
-            <span class="copy">
-              <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
-                <rect x="4.2" y="4.2" width="7.3" height="7.3" rx="1" stroke="currentColor" stroke-width="1"/>
-                <path d="M8.8 2.8V2.5C8.8 1.94 8.36 1.5 7.8 1.5H2.5C1.94 1.5 1.5 1.94 1.5 2.5V7.8C1.5 8.36 1.94 8.8 2.5 8.8H2.8" stroke="currentColor" stroke-width="1"/>
-              </svg>
-            </span>
-          </div>
-          <span class="view-prompt">View prompt</span>
-          <div class="open-in">
-            <span>Open in</span>
-            <span class="tools">
-              <a>Claude</a><span class="sep">·</span><a>ChatGPT</a><span class="sep">·</span><a>Gemini</a><span class="sep">·</span><a>Perplexity</a>
-            </span>
-          </div>
-        </div>
-
-      </div>
-      <p class="company-desc">Apple Inc., together with its subsidiaries, designs, manufactures and markets smartphones, ... →</p>
-    </section>
-
-    <section class="company-profile">
-      <h2>Company Profile</h2>
-      <div class="cp-card" id="cpCard">
-        <div class="cp-name">Apple Inc. <span class="ticker">· AAPL</span></div>
-        <p class="cp-desc">Apple Inc., together with its subsidiaries, designs, manufactures and markets smartphones, personal computers, tablets, wearables and accessories worldwide. The company offers iPhone, a line of smartphones; Mac, a line of personal computers; iPad, a line of multi-purpose tablets; and wearables, home and accessories comprising AirPods, Apple TV, Apple Watch, Beats products and HomePod. It also provides services including the App Store, Apple Music, Apple Pay and iCloud.</p>
-      </div>
-    </section>
-
-    <nav class="bottom-nav">
-      <a>History</a>
-      <a>Market</a>
-      <a>News</a>
-    </nav>
-
-    <div class="capital-decision">
-      <a>Capital Decision</a>
+      <div class="appbar__thesis-line" id="appbarThesisLine"></div>
     </div>
-
   </div>
+
+  <!-- Thesis banner -->
+  <div class="thesis-banner" id="thesisBanner">
+    <div class="thesis-display" id="thesisDisplay">
+      <div class="dot dot--amber" id="thesisDot"></div>
+      <span id="thesisText">No One line thesis Recorded</span>
+    </div>
+    <div class="thesis-edit" id="thesisEdit" hidden>
+      <textarea id="thesisInput" class="edit-textarea" maxlength="40" rows="1" placeholder="This is an example one line thesis"></textarea>
+      <div class="edit-footer">
+        <span class="edit-counter" id="thesisCounter">0/40</span>
+        <button type="button" class="arrow-btn" id="thesisSend" disabled aria-label="Save thesis">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 12H21M21 12L14 5M21 12L14 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Activity feed -->
+  <div class="activity-feed">
+    <div class="activity-row">
+      <div class="dot dot--green-b"></div>
+      <p>Limit Order Filled <span class="reg" style="font-weight:500">1000 @ 87.00</span> <span class="muted">05.06.26</span></p>
+    </div>
+    <div class="activity-row">
+      <div class="dot dot--amber"></div>
+      <p>Open Orders <span class="muted">(1)</span></p>
+    </div>
+    <div class="activity-row">
+      <div class="dot dot--amber"></div>
+      <p>No thesis recorded</p>
+    </div>
+    <div class="activity-row wrap">
+      <div class="dot dot--red" style="margin-top:3px"></div>
+      <p>Kill criteria 2 triggered: <span style="font-weight:500">margin below 68%</span></p>
+    </div>
+  </div>
+
+  <!-- Price block -->
+  <div class="price-block">
+    <div class="price-block__name">KSTL · Kestrel Systems</div>
+    <div class="price-block__price" id="pbPrice">87.60</div>
+    <div class="price-block__change">
+      <span class="abs" id="pbChangeAbs">+0.94</span>
+      <span class="pct" id="pbChangePct">+1.45%</span>
+    </div>
+  </div>
+
+  <!-- Notes card -->
+  <div class="notes-card" id="notesCard">
+    <div class="notes-idle" id="notesIdle"><span>Notes</span></div>
+    <div class="notes-edit" id="notesEdit" hidden>
+      <textarea id="notesInput" class="edit-textarea notes-textarea" rows="2" placeholder="Record a thought, a thesis, a question."></textarea>
+      <div class="edit-footer">
+        <span class="label-11">Notes</span>
+        <button type="button" class="arrow-btn" id="notesSend" disabled aria-label="Save note">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 12H21M21 12L14 5M21 12L14 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Memo section -->
+  <div class="memo-section">
+    <div class="section-header--row">
+      <div class="section-header">Memo <span class="chev">›</span></div>
+      <div class="date">06.22.26</div>
+    </div>
+
+    <div class="class-role-row">
+      <div class="col col--classification">
+        <div class="label-11">Classification</div>
+        <div class="value-14">Compounder</div>
+      </div>
+      <div class="col col--role">
+        <div class="label-11">Role</div>
+        <div class="role-value-row">
+          <div class="value-14">Core Position <span class="muted">· 42.20%</span></div>
+          <div class="wt-label">WT</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="warning-card">
+      <div class="dot dot--amber2"></div>
+      <span>No thesis recorded</span>
+    </div>
+
+    <div class="warning-card">
+      <div class="dot dot--amber2"></div>
+      <span>No kill criteria</span>
+    </div>
+
+    <div class="prediction-card">
+      <div class="label-11">Prediction</div>
+      <div class="pred-value">60% probability of 20%/yr over 3 years</div>
+      <div class="pred-tracking">tracking · <span id="predTrackingVal">+7.0%</span> vs S&amp;P</div>
+    </div>
+
+    <a class="link-row" href="#">Research Note <span class="chev">›</span></a>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Position section -->
+  <div class="stat-section">
+    <div class="section-header">Position <span class="chev">›</span></div>
+
+    <div class="stat-grid-2">
+      <div class="stat">
+        <div class="label-11">Market Value</div>
+        <div class="stat-value-15" id="posMarketValue">18,950.00</div>
+      </div>
+      <div class="stat">
+        <div class="label-11">Portfolio Weight</div>
+        <div class="stat-value-15" id="posWeight">42.2%</div>
+      </div>
+    </div>
+
+    <div class="stat-grid-2">
+      <div class="stat">
+        <div class="label-11">Unrealized P/L</div>
+        <div class="stat-value-15" id="posUnrealizedPL">+5,652.00 <span class="sub" id="posUnrealizedPLPct">+42.6%</span></div>
+      </div>
+      <div class="stat">
+        <div class="label-11">S&amp;P 500 Equivalent Value</div>
+        <div class="stat-value-15" id="posSPValue">+4,652.00 <span class="sub" id="posSPPct">+35.6%</span></div>
+      </div>
+    </div>
+
+    <div class="stat-grid-2 pb-content">
+      <div class="stat">
+        <div class="label-11">Vs S&amp;P</div>
+        <div class="stat-value-15" id="posVsSP">+7.0 <span class="sub">pp</span></div>
+      </div>
+      <div class="stat">
+        <div class="label-11">Dollar impact</div>
+        <div class="stat-value-15" id="posDollarImpact">+1,000.00</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Profile section -->
+  <div class="profile-section">
+    <div class="section-header">Profile</div>
+
+    <div class="company-block">
+      <div class="label-11">Company</div>
+      <div class="desc">Designs accelerated-computing platforms — processors, networking and systems software — sold to cloud providers, enterprises and consumer manufacturers. Data Center is the load-bearing segment; the rest is optional to the thesis.</div>
+    </div>
+
+    <div class="profile-grid" id="profileGrid">
+      <div class="cell"><div class="label-11">Sector</div><div class="val">Information Technology</div></div>
+      <div class="cell"><div class="label-11">Headquarters</div><div class="val">Santa Clara, CA</div></div>
+      <div class="cell" id="cellEmployees"><div class="label-11">Employees</div><div class="val">36,000</div></div>
+      <div class="cell"><div class="label-11">Fiscal year end</div><div class="val">January</div></div>
+      <div class="cell"><div class="label-11">Free float</div><div class="val">96.1%</div></div>
+
+      <div class="chart-popup" id="chartPopup" hidden>
+        <div class="chart-popup__row">
+          <div class="chart-popup__stat">
+            <div class="label-11">Price</div>
+            <div class="chart-popup__val" id="popPrice">87.60</div>
+          </div>
+          <div class="chart-popup__stat">
+            <div class="label-11">Chg</div>
+            <div class="chart-popup__val" id="popChg">+0.94</div>
+          </div>
+          <div class="chart-popup__stat">
+            <div class="label-11">Turnover</div>
+            <div class="chart-popup__val" id="popTurnover">14.85M</div>
+          </div>
+        </div>
+        <div class="chart-popup__row">
+          <div class="chart-popup__stat">
+            <div class="label-11">Avg Prc</div>
+            <div class="chart-popup__val" id="popAvgPrc">45.22</div>
+          </div>
+          <div class="chart-popup__stat">
+            <div class="label-11">% Chg</div>
+            <div class="chart-popup__val" id="popPctChg">+2.85%</div>
+          </div>
+          <div class="chart-popup__stat">
+            <div class="label-11">Volume</div>
+            <div class="chart-popup__val" id="popVolume">47.34K</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chart section -->
+  <div class="chart-section">
+    <div class="chart-tooltip" id="chartTooltip">
+      <span class="chart-tooltip__right">
+        <span class="chart-tooltip__price" id="chartPrice">87.60</span>
+        <span class="chart-tooltip__change" id="chartChange">+1.54 (+1.2%)</span>
+      </span>
+    </div>
+
+    <div class="chart-canvas" id="chartCanvas">
+      <span class="chart-time-float" id="chartTimeFloat" style="left: 73px;">10:30 AM</span>
+      <div class="chart-hairline" id="chartHairline" style="left: 101px;"></div>
+      <div class="chart-dot" id="chartDot" style="left: 99px; top: 142px;"></div>
+
+      <div class="chart-seg" style="position:absolute; left:0.6px; top:0; width:158.5px; height:179px;">
+        <svg width="158.5" height="179" viewBox="0 0 158.5 179" preserveAspectRatio="none" fill="none">
+          <path id="chartPathA" d="M0.75 122.227C0.75 121.136 4.41667 84.8216 6.25 66.8005L11.25 63.6203L16.25 77.2497L20.25 14.5543L25.75 2.74209L30.25 43.1761L34.75 45.4477L40.75 52.2624L44.25 39.5416L59.25 119.955L63.75 91.7878L74.25 156.755L78.75 176.29L83.75 150.849L87.75 167.204L92.25 174.473L98.25 147.214L103.25 136.765L107.75 122.227L112.25 155.392L115.25 156.755L126.25 138.582L130.75 143.58L136.75 149.031L139.75 179.016L145.75 174.473L149.25 181.742L155.25 167.204L159.25 181.742" stroke="white" stroke-width="1.5" stroke-linecap="square" transform="scale(0.994,1)"/>
+        </svg>
+      </div>
+
+      <div class="chart-seg" style="position:absolute; left:159.3px; top:79.05px; width:158px; height:99.949px; transform:scaleX(-1);">
+        <svg width="158" height="99.949" viewBox="0 0 159.754 102.842" preserveAspectRatio="none" fill="none">
+          <path id="chartPathB" d="M0.75 68.4068C0.75 67.7979 4.4051 47.5206 6.23265 37.458L11.2169 35.6823L16.2011 43.2926L20.1885 8.285L25.6711 1.68936L30.1569 24.2667L34.6427 25.5351L40.6238 29.3403L44.1128 22.2373L59.0655 67.1384L63.5513 51.4103L74.0181 87.6863L78.5039 98.5945L83.4882 84.3885L87.4756 93.5209L91.9614 97.5798L97.9424 82.3591L102.927 76.5245L107.412 68.4068L111.898 86.9253L114.889 87.6863L125.854 77.5392L130.34 80.3296L136.321 83.3738L139.312 100.117L145.293 97.5798L148.782 101.639L154.763 93.5209L158.75 101.639" stroke="white" stroke-width="1.5" stroke-linecap="square"/>
+        </svg>
+      </div>
+
+      <div class="chart-seg" style="position:absolute; left:318.3px; top:130.74px; width:28.41px; height:16.466px; transform:scaleX(-1);">
+        <svg width="28.41" height="16.466" viewBox="0 0 30.4178 18.4831" preserveAspectRatio="none" fill="none">
+          <path id="chartPathC" d="M0.972461 0.972461L6.95354 3.32475L9.94406 16.2623L15.9251 14.3021L19.4141 17.4385L25.3952 11.1657L29.3826 17.4385" stroke="white" stroke-width="1.5" stroke-linecap="square"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="chart-tabline"></div>
+    <div class="chart-tabs" id="chartTabs">
+      <span class="active" data-range="1D">1D</span>
+      <span data-range="1w">1w</span>
+      <span data-range="1M">1M</span>
+      <span data-range="6M">6M</span>
+      <span data-range="YTD">YTD</span>
+      <span data-range="1Y">1Y</span>
+      <span data-range="5Y">5Y</span>
+      <span data-range="max">max</span>
+    </div>
+  </div>
+
+  <!-- Key stats grid -->
+  <div class="keystats-section">
+    <div class="keystats-grid">
+      <div class="cell"><div class="label-11">Day Range</div><div class="val">36.82 - 92.12</div></div>
+      <div class="cell"><div class="label-11">52-Week Range</div><div class="val">29.50 - 93.81</div></div>
+      <div class="cell"><div class="label-11">Volume (Today / Avg)</div><div class="val">180K / 205K</div></div>
+      <div class="cell"><div class="label-11">Last Sale</div><div class="val">39.60</div></div>
+      <div class="cell"><div class="label-11">Exchange</div><div class="val">TSX</div></div>
+      <div class="cell"><div class="label-11">Market Cap</div><div class="val">4.15B</div></div>
+      <div class="cell"><div class="label-11">Enterprise Value (EV)</div><div class="val">903.3M</div></div>
+      <div class="cell"><div class="label-11">Shares Outstanding</div><div class="val">115.3M</div></div>
+      <div class="cell"><div class="label-11">Dividend Yield</div><div class="val">-</div></div>
+      <div class="cell"><div class="label-11">P/E</div><div class="val">40.6</div></div>
+      <div class="cell"><div class="label-11">EV/EBITDA</div><div class="val">18.9</div></div>
+      <div class="cell"><div class="label-11">EV/Sales</div><div class="val">3.4</div></div>
+      <div class="cell"><div class="label-11">P/FCF</div><div class="val">32.3</div></div>
+      <div class="cell"><div class="label-11">EV / Gross Profit</div><div class="val">32.3</div></div>
+      <div class="cell"><div class="label-11">P/B</div><div class="val">8.2</div></div>
+    </div>
+  </div>
+
+  <!-- Links section -->
+  <div class="links-section">
+    <div class="link-item">
+      <span class="link-item__name">Fiscal.ai</span>
+      <span class="link-item__right"><span class="link-item__url" style="text-transform:capitalize">Financials. ratios. filings</span><span class="chev">›</span></span>
+    </div>
+    <div class="link-item">
+      <span class="link-item__name">Claude</span>
+      <span class="link-item__right"><span class="link-item__url">Claude.ai</span><span class="chev">›</span></span>
+    </div>
+    <div class="link-item">
+      <span class="link-item__name">ChatGPT</span>
+      <span class="link-item__right"><span class="link-item__url">ChatGPT.com</span><span class="chev">›</span></span>
+    </div>
+    <div class="link-item">
+      <span class="link-item__name">Gemini</span>
+      <span class="link-item__right"><span class="link-item__url">Gemini.google.com</span><span class="chev">›</span></span>
+    </div>
+  </div>
+
+  <a class="link-row research-prompt-link" href="#">Research Prompt <span class="chev">›</span></a>
+
+  <div class="divider" style="margin-top:40px;"></div>
+
+  <!-- News section -->
+  <div class="news-section">
+    <div class="section-header">News</div>
+    <div class="news-list">
+      <div class="news-item">
+        <div class="news-item__headline">Uber Invests in Drone Delivery With Flytrex Partnership</div>
+        <div class="news-item__meta">PYMNTS · 1h</div>
+      </div>
+      <div class="news-item">
+        <div class="news-item__headline">Uber Technologies ($UBER) | IonQ ($IONQ) | Lyft ($LYFT) | Ballard Power Systems ($BLD...)</div>
+        <div class="news-item__meta">Green Stock News · 2h</div>
+      </div>
+      <div class="news-item">
+        <div class="news-item__headline">Not Too Late To Buy Uber Stock Despite 50% Rally</div>
+        <div class="news-item__meta">Forbes · 3h</div>
+      </div>
+      <div class="news-item">
+        <div class="news-item__headline">Second-source packaging qualification slips to Q4</div>
+        <div class="news-item__meta">Forbes · 3h</div>
+      </div>
+    </div>
+    <a class="link-row section-cta" href="#">View More <span class="chev">›</span></a>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- History section -->
+  <div class="history-section">
+    <div class="section-header">History</div>
+    <div class="history-list">
+      <div class="history-item">
+        <div class="col">
+          <div class="history-date">06.27.26</div>
+          <div class="history-type">Buy <span class="suffix">· Market</span></div>
+          <div class="history-account">TFSA</div>
+        </div>
+        <div class="col col--right">
+          <div class="history-price">230.00</div>
+          <div class="history-shares">23 shares x 10.00</div>
+        </div>
+      </div>
+      <div class="history-item">
+        <div class="col">
+          <div class="history-date">06.27.26</div>
+          <div class="history-type all-muted">Buy · Market</div>
+          <div class="history-account">Non-Registered</div>
+        </div>
+        <div class="col col--right">
+          <div class="history-price muted">Expired</div>
+          <div class="history-shares">23 shares</div>
+        </div>
+      </div>
+      <div class="history-item">
+        <div class="col">
+          <div class="history-date">06.24.26</div>
+          <div class="history-type">Buy <span class="suffix">· Market</span></div>
+          <div class="history-account">RRSP</div>
+        </div>
+        <div class="col col--right">
+          <div class="history-price">230.00</div>
+          <div class="history-shares">23 shares x 10.00</div>
+        </div>
+      </div>
+      <div class="history-item">
+        <div class="col">
+          <div class="history-date">06.23.26</div>
+          <div class="history-type">Buy <span class="suffix">· Limit</span></div>
+          <div class="history-account">TFSA</div>
+        </div>
+        <div class="col col--right">
+          <div class="history-price">350.00</div>
+          <div class="history-shares">35 shares x 10.00</div>
+        </div>
+      </div>
+      <div class="history-item">
+        <div class="col">
+          <div class="history-date">06.22.26</div>
+          <div class="history-type">Buy <span class="suffix">· Limit</span></div>
+          <div class="history-account">TFSA</div>
+        </div>
+        <div class="col col--right">
+          <div class="history-price">230.00</div>
+          <div class="history-shares">23 shares x 10.00</div>
+        </div>
+      </div>
+      <div class="history-item">
+        <div class="col">
+          <div class="history-date">06.20.26</div>
+          <div class="history-type">Buy <span class="suffix">· Limit</span></div>
+          <div class="history-account">TFSA</div>
+        </div>
+        <div class="col col--right">
+          <div class="history-price">230.00</div>
+          <div class="history-shares">23 shares x 10.00</div>
+        </div>
+      </div>
+    </div>
+    <a class="link-row section-cta" href="#">View More <span class="chev">›</span></a>
+  </div>
+
+  <div class="capital-decision">Capital Decision</div>
+
 </div>
 
 <script>
-  var burger = document.getElementById('burger');
-  var menu = document.getElementById('versionMenu');
-  burger.addEventListener('click', function (e) {
-    e.stopPropagation();
-    menu.classList.toggle('show');
+(function () {
+  /* ---------- Thesis inline edit ---------- */
+  var thesisBanner = document.getElementById('thesisBanner');
+  var thesisDisplay = document.getElementById('thesisDisplay');
+  var thesisEdit = document.getElementById('thesisEdit');
+  var thesisInput = document.getElementById('thesisInput');
+  var thesisCounter = document.getElementById('thesisCounter');
+  var thesisSend = document.getElementById('thesisSend');
+  var thesisText = document.getElementById('thesisText');
+  var thesisDot = document.getElementById('thesisDot');
+  var appbarThesisLine = document.getElementById('appbarThesisLine');
+  var stickyHeaderEl = document.getElementById('stickyHeader');
+  var savedThesis = null;
+  var isStuck = false;
+
+  function updateStickyThesisLine() {
+    var show = isStuck && !!savedThesis;
+    appbarThesisLine.textContent = savedThesis || '';
+    appbarThesisLine.classList.toggle('visible', show);
+  }
+  function checkStuck() {
+    var headerHeight = stickyHeaderEl.getBoundingClientRect().height;
+    var bannerRect = thesisBanner.getBoundingClientRect();
+    var stuck = bannerRect.bottom <= headerHeight;
+    if (stuck !== isStuck) {
+      isStuck = stuck;
+      updateStickyThesisLine();
+    }
+  }
+  window.addEventListener('scroll', checkStuck, { passive: true });
+
+  function openThesisEdit() {
+    thesisDisplay.hidden = true;
+    thesisEdit.hidden = false;
+    thesisInput.focus();
+  }
+  function closeThesisEdit() {
+    thesisEdit.hidden = true;
+    thesisDisplay.hidden = false;
+  }
+  thesisDisplay.addEventListener('click', openThesisEdit);
+  thesisInput.addEventListener('input', function () {
+    thesisCounter.textContent = thesisInput.value.length + '/40';
+    thesisSend.disabled = thesisInput.value.trim().length === 0;
+  });
+  thesisSend.addEventListener('click', function () {
+    var val = thesisInput.value.trim();
+    if (!val) return;
+    thesisText.textContent = val;
+    thesisDot.hidden = true;
+    closeThesisEdit();
+    savedThesis = val;
+    updateStickyThesisLine();
+  });
+  thesisInput.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeThesisEdit();
   });
   document.addEventListener('click', function (e) {
-    if (!menu.contains(e.target)) menu.classList.remove('show');
+    if (!thesisEdit.hidden && !thesisBanner.contains(e.target)) {
+      if (thesisInput.value.trim().length === 0) closeThesisEdit();
+    }
   });
-  function setVersion(v) {
-    menu.querySelectorAll('.vm-item').forEach(function (i) {
-      i.classList.toggle('active', i.dataset.version === v);
-    });
-    document.body.classList.toggle('v2', v === '2');
-    document.body.classList.toggle('v3', v === '3');
-    try { localStorage.setItem('stockPageVersion', v); } catch (e) {}
-  }
-  menu.querySelectorAll('.vm-item').forEach(function (item) {
-    item.addEventListener('click', function () {
-      setVersion(item.dataset.version);
-      menu.classList.remove('show');
-    });
-  });
-  try {
-    var saved = localStorage.getItem('stockPageVersion');
-    if (saved) setVersion(saved);
-  } catch (e) {}
 
-  var cpCard = document.getElementById('cpCard');
-  cpCard.addEventListener('click', function () {
-    window.location.href = 'profile.html';
+  /* ---------- Notes inline edit ---------- */
+  var notesCard = document.getElementById('notesCard');
+  var notesIdle = document.getElementById('notesIdle');
+  var notesEdit = document.getElementById('notesEdit');
+  var notesInput = document.getElementById('notesInput');
+  var notesSend = document.getElementById('notesSend');
+
+  function openNotesEdit() {
+    notesIdle.hidden = true;
+    notesEdit.hidden = false;
+    notesInput.focus();
+  }
+  function closeNotesEditIfEmpty() {
+    if (notesInput.value.trim().length === 0) {
+      notesEdit.hidden = true;
+      notesIdle.hidden = false;
+    }
+  }
+  notesIdle.addEventListener('click', openNotesEdit);
+  notesInput.addEventListener('input', function () {
+    notesSend.disabled = notesInput.value.trim().length === 0;
+    notesInput.style.height = 'auto';
+    notesInput.style.height = notesInput.scrollHeight + 'px';
   });
+  notesSend.addEventListener('click', function () {
+    notesInput.blur();
+  });
+  document.addEventListener('click', function (e) {
+    if (!notesEdit.hidden && !notesCard.contains(e.target)) closeNotesEditIfEmpty();
+  });
+
+  /* ---------- Chart tabs ---------- */
+  var chartTabs = document.getElementById('chartTabs');
+  chartTabs.addEventListener('click', function (e) {
+    var el = e.target.closest('span');
+    if (!el) return;
+    var current = chartTabs.querySelectorAll('span');
+    for (var i = 0; i < current.length; i++) current[i].classList.remove('active');
+    el.classList.add('active');
+  });
+
+  /* ---------- Chart hover / drag interactivity ---------- */
+  var chartCanvas = document.getElementById('chartCanvas');
+  var chartHairline = document.getElementById('chartHairline');
+  var chartDot = document.getElementById('chartDot');
+  var chartTime = document.getElementById('chartTime');
+  var chartTimeFloat = document.getElementById('chartTimeFloat');
+  var chartTooltip = document.getElementById('chartTooltip');
+  var chartPrice = document.getElementById('chartPrice');
+  var chartChange = document.getElementById('chartChange');
+  var profileGrid = document.getElementById('profileGrid');
+  var chartPopup = document.getElementById('chartPopup');
+  var cellEmployees = document.getElementById('cellEmployees');
+  var popPrice = document.getElementById('popPrice');
+  var popChg = document.getElementById('popChg');
+  var popTurnover = document.getElementById('popTurnover');
+  var popAvgPrc = document.getElementById('popAvgPrc');
+  var popPctChg = document.getElementById('popPctChg');
+  var popVolume = document.getElementById('popVolume');
+
+  /* Vertices lifted directly from the exported chart vector paths, mapped into canvas pixel space */
+  var rawA = [[0.75,122.227],[6.25,66.8005],[11.25,63.6203],[16.25,77.2497],[20.25,14.5543],[25.75,2.74209],[30.25,43.1761],[34.75,45.4477],[40.75,52.2624],[44.25,39.5416],[59.25,119.955],[63.75,91.7878],[74.25,156.755],[78.75,176.29],[83.75,150.849],[87.75,167.204],[92.25,174.473],[98.25,147.214],[103.25,136.765],[107.75,122.227],[112.25,155.392],[115.25,156.755],[126.25,138.582],[130.75,143.58],[136.75,149.031],[139.75,179.016],[145.75,174.473],[149.25,181.742],[155.25,167.204],[159.25,181.742]];
+  var rawB = [[0.75,68.4068],[6.23265,37.458],[11.2169,35.6823],[16.2011,43.2926],[20.1885,8.285],[25.6711,1.68936],[30.1569,24.2667],[34.6427,25.5351],[40.6238,29.3403],[44.1128,22.2373],[59.0655,67.1384],[63.5513,51.4103],[74.0181,87.6863],[78.5039,98.5945],[83.4882,84.3885],[87.4756,93.5209],[91.9614,97.5798],[97.9424,82.3591],[102.927,76.5245],[107.412,68.4068],[111.898,86.9253],[114.889,87.6863],[125.854,77.5392],[130.34,80.3296],[136.321,83.3738],[139.312,100.117],[145.293,97.5798],[148.782,101.639],[154.763,93.5209],[158.75,101.639]];
+  var rawC = [[0.972461,0.972461],[6.95354,3.32475],[9.94406,16.2623],[15.9251,14.3021],[19.4141,17.4385],[25.3952,11.1657],[29.3826,17.4385]];
+
+  var SEG_A = { left: 0.6, top: 0 };
+  var SEG_B = { left: 159.3, top: 79.05, width: 158 };
+  var SEG_C = { left: 318.3, top: 130.74, width: 28.41 };
+
+  var points = [];
+  rawA.forEach(function (p) { points.push({ x: SEG_A.left + p[0], y: SEG_A.top + p[1] }); });
+  rawB.forEach(function (p) { points.push({ x: SEG_B.left + (SEG_B.width - p[0]), y: SEG_B.top + p[1] }); });
+  rawC.forEach(function (p) { points.push({ x: SEG_C.left + (SEG_C.width - p[0]), y: SEG_C.top + p[1] }); });
+  points.sort(function (a, b) { return a.x - b.x; });
+
+  function yForX(x) {
+    if (x <= points[0].x) return points[0].y;
+    if (x >= points[points.length - 1].x) return points[points.length - 1].y;
+    for (var i = 0; i < points.length - 1; i++) {
+      if (x >= points[i].x && x <= points[i + 1].x) {
+        var t = (x - points[i].x) / ((points[i + 1].x - points[i].x) || 1);
+        return points[i].y + t * (points[i + 1].y - points[i].y);
+      }
+    }
+    return points[points.length - 1].y;
+  }
+
+  var CHART_MIN_X = points[0].x, CHART_MAX_X = points[points.length - 1].x;
+  var CHART_MIN_Y = 0, CHART_MAX_Y = 179;
+  var DAY_HIGH = 88.60, DAY_LOW = 86.20, PREV_CLOSE = 86.66;
+
+  function formatTime(frac) {
+    var startMin = 9 * 60 + 30, endMin = 16 * 60;
+    var mins = startMin + frac * (endMin - startMin);
+    var h = Math.floor(mins / 60), m = Math.floor(mins % 60);
+    var ampm = h >= 12 ? 'PM' : 'AM';
+    var h12 = h % 12; if (h12 === 0) h12 = 12;
+    return h12 + ':' + (m < 10 ? '0' : '') + m + ' ' + ampm;
+  }
+
+  function positionPopup() {
+    var gridRect = profileGrid.getBoundingClientRect();
+    var cellRect = cellEmployees.getBoundingClientRect();
+    var top = cellRect.top - gridRect.top - 15;
+    chartPopup.style.top = top + 'px';
+    chartPopup.style.height = (gridRect.height - top) + 'px';
+  }
+
+  var RESTING_X = 101;
+
+  function updateAt(clientX) {
+    var rect = chartCanvas.getBoundingClientRect();
+    var x = clientX === null ? RESTING_X : clientX - rect.left;
+    if (x < CHART_MIN_X) x = CHART_MIN_X;
+    if (x > CHART_MAX_X) x = CHART_MAX_X;
+    var y = yForX(x);
+    var frac = (x - CHART_MIN_X) / (CHART_MAX_X - CHART_MIN_X);
+
+    chartHairline.style.left = x + 'px';
+    chartDot.style.left = (x - 2.2) + 'px';
+    chartDot.style.top = (y - 2.2) + 'px';
+
+    var price = DAY_LOW + (1 - (y - CHART_MIN_Y) / (CHART_MAX_Y - CHART_MIN_Y)) * (DAY_HIGH - DAY_LOW);
+    var chg = price - PREV_CLOSE;
+    var pct = (chg / PREV_CLOSE) * 100;
+
+    if (clientX === null) {
+      chartPrice.textContent = '87.60';
+      chartChange.textContent = '+1.54 (+1.2%)';
+      chartTimeFloat.textContent = '10:30 AM';
+    } else {
+      chartPrice.textContent = price.toFixed(2);
+      chartChange.textContent = (chg >= 0 ? '+' : '') + chg.toFixed(2) + ' (' + (pct >= 0 ? '+' : '') + pct.toFixed(1) + '%)';
+      chartTimeFloat.textContent = formatTime(frac);
+    }
+    chartTimeFloat.style.left = Math.max(0, Math.min(x - 28, rect.width - 60)) + 'px';
+
+    popPrice.textContent = price.toFixed(2);
+    popChg.textContent = (chg >= 0 ? '+' : '') + chg.toFixed(2);
+    popPctChg.textContent = (pct >= 0 ? '+' : '') + pct.toFixed(2) + '%';
+    popAvgPrc.textContent = ((DAY_HIGH + DAY_LOW) / 2).toFixed(2);
+    popTurnover.textContent = (10 + frac * 8).toFixed(2) + 'M';
+    popVolume.textContent = (30 + frac * 25).toFixed(2) + 'K';
+  }
+
+  function showInteraction(clientX) {
+    profileGrid.classList.add('popup-active');
+    chartPopup.hidden = false;
+    positionPopup();
+    updateAt(clientX);
+  }
+  function hideInteraction() {
+    updateAt(null);
+    profileGrid.classList.remove('popup-active');
+    chartPopup.hidden = true;
+  }
+
+  chartCanvas.addEventListener('mousemove', function (e) { updateAt(e.clientX); });
+  chartCanvas.addEventListener('mouseenter', function (e) { showInteraction(e.clientX); });
+  chartCanvas.addEventListener('mouseleave', hideInteraction);
+  chartCanvas.addEventListener('touchstart', function (e) { showInteraction(e.touches[0].clientX); e.preventDefault(); }, { passive: false });
+  chartCanvas.addEventListener('touchmove', function (e) { updateAt(e.touches[0].clientX); e.preventDefault(); }, { passive: false });
+  chartCanvas.addEventListener('touchend', hideInteraction);
+
+  /* ---------- Live market simulation (header, price block, position stats) ---------- */
+  var headerPrice = document.getElementById('headerPrice');
+  var headerChg = document.getElementById('headerChg');
+  var pbPrice = document.getElementById('pbPrice');
+  var pbChangeAbs = document.getElementById('pbChangeAbs');
+  var pbChangePct = document.getElementById('pbChangePct');
+  var predTrackingVal = document.getElementById('predTrackingVal');
+  var marketClock = document.getElementById('marketClock');
+  var posMarketValue = document.getElementById('posMarketValue');
+  var posWeight = document.getElementById('posWeight');
+  var posUnrealizedPL = document.getElementById('posUnrealizedPL');
+  var posUnrealizedPLPct = document.getElementById('posUnrealizedPLPct');
+  var posSPValue = document.getElementById('posSPValue');
+  var posSPPct = document.getElementById('posSPPct');
+  var posVsSP = document.getElementById('posVsSP');
+  var posDollarImpact = document.getElementById('posDollarImpact');
+
+  function fmtMoney(n) {
+    var neg = n < 0;
+    var parts = Math.abs(n).toFixed(2).split('.');
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return (neg ? '-' : '') + parts.join('.');
+  }
+  function fmtSigned(n) { return (n >= 0 ? '+' : '') + fmtMoney(n); }
+
+  var market = {
+    price: 87.60,
+    prevClose: 86.66,
+    shares: 18950 / 87.60,
+    costBasis: 18950 - 5652,
+    totalPortfolio: 18950 / 0.422,
+    spCostBasis: 4652 / 0.356,
+    spPLPct: 35.6
+  };
+
+  function renderMarket() {
+    var change = market.price - market.prevClose;
+    var pct = (change / market.prevClose) * 100;
+    var marketValue = market.price * market.shares;
+    var weight = (marketValue / market.totalPortfolio) * 100;
+    var unrealizedPL = marketValue - market.costBasis;
+    var unrealizedPLPct = (unrealizedPL / market.costBasis) * 100;
+    var spPL = market.spCostBasis * (market.spPLPct / 100);
+    var vsSPpp = unrealizedPLPct - market.spPLPct;
+    var dollarImpact = unrealizedPL - spPL;
+
+    headerPrice.textContent = market.price.toFixed(2);
+    headerChg.textContent = (pct >= 0 ? '+' : '') + pct.toFixed(2) + '%';
+    pbPrice.textContent = market.price.toFixed(2);
+    pbChangeAbs.textContent = fmtSigned(change);
+    pbChangePct.textContent = (pct >= 0 ? '+' : '') + pct.toFixed(2) + '%';
+
+    posMarketValue.textContent = fmtMoney(marketValue);
+    posWeight.textContent = weight.toFixed(1) + '%';
+    posUnrealizedPL.firstChild.textContent = fmtSigned(unrealizedPL) + ' ';
+    posUnrealizedPLPct.textContent = (unrealizedPLPct >= 0 ? '+' : '') + unrealizedPLPct.toFixed(1) + '%';
+    posSPValue.firstChild.textContent = fmtSigned(spPL) + ' ';
+    posSPPct.textContent = (market.spPLPct >= 0 ? '+' : '') + market.spPLPct.toFixed(1) + '%';
+    posVsSP.firstChild.textContent = (vsSPpp >= 0 ? '+' : '') + vsSPpp.toFixed(1) + ' ';
+    posDollarImpact.textContent = fmtSigned(dollarImpact);
+    predTrackingVal.textContent = (vsSPpp >= 0 ? '+' : '') + vsSPpp.toFixed(1) + '%';
+  }
+
+  function tickMarket() {
+    market.price += (Math.random() - 0.5) * 0.12;
+    if (market.price < 85.5) market.price = 85.5;
+    if (market.price > 89.5) market.price = 89.5;
+    market.spPLPct += (Math.random() - 0.5) * 0.04;
+    if (market.spPLPct < 33) market.spPLPct = 33;
+    if (market.spPLPct > 38) market.spPLPct = 38;
+    renderMarket();
+  }
+  renderMarket();
+  setInterval(tickMarket, 2500);
+
+  var clockDate = new Date(2026, 0, 1, 9, 14, 26);
+  function tickClock() {
+    clockDate.setSeconds(clockDate.getSeconds() + 1);
+    var h = clockDate.getHours(), m = clockDate.getMinutes(), s = clockDate.getSeconds();
+    function pad(n) { return (n < 10 ? '0' : '') + n; }
+    marketClock.textContent = pad(h) + ':' + pad(m) + ':' + pad(s) + ' ET';
+  }
+  setInterval(tickClock, 1000);
+})();
 </script>
 </body>
 </html>
