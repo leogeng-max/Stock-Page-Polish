@@ -7,6 +7,21 @@
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+
+<!-- Burger menu (outside the device frame) -->
+<button type="button" class="burger-btn" id="burgerBtn" aria-label="Open menu">
+  <span></span><span></span><span></span>
+</button>
+<div class="burger-menu" id="burgerMenu" hidden>
+  <div class="burger-menu__title">Preview state</div>
+  <button type="button" class="burger-menu__item active" data-page-state="full">Full</button>
+  <button type="button" class="burger-menu__item" data-page-state="market-close">Market Close</button>
+  <button type="button" class="burger-menu__item" data-page-state="after-hours">Market After Hours</button>
+  <button type="button" class="burger-menu__item" data-page-state="pre-market">Market Pre-Market</button>
+</div>
+
+<div class="device">
+  <div class="screen" id="screen">
 <div class="frame">
 
   <!-- Sticky header (status bar + app bar) -->
@@ -37,13 +52,13 @@
     <!-- App bar -->
     <div class="appbar">
       <div class="appbar__market">
-        <div class="dot dot--green"></div>
+        <div class="dot dot--green" id="marketStatusDot"></div>
         <span id="marketClock">09:14:26 ET</span>
       </div>
       <div class="appbar__nav">
         <div class="appbar__left">
           <div class="appbar__back"><img src="assets/icon-back.svg" alt=""></div>
-          <div class="appbar__ticker">KSTL · <span id="headerPrice">87.00</span> USD<span class="chg" id="headerChg">+1.45%</span></div>
+          <div class="appbar__ticker">KSTL<span class="price-reveal" id="headerPriceGroup"> · <svg class="ah-moon ah-header-moon" id="headerAhDot" hidden width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 1020.354 15.354z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="headerPrice">87.00</span> USD<span class="chg" id="headerChg">+1.45%</span></span></div>
         </div>
         <div class="appbar__actions"><img src="assets/icon-header-actions.svg" alt=""></div>
       </div>
@@ -54,8 +69,11 @@
   <!-- Thesis banner -->
   <div class="thesis-banner" id="thesisBanner">
     <div class="thesis-display" id="thesisDisplay">
-      <div class="dot dot--amber" id="thesisDot"></div>
-      <span id="thesisText">No One line thesis Recorded</span>
+      <span class="thesis-display__left">
+        <span class="dot dot--amber" id="thesisDot"></span>
+        <span id="thesisText">No One line thesis Recorded</span>
+      </span>
+      <span class="version-chip" id="thesisVersionChip" hidden>v4 <span class="chev">›</span></span>
     </div>
     <div class="thesis-edit" id="thesisEdit" hidden>
       <textarea id="thesisInput" class="edit-textarea" maxlength="40" rows="1" placeholder="This is an example one line thesis"></textarea>
@@ -72,6 +90,10 @@
 
   <!-- Activity feed -->
   <div class="activity-feed">
+    <div class="activity-row">
+      <div class="dot dot--white"></div>
+      <p>New 52-Week High <span class="muted">· 93.81</span></p>
+    </div>
     <div class="activity-row">
       <div class="dot dot--green-b"></div>
       <p>Limit Order Filled <span class="reg" style="font-weight:500">1000 @ 87.00</span> <span class="muted">05.06.26</span></p>
@@ -91,18 +113,29 @@
   </div>
 
   <!-- Price block -->
-  <div class="price-block">
+  <div class="price-block" id="priceBlock">
     <div class="price-block__name">KSTL · Kestrel Systems</div>
-    <div class="price-block__price" id="pbPrice">87.60</div>
+    <div class="price-block__price-row">
+      <div class="price-block__price" id="pbPrice">87.60</div>
+    </div>
     <div class="price-block__change">
       <span class="abs" id="pbChangeAbs">+0.94</span>
       <span class="pct" id="pbChangePct">+1.45%</span>
+    </div>
+    <div class="price-block__ah-change" id="pbAhChangeRow" hidden>
+      <span class="price-block__ah-price" id="pbAhPriceInline">87.43</span>
+      <span class="price-block__ah-delta" id="pbAhChange">+0.12 (+0.1%)</span>
+      <span class="ah-badge" id="pbAhBadge"><svg class="ah-moon" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 1020.354 15.354z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="pbAhBadgeLabel">After Hours</span></span>
     </div>
   </div>
 
   <!-- Notes card -->
   <div class="notes-card" id="notesCard">
     <div class="notes-idle" id="notesIdle"><span>Notes</span></div>
+    <div class="notes-display" id="notesDisplay" hidden>
+      <div class="label-11">Notes</div>
+      <div class="notes-display__text" id="notesDisplayText"></div>
+    </div>
     <div class="notes-edit" id="notesEdit" hidden>
       <textarea id="notesInput" class="edit-textarea notes-textarea" rows="2" placeholder="Record a thought, a thesis, a question."></textarea>
       <div class="edit-footer">
@@ -137,20 +170,95 @@
       </div>
     </div>
 
-    <div class="warning-card">
-      <div class="dot dot--amber2"></div>
-      <span>No thesis recorded</span>
+    <!-- Thesis card -->
+    <div class="rich-card" data-state-target="thesis">
+      <div class="rich-card__empty">
+        <div class="warning-card">
+          <div class="dot dot--amber2"></div>
+          <span>No thesis recorded</span>
+        </div>
+      </div>
+      <div class="rich-card__full" hidden>
+        <div class="rich-card__box">
+          <div class="rich-card__head">
+            <span class="label-11">Thesis</span>
+            <span class="version-chip">v4 <span class="chev">›</span></span>
+          </div>
+          <div class="rich-card__body">Data Center is the load-bearing segment: hyperscaler capex keeps compounding, and Kestrel's platform lock-in lets software margins expand faster than unit costs.</div>
+        </div>
+      </div>
     </div>
 
-    <div class="warning-card">
-      <div class="dot dot--amber2"></div>
-      <span>No kill criteria</span>
+    <!-- Kill Criteria card -->
+    <div class="rich-card" data-state-target="kill">
+      <div class="rich-card__empty">
+        <div class="warning-card">
+          <div class="dot dot--amber2"></div>
+          <span>No kill criteria</span>
+        </div>
+      </div>
+      <div class="rich-card__full" hidden>
+        <div class="rich-card__box rich-card__box--kill">
+          <div class="rich-card__head">
+            <span class="kill-title">Kill Criteria — 1 Triggered</span>
+            <span class="version-chip">v4 <span class="chev">›</span></span>
+          </div>
+          <ul class="kill-list">
+            <li class="kill-item">
+              <span class="dot dot--muted"></span>
+              <div class="kill-item__text">
+                <div class="kill-item__title">Data Center revenue growth falls below 25% YoY ...</div>
+              </div>
+            </li>
+            <li class="kill-item">
+              <span class="dot dot--red"></span>
+              <div class="kill-item__text">
+                <div class="kill-item__title">Gross margin compresses below 68%</div>
+                <div class="kill-item__sub">Triggered — margin fell to 68%, at your threshold.</div>
+              </div>
+            </li>
+            <li class="kill-item">
+              <span class="dot dot--muted"></span>
+              <div class="kill-item__text">
+                <div class="kill-item__title">Loses a top-3 hyperscaler customer</div>
+              </div>
+            </li>
+            <li class="kill-item">
+              <span class="dot dot--amber2"></span>
+              <div class="kill-item__text">
+                <div class="kill-item__title">A credible second-source competitor ships at scale</div>
+                <div class="kill-item__sub">Needs attention — qualification announced last week.</div>
+              </div>
+            </li>
+            <li class="kill-item">
+              <span class="dot dot--muted"></span>
+              <div class="kill-item__text">
+                <div class="kill-item__title">Capex intensity guided higher without revenue ac...</div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
     </div>
 
     <div class="prediction-card">
-      <div class="label-11">Prediction</div>
+      <div class="rich-card__head">
+        <span class="label-11">Prediction</span>
+        <span class="version-chip">v1 <span class="chev">›</span></span>
+      </div>
       <div class="pred-value">60% probability of 20%/yr over 3 years</div>
-      <div class="pred-tracking">tracking · <span id="predTrackingVal">+7.0%</span> vs S&amp;P</div>
+      <div class="pred-tracking">Tracking · <span id="predTrackingVal">+7.0%</span> vs S&amp;P</div>
+
+      <div class="pred-timeline">
+        <div class="pred-timeline__row">
+          <span class="label-11">Time</span>
+          <span class="pred-timeline__left" id="predTimeLeft">2y 4mo left</span>
+        </div>
+        <div class="pred-timeline__bar">
+          <div class="pred-timeline__fill" id="predTimeFill" style="width: 22%"></div>
+        </div>
+        <div class="pred-timeline__range" id="predTimeRange">Oct 2025 → Oct 2028</div>
+      </div>
     </div>
 
     <a class="link-row" href="#">Research Note <span class="chev">›</span></a>
@@ -159,39 +267,68 @@
   <div class="divider"></div>
 
   <!-- Position section -->
-  <div class="stat-section">
-    <div class="section-header">Position <span class="chev">›</span></div>
+  <div class="stat-section" id="positionSection">
+    <div class="section-header">Position <span class="chev">›</span><span class="ah-badge ah-badge--inline" id="posAhBadge" hidden><svg class="ah-moon" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 1020.354 15.354z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="posAhBadgeLabel">After hours</span></span></div>
 
-    <div class="stat-grid-2">
-      <div class="stat">
-        <div class="label-11">Market Value</div>
-        <div class="stat-value-15" id="posMarketValue">18,950.00</div>
-      </div>
-      <div class="stat">
-        <div class="label-11">Portfolio Weight</div>
-        <div class="stat-value-15" id="posWeight">42.2%</div>
+    <div class="rich-card__empty" id="positionEmpty" hidden>
+      <div class="warning-card">
+        <div class="dot dot--amber2"></div>
+        <span>No position held</span>
       </div>
     </div>
 
-    <div class="stat-grid-2">
-      <div class="stat">
-        <div class="label-11">Unrealized P/L</div>
-        <div class="stat-value-15" id="posUnrealizedPL">+5,652.00 <span class="sub" id="posUnrealizedPLPct">+42.6%</span></div>
+    <div id="positionFull">
+      <div class="stat-grid-2">
+        <div class="stat">
+          <div class="label-11">Cost Basis</div>
+          <div class="stat-value-15">13,298.00 <span class="sub">USD</span></div>
+          <div class="stat-sub-line" id="posCostBasisCAD">18,216.44 CAD</div>
+        </div>
+        <div class="stat">
+          <div class="label-11">Market Value</div>
+          <div class="stat-value-15"><span id="posMarketValueUSD">18,943.49</span> <span class="sub">USD</span> <span class="sub" id="posMarketValuePct">+1.0%</span></div>
+          <div class="stat-sub-line"><span id="posMarketValueCAD">25,949.99</span> CAD <span id="posMarketValuePctCAD">+1.0%</span></div>
+          <div class="stat-ah-line" id="posMarketValueAhLine" hidden><svg class="ah-moon" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 1020.354 15.354z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="posMarketValueAh">18,970.24</span> USD <span id="posMarketValueAhPct">+1.2%</span></div>
+        </div>
       </div>
-      <div class="stat">
-        <div class="label-11">S&amp;P 500 Equivalent Value</div>
-        <div class="stat-value-15" id="posSPValue">+4,652.00 <span class="sub" id="posSPPct">+35.6%</span></div>
-      </div>
-    </div>
 
-    <div class="stat-grid-2 pb-content">
-      <div class="stat">
-        <div class="label-11">Vs S&amp;P</div>
-        <div class="stat-value-15" id="posVsSP">+7.0 <span class="sub">pp</span></div>
+      <div class="stat-grid-2">
+        <div class="stat">
+          <div class="label-11">Unrealized P/L</div>
+          <div class="stat-value-15"><span id="posUnrealizedUSD">+5,645.49</span> <span class="sub">USD</span> <span class="sub" id="posUnrealizedPct">+42.5%</span></div>
+          <div class="stat-sub-line"><span id="posUnrealizedCAD">+7,733.55</span> CAD <span id="posUnrealizedPctCAD">+42.5%</span></div>
+          <div class="stat-ah-line" id="posUnrealizedAhLine" hidden><svg class="ah-moon" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 1020.354 15.354z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="posUnrealizedAh">+5,671.16</span> USD <span id="posUnrealizedAhPct">+42.6%</span></div>
+        </div>
+        <div class="stat">
+          <div class="label-11">S&amp;P 500 Return</div>
+          <div class="stat-value-15"><span id="posSPReturnUSD">+4,733.51</span> <span class="sub">USD</span> <span class="sub" id="posSPReturnPct">+35.6%</span></div>
+          <div class="stat-sub-line"><span id="posSPReturnCAD">+6,484.36</span> CAD <span id="posSPReturnPctCAD">+35.6%</span></div>
+          <div class="stat-ah-line" id="posSPReturnAhLine" hidden><svg class="ah-moon" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 1020.354 15.354z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="posSPReturnAh">+4,733.51</span> USD <span id="posSPReturnAhPct">+35.6%</span></div>
+        </div>
       </div>
-      <div class="stat">
-        <div class="label-11">Dollar impact</div>
-        <div class="stat-value-15" id="posDollarImpact">+1,000.00</div>
+
+      <div class="stat-grid-2">
+        <div class="stat">
+          <div class="label-11">Alpha</div>
+          <div class="stat-value-15" id="posAlpha">+6.9 <span class="sub">pp</span></div>
+          <div class="stat-ah-line" id="posAlphaAhLine" hidden><svg class="ah-moon" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 1020.354 15.354z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="posAlphaAh">+7.0pp</span></div>
+        </div>
+        <div class="stat">
+          <div class="label-11">Portfolio Weight</div>
+          <div class="stat-value-15" id="posWeight">42.2%</div>
+          <div class="stat-ah-line" id="posWeightAhLine" hidden><svg class="ah-moon" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 1020.354 15.354z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="posWeightAh">42.3%</span></div>
+        </div>
+      </div>
+
+      <div class="stat-grid-2 pb-content">
+        <div class="stat">
+          <div class="label-11">Held Since</div>
+          <div class="stat-value-15">Oct 14, 2025</div>
+        </div>
+        <div class="stat">
+          <div class="label-11">Holding Period</div>
+          <div class="stat-value-15">8 months</div>
+        </div>
       </div>
     </div>
   </div>
@@ -215,6 +352,7 @@
       <div class="cell"><div class="label-11">Free float</div><div class="val">96.1%</div></div>
 
       <div class="chart-popup" id="chartPopup" hidden>
+        <div class="chart-popup__timestamp"><span class="date">June 22, 2026</span><span class="time" id="popTime">10:30 AM</span></div>
         <div class="chart-popup__row">
           <div class="chart-popup__stat">
             <div class="label-11">Price</div>
@@ -252,32 +390,43 @@
     <div class="chart-tooltip" id="chartTooltip">
       <span class="chart-tooltip__right">
         <span class="chart-tooltip__price" id="chartPrice">87.60</span>
-        <span class="chart-tooltip__change" id="chartChange">+1.54 (+1.2%)</span>
+        <div class="chart-tooltip__session-row" id="chartSessionRow" hidden>
+          <span class="chart-tooltip__label" id="chartSessionLabel">After Hours</span>
+          <span id="chartSessionChange">-1.50 (-1.18%)</span>
+        </div>
+        <div class="chart-tooltip__close-row">
+          <span class="chart-tooltip__label" id="chartCloseLabel" hidden>Close</span>
+          <span class="chart-tooltip__change" id="chartChange">+1.54 (+1.2%)</span>
+        </div>
       </span>
     </div>
 
-    <div class="chart-canvas" id="chartCanvas">
+    <div class="chart-canvas-wrap" id="chartCanvasWrap">
       <span class="chart-time-float" id="chartTimeFloat" style="left: 73px;">10:30 AM</span>
       <div class="chart-hairline" id="chartHairline" style="left: 101px;"></div>
       <div class="chart-dot" id="chartDot" style="left: 99px; top: 142px;"></div>
 
-      <div class="chart-seg" style="position:absolute; left:0.6px; top:0; width:158.5px; height:179px;">
-        <svg width="158.5" height="179" viewBox="0 0 158.5 179" preserveAspectRatio="none" fill="none">
-          <path id="chartPathA" d="M0.75 122.227C0.75 121.136 4.41667 84.8216 6.25 66.8005L11.25 63.6203L16.25 77.2497L20.25 14.5543L25.75 2.74209L30.25 43.1761L34.75 45.4477L40.75 52.2624L44.25 39.5416L59.25 119.955L63.75 91.7878L74.25 156.755L78.75 176.29L83.75 150.849L87.75 167.204L92.25 174.473L98.25 147.214L103.25 136.765L107.75 122.227L112.25 155.392L115.25 156.755L126.25 138.582L130.75 143.58L136.75 149.031L139.75 179.016L145.75 174.473L149.25 181.742L155.25 167.204L159.25 181.742" stroke="white" stroke-width="1.5" stroke-linecap="square" transform="scale(0.994,1)"/>
-        </svg>
+      <div class="chart-canvas" id="chartCanvas">
+        <div class="chart-seg" style="position:absolute; left:0.6px; top:0; width:158.5px; height:179px;">
+          <svg width="158.5" height="179" viewBox="0 0 158.5 179" preserveAspectRatio="none" fill="none">
+            <path id="chartPathA" d="M0.75 122.227C0.75 121.136 4.41667 84.8216 6.25 66.8005L11.25 63.6203L16.25 77.2497L20.25 14.5543L25.75 2.74209L30.25 43.1761L34.75 45.4477L40.75 52.2624L44.25 39.5416L59.25 119.955L63.75 91.7878L74.25 156.755L78.75 176.29L83.75 150.849L87.75 167.204L92.25 174.473L98.25 147.214L103.25 136.765L107.75 122.227L112.25 155.392L115.25 156.755L126.25 138.582L130.75 143.58L136.75 149.031L139.75 179.016L145.75 174.473L149.25 181.742L155.25 167.204L159.25 181.742" stroke="white" stroke-width="1.5" stroke-linecap="square" transform="scale(0.994,1)"/>
+          </svg>
+        </div>
+
+        <div class="chart-seg" style="position:absolute; left:159.3px; top:79.05px; width:158px; height:99.949px; transform:scaleX(-1);">
+          <svg width="158" height="99.949" viewBox="0 0 159.754 102.842" preserveAspectRatio="none" fill="none">
+            <path id="chartPathB" d="M0.75 68.4068C0.75 67.7979 4.4051 47.5206 6.23265 37.458L11.2169 35.6823L16.2011 43.2926L20.1885 8.285L25.6711 1.68936L30.1569 24.2667L34.6427 25.5351L40.6238 29.3403L44.1128 22.2373L59.0655 67.1384L63.5513 51.4103L74.0181 87.6863L78.5039 98.5945L83.4882 84.3885L87.4756 93.5209L91.9614 97.5798L97.9424 82.3591L102.927 76.5245L107.412 68.4068L111.898 86.9253L114.889 87.6863L125.854 77.5392L130.34 80.3296L136.321 83.3738L139.312 100.117L145.293 97.5798L148.782 101.639L154.763 93.5209L158.75 101.639" stroke="white" stroke-width="1.5" stroke-linecap="square"/>
+          </svg>
+        </div>
+
+        <div class="chart-seg" style="position:absolute; left:318.3px; top:130.74px; width:28.41px; height:16.466px; transform:scaleX(-1);">
+          <svg width="28.41" height="16.466" viewBox="0 0 30.4178 18.4831" preserveAspectRatio="none" fill="none">
+            <path id="chartPathC" d="M0.972461 0.972461L6.95354 3.32475L9.94406 16.2623L15.9251 14.3021L19.4141 17.4385L25.3952 11.1657L29.3826 17.4385" stroke="white" stroke-width="1.5" stroke-linecap="square"/>
+          </svg>
+        </div>
       </div>
 
-      <div class="chart-seg" style="position:absolute; left:159.3px; top:79.05px; width:158px; height:99.949px; transform:scaleX(-1);">
-        <svg width="158" height="99.949" viewBox="0 0 159.754 102.842" preserveAspectRatio="none" fill="none">
-          <path id="chartPathB" d="M0.75 68.4068C0.75 67.7979 4.4051 47.5206 6.23265 37.458L11.2169 35.6823L16.2011 43.2926L20.1885 8.285L25.6711 1.68936L30.1569 24.2667L34.6427 25.5351L40.6238 29.3403L44.1128 22.2373L59.0655 67.1384L63.5513 51.4103L74.0181 87.6863L78.5039 98.5945L83.4882 84.3885L87.4756 93.5209L91.9614 97.5798L97.9424 82.3591L102.927 76.5245L107.412 68.4068L111.898 86.9253L114.889 87.6863L125.854 77.5392L130.34 80.3296L136.321 83.3738L139.312 100.117L145.293 97.5798L148.782 101.639L154.763 93.5209L158.75 101.639" stroke="white" stroke-width="1.5" stroke-linecap="square"/>
-        </svg>
-      </div>
-
-      <div class="chart-seg" style="position:absolute; left:318.3px; top:130.74px; width:28.41px; height:16.466px; transform:scaleX(-1);">
-        <svg width="28.41" height="16.466" viewBox="0 0 30.4178 18.4831" preserveAspectRatio="none" fill="none">
-          <path id="chartPathC" d="M0.972461 0.972461L6.95354 3.32475L9.94406 16.2623L15.9251 14.3021L19.4141 17.4385L25.3952 11.1657L29.3826 17.4385" stroke="white" stroke-width="1.5" stroke-linecap="square"/>
-        </svg>
-      </div>
+      <div class="chart-volume" id="chartVolume"></div>
     </div>
 
     <div class="chart-tabline"></div>
@@ -290,6 +439,31 @@
       <span data-range="1Y">1Y</span>
       <span data-range="5Y">5Y</span>
       <span data-range="max">max</span>
+    </div>
+  </div>
+
+  <!-- Level 1 Quote -->
+  <div class="l1-section">
+    <div class="l1-quote__header" id="l1QuoteHeader">
+      <span class="l1-quote__label"><span class="chev" id="l1Chev">›</span>Level 1 Quote</span>
+      <span class="l1-quote__preview" id="l1QuotePreview"><span class="l1-preview-bid" id="l1PreviewBid">87.73</span> / <span class="l1-preview-ask" id="l1PreviewAsk">87.79</span></span>
+    </div>
+    <div class="l1-panel" id="l1Panel" hidden>
+      <div class="l1-bidask">
+        <div class="l1-bidask__side l1-bidask__side--bid">
+          <div class="label-11">Bid</div>
+          <div class="l1-bidask__price" id="l1Bid">87.52</div>
+          <div class="l1-bidask__size" id="l1BidSize">x 200</div>
+        </div>
+        <div class="l1-bidask__side l1-bidask__side--ask">
+          <div class="label-11">Ask</div>
+          <div class="l1-bidask__price" id="l1Ask">87.58</div>
+          <div class="l1-bidask__size" id="l1AskSize">x 400</div>
+        </div>
+      </div>
+      <div class="l1-spread"><span class="label-11">Spread</span><span id="l1Spread">0.06</span></div>
+      <div class="label-11 l1-sales-label">Last Sales</div>
+      <div class="l1-sales" id="l1Sales"></div>
     </div>
   </div>
 
@@ -313,6 +487,40 @@
       <div class="cell"><div class="label-11">P/B</div><div class="val">8.2</div></div>
     </div>
   </div>
+
+  <!-- Financials / Investor Relations / Ownership -->
+  <div class="finrel-section">
+    <div class="finrel-block">
+      <div class="section-header">Financials <span class="chev">›</span></div>
+      <div class="finrel-grid">
+        <div class="cell"><div class="label-11">Revenue (Q1 FY26)</div><div class="val">612.4M <span class="delta up">+18.2%</span></div></div>
+        <div class="cell"><div class="label-11">Net Income</div><div class="val">102.1M <span class="delta up">+24.6%</span></div></div>
+        <div class="cell"><div class="label-11">Free Cash Flow</div><div class="val">88.7M <span class="delta down">-4.1%</span></div></div>
+        <div class="cell"><div class="label-11">Gross Margin</div><div class="val">67.8% <span class="delta up">+1.7pp</span></div></div>
+      </div>
+      <div class="finrel-footnote">Quarterly · tap for full statements, ratios, and prior periods.<br>Powered by Fiscal.ai</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="finrel-block finrel-block--link" id="investorRelationsTrigger" role="button" tabindex="0">
+      <div class="section-header">Investor Relations <span class="chev">›</span></div>
+      <div class="finrel-footnote">Next earnings: Q2 FY26 · Aug 6, 2026 · Quarterly calls, transcripts &amp; filings</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="finrel-block">
+      <div class="section-header">Ownership <span class="chev">›</span></div>
+      <div class="finrel-grid">
+        <div class="cell"><div class="label-11">Insider Ownership</div><div class="val">8.4%</div></div>
+        <div class="cell"><div class="label-11">Institutional Ownership</div><div class="val">71.2%</div></div>
+      </div>
+      <div class="finrel-footnote">3 insider transactions in the last 90 days</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
 
   <!-- Links section -->
   <div class="links-section">
@@ -440,6 +648,73 @@
 
   <div class="capital-decision">Capital Decision</div>
 
+
+</div>
+  </div>
+
+  <!-- Investor Relations detail overlay -->
+  <div class="ir-overlay" id="irOverlay" hidden>
+    <div class="ir-overlay__header">
+      <button type="button" class="ir-back-btn" id="irBackBtn" aria-label="Back">
+        <img src="assets/icon-back.svg" alt="">
+      </button>
+      <span class="ir-overlay__title">Investor Relations</span>
+    </div>
+    <div class="ir-overlay__subtitle">Next earnings call: Q2 FY26 · Thursday, Aug 6, 2026 · 8:00 AM ET</div>
+    <div class="divider"></div>
+    <div class="ir-filing-list">
+      <div class="ir-filing-row">
+        <div class="col">
+          <div class="ir-filing-period">Q1 FY26</div>
+          <div class="ir-filing-reported">Reported May 2, 2026</div>
+        </div>
+        <div class="ir-filing-links">
+          <a href="#" class="ir-filing-link">Transcript <span class="chev">›</span></a>
+          <a href="#" class="ir-filing-link">10-Q <span class="chev">›</span></a>
+        </div>
+      </div>
+      <div class="ir-filing-row">
+        <div class="col">
+          <div class="ir-filing-period">Q4 FY25</div>
+          <div class="ir-filing-reported">Reported Feb 10, 2026</div>
+        </div>
+        <div class="ir-filing-links">
+          <a href="#" class="ir-filing-link">Transcript <span class="chev">›</span></a>
+          <a href="#" class="ir-filing-link">10-K <span class="chev">›</span></a>
+        </div>
+      </div>
+      <div class="ir-filing-row">
+        <div class="col">
+          <div class="ir-filing-period">Q3 FY25</div>
+          <div class="ir-filing-reported">Reported Nov 4, 2025</div>
+        </div>
+        <div class="ir-filing-links">
+          <a href="#" class="ir-filing-link">Transcript <span class="chev">›</span></a>
+          <a href="#" class="ir-filing-link">10-Q <span class="chev">›</span></a>
+        </div>
+      </div>
+      <div class="ir-filing-row">
+        <div class="col">
+          <div class="ir-filing-period">Q2 FY25</div>
+          <div class="ir-filing-reported">Reported Aug 5, 2025</div>
+        </div>
+        <div class="ir-filing-links">
+          <a href="#" class="ir-filing-link">Transcript <span class="chev">›</span></a>
+          <a href="#" class="ir-filing-link">10-Q <span class="chev">›</span></a>
+        </div>
+      </div>
+      <div class="ir-filing-row">
+        <div class="col">
+          <div class="ir-filing-period">Q1 FY25</div>
+          <div class="ir-filing-reported">Reported May 6, 2025</div>
+        </div>
+        <div class="ir-filing-links">
+          <a href="#" class="ir-filing-link">Transcript <span class="chev">›</span></a>
+          <a href="#" class="ir-filing-link">10-Q <span class="chev">›</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -453,6 +728,7 @@
   var thesisSend = document.getElementById('thesisSend');
   var thesisText = document.getElementById('thesisText');
   var thesisDot = document.getElementById('thesisDot');
+  var thesisVersionChip = document.getElementById('thesisVersionChip');
   var appbarThesisLine = document.getElementById('appbarThesisLine');
   var stickyHeaderEl = document.getElementById('stickyHeader');
   var savedThesis = null;
@@ -472,7 +748,24 @@
       updateStickyThesisLine();
     }
   }
-  window.addEventListener('scroll', checkStuck, { passive: true });
+  var screenEl = document.getElementById('screen');
+  screenEl.addEventListener('scroll', checkStuck, { passive: true });
+
+  /* ---------- Reveal header price only after scrolling past the price block ---------- */
+  var priceBlockEl = document.getElementById('priceBlock');
+  var headerPriceGroup = document.getElementById('headerPriceGroup');
+  var priceRevealed = false;
+  function checkPriceReveal() {
+    var headerHeight = stickyHeaderEl.getBoundingClientRect().height;
+    var rect = priceBlockEl.getBoundingClientRect();
+    var revealed = rect.bottom <= headerHeight;
+    if (revealed !== priceRevealed) {
+      priceRevealed = revealed;
+      headerPriceGroup.classList.toggle('visible', revealed);
+    }
+  }
+  screenEl.addEventListener('scroll', checkPriceReveal, { passive: true });
+  checkPriceReveal();
 
   function openThesisEdit() {
     thesisDisplay.hidden = true;
@@ -506,35 +799,53 @@
     }
   });
 
-  /* ---------- Notes inline edit ---------- */
+  /* ---------- Notes inline edit (idle / display / edit) ---------- */
   var notesCard = document.getElementById('notesCard');
   var notesIdle = document.getElementById('notesIdle');
+  var notesDisplay = document.getElementById('notesDisplay');
+  var notesDisplayText = document.getElementById('notesDisplayText');
   var notesEdit = document.getElementById('notesEdit');
   var notesInput = document.getElementById('notesInput');
   var notesSend = document.getElementById('notesSend');
+  var savedNote = null;
 
   function openNotesEdit() {
     notesIdle.hidden = true;
+    notesDisplay.hidden = true;
     notesEdit.hidden = false;
+    notesInput.value = savedNote || '';
+    notesSend.disabled = !savedNote;
+    notesInput.style.height = 'auto';
+    notesInput.style.height = notesInput.scrollHeight + 'px';
     notesInput.focus();
   }
-  function closeNotesEditIfEmpty() {
-    if (notesInput.value.trim().length === 0) {
-      notesEdit.hidden = true;
+  function closeNotesEdit() {
+    notesEdit.hidden = true;
+    if (savedNote) {
+      notesDisplayText.textContent = savedNote;
+      notesDisplay.hidden = false;
+      notesIdle.hidden = true;
+    } else {
       notesIdle.hidden = false;
+      notesDisplay.hidden = true;
     }
   }
   notesIdle.addEventListener('click', openNotesEdit);
+  notesDisplay.addEventListener('click', openNotesEdit);
   notesInput.addEventListener('input', function () {
     notesSend.disabled = notesInput.value.trim().length === 0;
     notesInput.style.height = 'auto';
     notesInput.style.height = notesInput.scrollHeight + 'px';
   });
   notesSend.addEventListener('click', function () {
+    var val = notesInput.value.trim();
+    if (!val) return;
+    savedNote = val;
     notesInput.blur();
+    closeNotesEdit();
   });
   document.addEventListener('click', function (e) {
-    if (!notesEdit.hidden && !notesCard.contains(e.target)) closeNotesEditIfEmpty();
+    if (!notesEdit.hidden && !notesCard.contains(e.target)) closeNotesEdit();
   });
 
   /* ---------- Chart tabs ---------- */
@@ -548,7 +859,7 @@
   });
 
   /* ---------- Chart hover / drag interactivity ---------- */
-  var chartCanvas = document.getElementById('chartCanvas');
+  var chartCanvasWrap = document.getElementById('chartCanvasWrap');
   var chartHairline = document.getElementById('chartHairline');
   var chartDot = document.getElementById('chartDot');
   var chartTime = document.getElementById('chartTime');
@@ -556,6 +867,10 @@
   var chartTooltip = document.getElementById('chartTooltip');
   var chartPrice = document.getElementById('chartPrice');
   var chartChange = document.getElementById('chartChange');
+  var chartSessionRow = document.getElementById('chartSessionRow');
+  var chartSessionLabel = document.getElementById('chartSessionLabel');
+  var chartSessionChange = document.getElementById('chartSessionChange');
+  var chartCloseLabel = document.getElementById('chartCloseLabel');
   var profileGrid = document.getElementById('profileGrid');
   var chartPopup = document.getElementById('chartPopup');
   var cellEmployees = document.getElementById('cellEmployees');
@@ -565,6 +880,7 @@
   var popAvgPrc = document.getElementById('popAvgPrc');
   var popPctChg = document.getElementById('popPctChg');
   var popVolume = document.getElementById('popVolume');
+  var popTime = document.getElementById('popTime');
 
   /* Vertices lifted directly from the exported chart vector paths, mapped into canvas pixel space */
   var rawA = [[0.75,122.227],[6.25,66.8005],[11.25,63.6203],[16.25,77.2497],[20.25,14.5543],[25.75,2.74209],[30.25,43.1761],[34.75,45.4477],[40.75,52.2624],[44.25,39.5416],[59.25,119.955],[63.75,91.7878],[74.25,156.755],[78.75,176.29],[83.75,150.849],[87.75,167.204],[92.25,174.473],[98.25,147.214],[103.25,136.765],[107.75,122.227],[112.25,155.392],[115.25,156.755],[126.25,138.582],[130.75,143.58],[136.75,149.031],[139.75,179.016],[145.75,174.473],[149.25,181.742],[155.25,167.204],[159.25,181.742]];
@@ -609,7 +925,7 @@
   function positionPopup() {
     var gridRect = profileGrid.getBoundingClientRect();
     var cellRect = cellEmployees.getBoundingClientRect();
-    var top = cellRect.top - gridRect.top - 15;
+    var top = cellRect.top - gridRect.top - 20;
     chartPopup.style.top = top + 'px';
     chartPopup.style.height = (gridRect.height - top) + 'px';
   }
@@ -617,7 +933,7 @@
   var RESTING_X = 101;
 
   function updateAt(clientX) {
-    var rect = chartCanvas.getBoundingClientRect();
+    var rect = chartCanvasWrap.getBoundingClientRect();
     var x = clientX === null ? RESTING_X : clientX - rect.left;
     if (x < CHART_MIN_X) x = CHART_MIN_X;
     if (x > CHART_MAX_X) x = CHART_MAX_X;
@@ -649,6 +965,7 @@
     popAvgPrc.textContent = ((DAY_HIGH + DAY_LOW) / 2).toFixed(2);
     popTurnover.textContent = (10 + frac * 8).toFixed(2) + 'M';
     popVolume.textContent = (30 + frac * 25).toFixed(2) + 'K';
+    popTime.textContent = clientX === null ? '10:30 AM' : formatTime(frac);
   }
 
   function showInteraction(clientX) {
@@ -663,12 +980,101 @@
     chartPopup.hidden = true;
   }
 
-  chartCanvas.addEventListener('mousemove', function (e) { updateAt(e.clientX); });
-  chartCanvas.addEventListener('mouseenter', function (e) { showInteraction(e.clientX); });
-  chartCanvas.addEventListener('mouseleave', hideInteraction);
-  chartCanvas.addEventListener('touchstart', function (e) { showInteraction(e.touches[0].clientX); e.preventDefault(); }, { passive: false });
-  chartCanvas.addEventListener('touchmove', function (e) { updateAt(e.touches[0].clientX); e.preventDefault(); }, { passive: false });
-  chartCanvas.addEventListener('touchend', hideInteraction);
+  chartCanvasWrap.addEventListener('mousemove', function (e) { updateAt(e.clientX); });
+  chartCanvasWrap.addEventListener('mouseenter', function (e) { showInteraction(e.clientX); });
+  chartCanvasWrap.addEventListener('mouseleave', hideInteraction);
+  chartCanvasWrap.addEventListener('touchstart', function (e) { showInteraction(e.touches[0].clientX); e.preventDefault(); }, { passive: false });
+  chartCanvasWrap.addEventListener('touchmove', function (e) { updateAt(e.touches[0].clientX); e.preventDefault(); }, { passive: false });
+  chartCanvasWrap.addEventListener('touchend', hideInteraction);
+
+  /* ---------- Volume bars (colored by trend of the underlying price line) ---------- */
+  var chartVolumeEl = document.getElementById('chartVolume');
+  (function buildVolumeBars() {
+    var BAR_COUNT = 42;
+    var frag = document.createDocumentFragment();
+    var prevY = null;
+    for (var i = 0; i < BAR_COUNT; i++) {
+      var x = CHART_MIN_X + (i + 0.5) / BAR_COUNT * (CHART_MAX_X - CHART_MIN_X);
+      var y = yForX(x);
+      var seed = Math.sin(i * 12.9898) * 43758.5453;
+      var rnd = seed - Math.floor(seed);
+      var h = 8 + rnd * 32;
+      var up = prevY === null ? true : y < prevY;
+      prevY = y;
+      var bar = document.createElement('div');
+      bar.className = 'bar ' + (up ? 'up' : 'down');
+      bar.style.height = h.toFixed(1) + 'px';
+      frag.appendChild(bar);
+    }
+    chartVolumeEl.appendChild(frag);
+  })();
+
+  /* ---------- Level 1 Quote (collapsible, live) ---------- */
+  var l1QuoteHeader = document.getElementById('l1QuoteHeader');
+  var l1Chev = document.getElementById('l1Chev');
+  var l1QuotePreview = document.getElementById('l1QuotePreview');
+  var l1Panel = document.getElementById('l1Panel');
+  var l1PreviewBid = document.getElementById('l1PreviewBid');
+  var l1PreviewAsk = document.getElementById('l1PreviewAsk');
+  var l1Bid = document.getElementById('l1Bid');
+  var l1Ask = document.getElementById('l1Ask');
+  var l1BidSize = document.getElementById('l1BidSize');
+  var l1AskSize = document.getElementById('l1AskSize');
+  var l1Spread = document.getElementById('l1Spread');
+  var l1Sales = document.getElementById('l1Sales');
+  var l1Open = false;
+  var lastSalePrice = null;
+
+  function randLotSize() { return (1 + Math.floor(Math.random() * 5)) * 100; }
+
+  function renderQuote() {
+    /* The NBBO bid/ask and trade tape only exist while the regular session
+       is live — outside of it they stay frozen at the last live quote. */
+    if (pageMode !== 'full') return;
+    var spread = 0.04 + Math.random() * 0.04;
+    var bid = market.price - spread / 2;
+    var ask = market.price + spread / 2;
+    l1PreviewBid.textContent = bid.toFixed(2);
+    l1PreviewAsk.textContent = ask.toFixed(2);
+    if (l1Open) {
+      l1Bid.textContent = bid.toFixed(2);
+      l1Ask.textContent = ask.toFixed(2);
+      l1BidSize.textContent = 'x ' + randLotSize();
+      l1AskSize.textContent = 'x ' + randLotSize();
+      l1Spread.textContent = spread.toFixed(2);
+      addSaleRow(bid, ask);
+    }
+  }
+
+  function addSaleRow(bid, ask) {
+    var price = market.price + (Math.random() - 0.5) * 0.06;
+    var up = lastSalePrice === null ? true : price >= lastSalePrice;
+    lastSalePrice = price;
+    var row = document.createElement('div');
+    row.className = 'l1-sale-row ' + (up ? 'up' : 'down');
+    var h = document.createElement('span');
+    h.className = 'l1-sale-time';
+    h.textContent = marketClock.textContent.replace(' ET', '');
+    var p = document.createElement('span');
+    p.className = 'l1-sale-price';
+    p.textContent = price.toFixed(2);
+    var s = document.createElement('span');
+    s.className = 'l1-sale-size';
+    s.textContent = 'x ' + randLotSize();
+    row.appendChild(h); row.appendChild(p); row.appendChild(s);
+    l1Sales.insertBefore(row, l1Sales.firstChild);
+    while (l1Sales.children.length > 8) l1Sales.removeChild(l1Sales.lastChild);
+  }
+
+  l1QuoteHeader.addEventListener('click', function () {
+    l1Open = !l1Open;
+    l1Panel.hidden = !l1Open;
+    l1QuotePreview.style.visibility = l1Open ? 'hidden' : 'visible';
+    l1Chev.classList.toggle('is-open', l1Open);
+    if (l1Open && l1Sales.children.length === 0) {
+      for (var i = 0; i < 6; i++) addSaleRow();
+    }
+  });
 
   /* ---------- Live market simulation (header, price block, position stats) ---------- */
   var headerPrice = document.getElementById('headerPrice');
@@ -678,14 +1084,73 @@
   var pbChangePct = document.getElementById('pbChangePct');
   var predTrackingVal = document.getElementById('predTrackingVal');
   var marketClock = document.getElementById('marketClock');
-  var posMarketValue = document.getElementById('posMarketValue');
+  var posMarketValueUSD = document.getElementById('posMarketValueUSD');
+  var posMarketValuePct = document.getElementById('posMarketValuePct');
+  var posMarketValueCAD = document.getElementById('posMarketValueCAD');
+  var posMarketValuePctCAD = document.getElementById('posMarketValuePctCAD');
+  var posUnrealizedUSD = document.getElementById('posUnrealizedUSD');
+  var posUnrealizedPct = document.getElementById('posUnrealizedPct');
+  var posUnrealizedCAD = document.getElementById('posUnrealizedCAD');
+  var posUnrealizedPctCAD = document.getElementById('posUnrealizedPctCAD');
+  var posSPReturnUSD = document.getElementById('posSPReturnUSD');
+  var posSPReturnPct = document.getElementById('posSPReturnPct');
+  var posSPReturnCAD = document.getElementById('posSPReturnCAD');
+  var posSPReturnPctCAD = document.getElementById('posSPReturnPctCAD');
+  var posAlpha = document.getElementById('posAlpha');
+  var posMarketValueAhLine = document.getElementById('posMarketValueAhLine');
+  var posMarketValueAh = document.getElementById('posMarketValueAh');
+  var posMarketValueAhPct = document.getElementById('posMarketValueAhPct');
+  var posUnrealizedAhLine = document.getElementById('posUnrealizedAhLine');
+  var posUnrealizedAh = document.getElementById('posUnrealizedAh');
+  var posUnrealizedAhPct = document.getElementById('posUnrealizedAhPct');
+  var posSPReturnAhLine = document.getElementById('posSPReturnAhLine');
+  var posSPReturnAh = document.getElementById('posSPReturnAh');
+  var posSPReturnAhPct = document.getElementById('posSPReturnAhPct');
+  var posAlphaAhLine = document.getElementById('posAlphaAhLine');
+  var posAlphaAh = document.getElementById('posAlphaAh');
+  var posWeightAhLine = document.getElementById('posWeightAhLine');
+  var posWeightAh = document.getElementById('posWeightAh');
   var posWeight = document.getElementById('posWeight');
-  var posUnrealizedPL = document.getElementById('posUnrealizedPL');
-  var posUnrealizedPLPct = document.getElementById('posUnrealizedPLPct');
-  var posSPValue = document.getElementById('posSPValue');
-  var posSPPct = document.getElementById('posSPPct');
-  var posVsSP = document.getElementById('posVsSP');
-  var posDollarImpact = document.getElementById('posDollarImpact');
+  var CAD_RATE = 1.36995;
+
+  var pbAhBadge = document.getElementById('pbAhBadge');
+  var pbAhChangeRow = document.getElementById('pbAhChangeRow');
+  var marketStatusDot = document.getElementById('marketStatusDot');
+  var headerAhDot = document.getElementById('headerAhDot');
+  var pbAhChange = document.getElementById('pbAhChange');
+  var pbAhPriceInline = document.getElementById('pbAhPriceInline');
+  var posAhBadge = document.getElementById('posAhBadge');
+  var posAhBadgeLabel = document.getElementById('posAhBadgeLabel');
+  var pbAhBadgeLabel = document.getElementById('pbAhBadgeLabel');
+  /* 'full' | 'market-close' | 'after-hours' | 'pre-market' */
+  var pageMode = 'full';
+
+  /* Each preview scenario starts the simulated clock at a time of day
+     consistent with that session, so the ET clock in the header isn't
+     stuck showing mid-day hours during an "after hours" preview. */
+  var STATE_CLOCK = {
+    'full': [9, 14, 26],
+    'market-close': [16, 0, 4],
+    'after-hours': [18, 30, 0],
+    'pre-market': [8, 15, 0]
+  };
+  var clockDate = new Date(2026, 0, 1, 9, 14, 26);
+  function isAfterHours() { return pageMode === 'after-hours'; }
+  function isPreMarket() { return pageMode === 'pre-market'; }
+  function isExtendedSession() { return isAfterHours() || isPreMarket(); }
+
+  var MOON_ICON = '<path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 1020.354 15.354z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
+  var SUNRISE_ICON = '<path d="M17 18a5 5 0 0 0-10 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' +
+    '<line x1="12" y1="2" x2="12" y2="9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>' +
+    '<line x1="4.22" y1="10.22" x2="5.64" y2="11.64" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>' +
+    '<line x1="1" y1="18" x2="3" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>' +
+    '<line x1="21" y1="18" x2="23" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>' +
+    '<line x1="18.36" y1="11.64" x2="19.78" y2="10.22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>' +
+    '<line x1="23" y1="22" x2="1" y2="22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>';
+  function setSessionIcons() {
+    var icon = isPreMarket() ? SUNRISE_ICON : MOON_ICON;
+    document.querySelectorAll('.ah-moon').forEach(function (svg) { svg.innerHTML = icon; });
+  }
 
   function fmtMoney(n) {
     var neg = n < 0;
@@ -702,57 +1167,259 @@
     costBasis: 18950 - 5652,
     totalPortfolio: 18950 / 0.422,
     spCostBasis: 4652 / 0.356,
-    spPLPct: 35.6
+    spPLPct: 35.6,
+    ahPrice: 87.42,
+    pmPrice: 87.18
   };
 
   function renderMarket() {
-    var change = market.price - market.prevClose;
+    var showExt = isExtendedSession();
+    var sessionPrice = isAfterHours() ? market.ahPrice : (isPreMarket() ? market.pmPrice : market.price);
+    var sessionLabel = isAfterHours() ? 'After Hours' : 'Pre-Market';
+    /* Header ticker tracks the active session's price and gets the
+       moon/sunrise icon. The big price-block number stays anchored to the
+       close, with the session price + delta shown in its own secondary row. */
+    var headerDisplayPrice = showExt ? sessionPrice : market.price;
+    var pbDisplayPrice = market.price;
+    /* Position stats stay anchored to the close — the session equivalent
+       shows as its own line per field instead of swapping the primary
+       numbers. */
+    var statsPrice = market.price;
+
+    var headerChange = headerDisplayPrice - market.prevClose;
+    var headerPct = (headerChange / market.prevClose) * 100;
+    var pbChange = pbDisplayPrice - market.prevClose;
+    var pbPct = (pbChange / market.prevClose) * 100;
+    var change = statsPrice - market.prevClose;
     var pct = (change / market.prevClose) * 100;
-    var marketValue = market.price * market.shares;
+    var marketValue = statsPrice * market.shares;
     var weight = (marketValue / market.totalPortfolio) * 100;
     var unrealizedPL = marketValue - market.costBasis;
     var unrealizedPLPct = (unrealizedPL / market.costBasis) * 100;
-    var spPL = market.spCostBasis * (market.spPLPct / 100);
-    var vsSPpp = unrealizedPLPct - market.spPLPct;
-    var dollarImpact = unrealizedPL - spPL;
+    var alphaPp = unrealizedPLPct - market.spPLPct;
+    var pctStr = (pct >= 0 ? '+' : '') + pct.toFixed(1) + '%';
 
-    headerPrice.textContent = market.price.toFixed(2);
-    headerChg.textContent = (pct >= 0 ? '+' : '') + pct.toFixed(2) + '%';
-    pbPrice.textContent = market.price.toFixed(2);
-    pbChangeAbs.textContent = fmtSigned(change);
-    pbChangePct.textContent = (pct >= 0 ? '+' : '') + pct.toFixed(2) + '%';
+    headerPrice.textContent = headerDisplayPrice.toFixed(2);
+    headerChg.textContent = (headerPct >= 0 ? '+' : '') + headerPct.toFixed(2) + '%';
+    pbPrice.textContent = pbDisplayPrice.toFixed(2);
+    pbChangeAbs.textContent = fmtSigned(pbChange);
+    pbChangePct.textContent = (pbPct >= 0 ? '+' : '') + pbPct.toFixed(2) + '%';
+    var marketOpen = pageMode === 'full';
+    headerAhDot.hidden = !showExt;
+    marketStatusDot.classList.toggle('dot--green', marketOpen);
+    marketStatusDot.classList.toggle('dot--red', !marketOpen);
+    setSessionIcons();
 
-    posMarketValue.textContent = fmtMoney(marketValue);
+    /* Badges: the big price stays anchored to the close; a labeled
+       secondary row shows the session price + icon + delta so both are
+       visible at once. */
+    posAhBadge.hidden = !showExt;
+    posAhBadgeLabel.textContent = sessionLabel;
+    if (showExt) {
+      var sinceCloseChg = sessionPrice - market.price;
+      var sinceClosePct = (sinceCloseChg / market.price) * 100;
+      pbAhPriceInline.textContent = sessionPrice.toFixed(2);
+      pbAhChange.textContent = (sinceCloseChg >= 0 ? '+' : '') + sinceCloseChg.toFixed(2) + ' (' + (sinceClosePct >= 0 ? '+' : '') + sinceClosePct.toFixed(1) + '%)';
+      pbAhBadgeLabel.textContent = sessionLabel;
+      pbAhChangeRow.hidden = false;
+    } else {
+      pbAhChangeRow.hidden = true;
+    }
+
+    posMarketValueUSD.textContent = fmtMoney(marketValue);
+    posMarketValuePct.textContent = pctStr;
+    posMarketValueCAD.textContent = fmtMoney(marketValue * CAD_RATE);
+    posMarketValuePctCAD.textContent = pctStr;
+    posUnrealizedUSD.textContent = fmtSigned(unrealizedPL);
+    posUnrealizedPct.textContent = (unrealizedPLPct >= 0 ? '+' : '') + unrealizedPLPct.toFixed(1) + '%';
+    posUnrealizedCAD.textContent = fmtSigned(unrealizedPL * CAD_RATE);
+    posUnrealizedPctCAD.textContent = (unrealizedPLPct >= 0 ? '+' : '') + unrealizedPLPct.toFixed(1) + '%';
+    var spPL = market.costBasis * (market.spPLPct / 100);
+    var spPctStr = (market.spPLPct >= 0 ? '+' : '') + market.spPLPct.toFixed(1) + '%';
+    posSPReturnUSD.textContent = fmtSigned(spPL);
+    posSPReturnPct.textContent = spPctStr;
+    posSPReturnCAD.textContent = fmtSigned(spPL * CAD_RATE);
+    posSPReturnPctCAD.textContent = spPctStr;
+    posAlpha.textContent = (alphaPp >= 0 ? '+' : '') + alphaPp.toFixed(1) + 'pp';
     posWeight.textContent = weight.toFixed(1) + '%';
-    posUnrealizedPL.firstChild.textContent = fmtSigned(unrealizedPL) + ' ';
-    posUnrealizedPLPct.textContent = (unrealizedPLPct >= 0 ? '+' : '') + unrealizedPLPct.toFixed(1) + '%';
-    posSPValue.firstChild.textContent = fmtSigned(spPL) + ' ';
-    posSPPct.textContent = (market.spPLPct >= 0 ? '+' : '') + market.spPLPct.toFixed(1) + '%';
-    posVsSP.firstChild.textContent = (vsSPpp >= 0 ? '+' : '') + vsSPpp.toFixed(1) + ' ';
-    posDollarImpact.textContent = fmtSigned(dollarImpact);
-    predTrackingVal.textContent = (vsSPpp >= 0 ? '+' : '') + vsSPpp.toFixed(1) + '%';
+    predTrackingVal.textContent = (alphaPp >= 0 ? '+' : '') + alphaPp.toFixed(1) + 'pp';
+
+    /* Badges design: an amber "after hours" line under each affected field,
+       computed from the after-hours price, while the primary numbers above
+       stay anchored to the close. */
+    posMarketValueAhLine.hidden = !showExt;
+    posUnrealizedAhLine.hidden = !showExt;
+    posSPReturnAhLine.hidden = !showExt;
+    posAlphaAhLine.hidden = !showExt;
+    posWeightAhLine.hidden = !showExt;
+    if (showExt) {
+      var ahMarketValue = sessionPrice * market.shares;
+      var ahMarketValuePct = ((sessionPrice - market.prevClose) / market.prevClose) * 100;
+      var ahUnrealizedPL = ahMarketValue - market.costBasis;
+      var ahUnrealizedPLPct = (ahUnrealizedPL / market.costBasis) * 100;
+      var ahAlphaPp = ahUnrealizedPLPct - market.spPLPct;
+      var ahWeight = (ahMarketValue / market.totalPortfolio) * 100;
+
+      posMarketValueAh.textContent = fmtMoney(ahMarketValue);
+      posMarketValueAhPct.textContent = (ahMarketValuePct >= 0 ? '+' : '') + ahMarketValuePct.toFixed(1) + '%';
+      posUnrealizedAh.textContent = fmtSigned(ahUnrealizedPL);
+      posUnrealizedAhPct.textContent = (ahUnrealizedPLPct >= 0 ? '+' : '') + ahUnrealizedPLPct.toFixed(1) + '%';
+      posSPReturnAh.textContent = fmtSigned(spPL);
+      posSPReturnAhPct.textContent = spPctStr;
+      posAlphaAh.textContent = (ahAlphaPp >= 0 ? '+' : '') + ahAlphaPp.toFixed(1) + 'pp';
+      posWeightAh.textContent = ahWeight.toFixed(1) + '%';
+    }
+
+    /* Chart tooltip copy: "Full" stays exactly as-is (no label). Market
+       Close adds a "Close" label to the existing change line. After Hours
+       and Pre-Market add a primary session line above it too. */
+    chartCloseLabel.hidden = pageMode === 'full';
+    chartSessionRow.hidden = !showExt;
+    if (showExt) {
+      var chartSessionChg = sessionPrice - market.prevClose;
+      var chartSessionPct = (chartSessionChg / market.prevClose) * 100;
+      chartSessionLabel.textContent = sessionLabel;
+      chartSessionChange.textContent = (chartSessionChg >= 0 ? '+' : '') + chartSessionChg.toFixed(2) + ' (' + (chartSessionPct >= 0 ? '+' : '') + chartSessionPct.toFixed(2) + '%)';
+    }
+
+    renderQuote();
   }
 
   function tickMarket() {
-    market.price += (Math.random() - 0.5) * 0.12;
-    if (market.price < 85.5) market.price = 85.5;
-    if (market.price > 89.5) market.price = 89.5;
-    market.spPLPct += (Math.random() - 0.5) * 0.04;
-    if (market.spPLPct < 33) market.spPLPct = 33;
-    if (market.spPLPct > 38) market.spPLPct = 38;
+    /* Only the live regular session moves the official close price and its
+       derived stats. "Market Close" is a fully frozen snapshot (no trading
+       at all). After Hours / Pre-Market only move their own session price —
+       the close stays anchored to the last regular-session print. */
+    if (pageMode === 'full') {
+      market.price += (Math.random() - 0.5) * 0.12;
+      if (market.price < 85.5) market.price = 85.5;
+      if (market.price > 89.5) market.price = 89.5;
+      market.spPLPct += (Math.random() - 0.5) * 0.04;
+      if (market.spPLPct < 33) market.spPLPct = 33;
+      if (market.spPLPct > 38) market.spPLPct = 38;
+      market.ahPrice = market.price + (Math.random() - 0.5) * 0.06;
+      market.pmPrice = market.price + (Math.random() - 0.5) * 0.06;
+    } else if (pageMode === 'after-hours') {
+      market.ahPrice += (Math.random() - 0.5) * 0.1;
+      if (market.ahPrice < 85.5) market.ahPrice = 85.5;
+      if (market.ahPrice > 89.5) market.ahPrice = 89.5;
+    } else if (pageMode === 'pre-market') {
+      market.pmPrice += (Math.random() - 0.5) * 0.1;
+      if (market.pmPrice < 85.5) market.pmPrice = 85.5;
+      if (market.pmPrice > 89.5) market.pmPrice = 89.5;
+    }
+    /* 'market-close': nothing moves — market is shut, no session trading. */
     renderMarket();
   }
   renderMarket();
   setInterval(tickMarket, 2500);
 
-  var clockDate = new Date(2026, 0, 1, 9, 14, 26);
-  function tickClock() {
-    clockDate.setSeconds(clockDate.getSeconds() + 1);
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function formatClockTime() {
+    var h = clockDate.getHours(), m = clockDate.getMinutes();
+    var ampm = h >= 12 ? 'PM' : 'AM';
+    var h12 = h % 12; if (h12 === 0) h12 = 12;
+    return h12 + ':' + pad(m) + ' ' + ampm;
+  }
+  function renderClockText() {
     var h = clockDate.getHours(), m = clockDate.getMinutes(), s = clockDate.getSeconds();
-    function pad(n) { return (n < 10 ? '0' : '') + n; }
     marketClock.textContent = pad(h) + ':' + pad(m) + ':' + pad(s) + ' ET';
   }
+  function tickClock() {
+    clockDate.setSeconds(clockDate.getSeconds() + 1);
+    renderClockText();
+    renderMarket();
+  }
   setInterval(tickClock, 1000);
+
+  /* ---------- Investor Relations detail overlay ---------- */
+  var irTrigger = document.getElementById('investorRelationsTrigger');
+  var irOverlay = document.getElementById('irOverlay');
+  var irBackBtn = document.getElementById('irBackBtn');
+  function openIrOverlay() { irOverlay.hidden = false; }
+  function closeIrOverlay() { irOverlay.hidden = true; }
+  irTrigger.addEventListener('click', openIrOverlay);
+  irTrigger.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') openIrOverlay(); });
+  irBackBtn.addEventListener('click', closeIrOverlay);
+
+  /* ---------- Burger menu + page-state preview switcher ---------- */
+  var burgerBtn = document.getElementById('burgerBtn');
+  var burgerMenu = document.getElementById('burgerMenu');
+  var menuItems = burgerMenu.querySelectorAll('.burger-menu__item');
+  var positionEmptyEl = document.getElementById('positionEmpty');
+  var positionFullEl = document.getElementById('positionFull');
+
+  function setRichCard(target, showFull) {
+    var card = document.querySelector('.rich-card[data-state-target="' + target + '"]');
+    card.querySelector('.rich-card__empty').hidden = showFull;
+    card.querySelector('.rich-card__full').hidden = !showFull;
+  }
+
+  function applyPageState(state) {
+    setRichCard('thesis', true);
+    setRichCard('kill', true);
+
+    thesisText.textContent = 'Compute Demand Keeps Outpacing Supply.';
+    thesisDot.hidden = true;
+    thesisVersionChip.hidden = false;
+    thesisBanner.classList.add('has-version');
+    savedThesis = thesisText.textContent;
+    checkStuck();
+
+    positionEmptyEl.hidden = true;
+    positionFullEl.hidden = false;
+
+    pageMode = state;
+    var t = STATE_CLOCK[state] || STATE_CLOCK.full;
+    clockDate = new Date(2026, 0, 1, t[0], t[1], t[2]);
+    renderClockText();
+    renderMarket();
+  }
+
+  burgerBtn.addEventListener('click', function (e) {
+    e.stopPropagation();
+    burgerMenu.hidden = !burgerMenu.hidden;
+  });
+  document.addEventListener('click', function (e) {
+    if (!burgerMenu.hidden && !burgerMenu.contains(e.target) && e.target !== burgerBtn) burgerMenu.hidden = true;
+  });
+  menuItems.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      menuItems.forEach(function (b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      applyPageState(btn.getAttribute('data-page-state'));
+      burgerMenu.hidden = true;
+    });
+  });
+
+  applyPageState('full');
+
+  /* ---------- Prediction timeline (time left in the 3-year window) ---------- */
+  (function () {
+    var start = new Date(2025, 9, 14);
+    var end = new Date(2028, 9, 14);
+    var now = new Date(2026, 5, 22);
+    var totalDays = Math.round((end - start) / 86400000);
+    var elapsedDays = Math.round((now - start) / 86400000);
+    var daysLeft = totalDays - elapsedDays;
+    var pct = Math.max(0, Math.min(100, (elapsedDays / totalDays) * 100));
+
+    var label;
+    if (daysLeft < 100) {
+      label = daysLeft + ' days left';
+    } else {
+      var months = (end.getFullYear() - now.getFullYear()) * 12 + (end.getMonth() - now.getMonth());
+      if (end.getDate() < now.getDate()) months -= 1;
+      var years = Math.floor(months / 12);
+      var remMonths = months % 12;
+      var parts = [];
+      if (years > 0) parts.push(years + 'y');
+      if (remMonths > 0 || years === 0) parts.push(remMonths + 'mo');
+      label = parts.join(' ') + ' left';
+    }
+    document.getElementById('predTimeLeft').textContent = label;
+    document.getElementById('predTimeFill').style.width = pct.toFixed(1) + '%';
+  })();
 })();
 </script>
 </body>
