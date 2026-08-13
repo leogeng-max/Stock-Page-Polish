@@ -318,6 +318,8 @@ p { margin: 0; }
   top: -0.5px;
 }
 .ah-moon[hidden] { display: none; }
+.ah-moon--badge.ah-moon--ah { color: #4a7dff; }
+.ah-moon--badge.ah-moon--pm { color: #fbc308; }
 .ah-header-moon {
   width: 11px;
   height: 11px;
@@ -1072,7 +1074,7 @@ p { margin: 0; }
 .chart-tabs span.active { color: #ffffff; }
 
 /* ---------- Level 1 Quote ---------- */
-.l1-section { margin: 0 20px; }
+.l1-section { margin: 0 20px; padding-bottom: 20px; }
 .l1-quote__header {
   display: flex;
   align-items: center;
@@ -1096,16 +1098,6 @@ p { margin: 0; }
   display: inline-block;
 }
 .l1-quote__label .chev.is-open { transform: rotate(90deg); }
-.l1-quote__preview {
-  font-size: 13px;
-  color: #929292;
-  letter-spacing: -0.26px;
-}
-.l1-preview-bid { color: #30d158; }
-.l1-preview-ask { color: #ff3533; }
-.l1-panel {
-  padding-bottom: 20px;
-}
 .l1-bidask {
   display: flex;
   border: 1px solid rgba(255,255,255,0.11);
