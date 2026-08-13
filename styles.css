@@ -949,14 +949,14 @@ p { margin: 0; }
 }
 .chart-tooltip__price {
   font-weight: 300;
-  font-size: 15px;
+  font-size: 24px;
   color: #ffffff;
   letter-spacing: -0.9px;
   line-height: 1;
   display: block;
 }
 .chart-tooltip__change {
-  font-size: 11px;
+  font-size: 14px;
   color: #929292;
   letter-spacing: -0.22px;
   line-height: 15px;
@@ -967,7 +967,7 @@ p { margin: 0; }
   align-items: baseline;
   justify-content: flex-end;
   gap: 6px;
-  font-size: 11px;
+  font-size: 14px;
   color: #929292;
   letter-spacing: -0.22px;
 }
@@ -980,7 +980,7 @@ p { margin: 0; }
   gap: 6px;
 }
 .chart-tooltip__label {
-  font-size: 11px;
+  font-size: 14px;
   color: #929292;
   letter-spacing: -0.22px;
 }
@@ -988,7 +988,7 @@ p { margin: 0; }
 .chart-canvas-wrap {
   position: relative;
   width: 100%;
-  margin-top: 11px;
+  margin-top: 56px;
   cursor: crosshair;
   touch-action: none;
 }
