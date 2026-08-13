@@ -246,7 +246,7 @@ p { margin: 0; }
   letter-spacing: -0.26px;
   margin-left: 4px;
 }
-.appbar__actions img { display: block; height: 13.2442px; width: 89px; }
+.appbar__actions img { display: block; height: 13.2442px; width: 51px; }
 .dot {
   width: 4.65px;
   height: 4.65px;
@@ -321,6 +321,7 @@ p { margin: 0; }
 .ah-header-moon {
   width: 11px;
   height: 11px;
+  margin-left: 4px;
   margin-right: 4px;
   top: -1px;
 }
@@ -343,10 +344,17 @@ p { margin: 0; }
   letter-spacing: -0.3px;
 }
 .price-block__ah-delta {
-  font-size: 12px;
+  font-size: 14px;
   color: #929292;
   letter-spacing: -0.24px;
 }
+.price-block__close-label {
+  font-size: 14px;
+  color: #929292;
+  letter-spacing: -0.28px;
+  margin-right: 1px;
+}
+.price-block__close-label[hidden] { display: none; }
 
 /* ---------- Thesis banner ---------- */
 .thesis-banner {
@@ -546,6 +554,19 @@ p { margin: 0; }
 /* ---------- Price block ---------- */
 .price-block {
   margin: 40px 20px 0;
+  position: relative;
+}
+.price-block__name,
+.price-block__price-row,
+.price-block__ah-change,
+.price-block__change {
+  transition: opacity 0.15s ease;
+}
+.price-block.popup-active .price-block__name,
+.price-block.popup-active .price-block__price-row,
+.price-block.popup-active .price-block__ah-change,
+.price-block.popup-active .price-block__change {
+  opacity: 0;
 }
 .price-block__name {
   font-size: 18px;
@@ -823,6 +844,10 @@ p { margin: 0; }
 }
 .stat-ah-line[hidden] { display: none; }
 .stat-ah-line .dot { flex-shrink: 0; }
+.stat-value--positive,
+.stat-value--positive .sub {
+  color: #30d158;
+}
 .stat-value-15 .sub {
   font-size: 12px;
   color: #929292;
@@ -864,16 +889,9 @@ p { margin: 0; }
   color: #c7c7c7;
   letter-spacing: -0.28px;
 }
-.profile-grid.popup-active .cell:nth-child(3),
-.profile-grid.popup-active .cell:nth-child(4),
-.profile-grid.popup-active .cell:nth-child(5) {
-  opacity: 0;
-}
-
 .chart-popup {
   position: absolute;
-  left: 0;
-  right: 0;
+  inset: 0;
   background: #0a0a0a;
   border: 1px solid rgba(255,255,255,0.11);
   border-radius: 2px;

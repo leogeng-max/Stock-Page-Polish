@@ -58,7 +58,7 @@
       <div class="appbar__nav">
         <div class="appbar__left">
           <div class="appbar__back"><img src="assets/icon-back.svg" alt=""></div>
-          <div class="appbar__ticker">KSTL<span class="price-reveal" id="headerPriceGroup"> · <svg class="ah-moon ah-header-moon" id="headerAhDot" hidden width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 1020.354 15.354z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="headerPrice">87.00</span> USD<span class="chg" id="headerChg">+1.45%</span></span></div>
+          <div class="appbar__ticker">KSTL<span class="price-reveal" id="headerPriceGroup"><span id="headerDotSep"> · </span><svg class="ah-moon ah-header-moon" id="headerAhDot" hidden width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 1020.354 15.354z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="headerPrice">87.00</span> USD<span class="chg" id="headerChg">+1.45%</span></span></div>
         </div>
         <div class="appbar__actions"><img src="assets/icon-header-actions.svg" alt=""></div>
       </div>
@@ -118,14 +118,47 @@
     <div class="price-block__price-row">
       <div class="price-block__price" id="pbPrice">87.60</div>
     </div>
-    <div class="price-block__change">
+    <div class="price-block__change" id="pbChangeRow">
+      <span class="price-block__close-label" id="pbCloseLabel" hidden>Close</span>
       <span class="abs" id="pbChangeAbs">+0.94</span>
       <span class="pct" id="pbChangePct">+1.45%</span>
     </div>
     <div class="price-block__ah-change" id="pbAhChangeRow" hidden>
+      <svg class="ah-moon" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 1020.354 15.354z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       <span class="price-block__ah-price" id="pbAhPriceInline">87.43</span>
       <span class="price-block__ah-delta" id="pbAhChange">+0.12 (+0.1%)</span>
-      <span class="ah-badge" id="pbAhBadge"><svg class="ah-moon" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 1020.354 15.354z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="pbAhBadgeLabel">After Hours</span></span>
+    </div>
+
+    <div class="chart-popup" id="chartPopup" hidden>
+      <div class="chart-popup__timestamp"><span class="date">June 22, 2026</span><span class="time" id="popTime">10:30 AM</span></div>
+      <div class="chart-popup__row">
+        <div class="chart-popup__stat">
+          <div class="label-11">Price</div>
+          <div class="chart-popup__val" id="popPrice">87.60</div>
+        </div>
+        <div class="chart-popup__stat">
+          <div class="label-11">Chg</div>
+          <div class="chart-popup__val" id="popChg">+0.94</div>
+        </div>
+        <div class="chart-popup__stat">
+          <div class="label-11">Turnover</div>
+          <div class="chart-popup__val" id="popTurnover">14.85M</div>
+        </div>
+      </div>
+      <div class="chart-popup__row">
+        <div class="chart-popup__stat">
+          <div class="label-11">Avg Prc</div>
+          <div class="chart-popup__val" id="popAvgPrc">45.22</div>
+        </div>
+        <div class="chart-popup__stat">
+          <div class="label-11">% Chg</div>
+          <div class="chart-popup__val" id="popPctChg">+2.85%</div>
+        </div>
+        <div class="chart-popup__stat">
+          <div class="label-11">Volume</div>
+          <div class="chart-popup__val" id="popVolume">47.34K</div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -268,7 +301,7 @@
 
   <!-- Position section -->
   <div class="stat-section" id="positionSection">
-    <div class="section-header">Position <span class="chev">›</span><span class="ah-badge ah-badge--inline" id="posAhBadge" hidden><svg class="ah-moon" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 1020.354 15.354z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="posAhBadgeLabel">After hours</span></span></div>
+    <div class="section-header">Position <span class="chev">›</span></div>
 
     <div class="rich-card__empty" id="positionEmpty" hidden>
       <div class="warning-card">
@@ -280,43 +313,43 @@
     <div id="positionFull">
       <div class="stat-grid-2">
         <div class="stat">
-          <div class="label-11">Cost Basis</div>
-          <div class="stat-value-15">13,298.00 <span class="sub">USD</span></div>
-          <div class="stat-sub-line" id="posCostBasisCAD">18,216.44 CAD</div>
-        </div>
-        <div class="stat">
           <div class="label-11">Market Value</div>
           <div class="stat-value-15"><span id="posMarketValueUSD">18,943.49</span> <span class="sub">USD</span> <span class="sub" id="posMarketValuePct">+1.0%</span></div>
           <div class="stat-sub-line"><span id="posMarketValueCAD">25,949.99</span> CAD <span id="posMarketValuePctCAD">+1.0%</span></div>
           <div class="stat-ah-line" id="posMarketValueAhLine" hidden><svg class="ah-moon" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 1020.354 15.354z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="posMarketValueAh">18,970.24</span> USD <span id="posMarketValueAhPct">+1.2%</span></div>
         </div>
-      </div>
-
-      <div class="stat-grid-2">
         <div class="stat">
           <div class="label-11">Unrealized P/L</div>
           <div class="stat-value-15"><span id="posUnrealizedUSD">+5,645.49</span> <span class="sub">USD</span> <span class="sub" id="posUnrealizedPct">+42.5%</span></div>
           <div class="stat-sub-line"><span id="posUnrealizedCAD">+7,733.55</span> CAD <span id="posUnrealizedPctCAD">+42.5%</span></div>
           <div class="stat-ah-line" id="posUnrealizedAhLine" hidden><svg class="ah-moon" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 1020.354 15.354z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="posUnrealizedAh">+5,671.16</span> USD <span id="posUnrealizedAhPct">+42.6%</span></div>
         </div>
+      </div>
+
+      <div class="stat-grid-2">
         <div class="stat">
           <div class="label-11">S&amp;P 500 Return</div>
           <div class="stat-value-15"><span id="posSPReturnUSD">+4,733.51</span> <span class="sub">USD</span> <span class="sub" id="posSPReturnPct">+35.6%</span></div>
           <div class="stat-sub-line"><span id="posSPReturnCAD">+6,484.36</span> CAD <span id="posSPReturnPctCAD">+35.6%</span></div>
           <div class="stat-ah-line" id="posSPReturnAhLine" hidden><svg class="ah-moon" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 1020.354 15.354z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="posSPReturnAh">+4,733.51</span> USD <span id="posSPReturnAhPct">+35.6%</span></div>
         </div>
+        <div class="stat">
+          <div class="label-11">Portfolio Weight</div>
+          <div class="stat-value-15" id="posWeight">42.2%</div>
+          <div class="stat-ah-line" id="posWeightAhLine" hidden><svg class="ah-moon" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 1020.354 15.354z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="posWeightAh">42.3%</span></div>
+        </div>
       </div>
 
       <div class="stat-grid-2">
         <div class="stat">
           <div class="label-11">Alpha</div>
-          <div class="stat-value-15" id="posAlpha">+6.9 <span class="sub">pp</span></div>
+          <div class="stat-value-15 stat-value--positive" id="posAlpha">+6.9 <span class="sub">pp</span></div>
           <div class="stat-ah-line" id="posAlphaAhLine" hidden><svg class="ah-moon" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 1020.354 15.354z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="posAlphaAh">+7.0pp</span></div>
         </div>
         <div class="stat">
-          <div class="label-11">Portfolio Weight</div>
-          <div class="stat-value-15" id="posWeight">42.2%</div>
-          <div class="stat-ah-line" id="posWeightAhLine" hidden><svg class="ah-moon" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 1020.354 15.354z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="posWeightAh">42.3%</span></div>
+          <div class="label-11">Alpha (CAD)</div>
+          <div class="stat-value-15 stat-value--positive"><span id="posAlphaCAD">+911.98</span> <span class="sub">CAD</span> <span class="sub" id="posAlphaCADPct">+6.9%</span></div>
+          <div class="stat-ah-line" id="posAlphaCADAhLine" hidden><svg class="ah-moon" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 1020.354 15.354z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="posAlphaCADAh">+924.35</span> CAD <span id="posAlphaCADAhPct">+7.0%</span></div>
         </div>
       </div>
 
@@ -347,41 +380,9 @@
     <div class="profile-grid" id="profileGrid">
       <div class="cell"><div class="label-11">Sector</div><div class="val">Information Technology</div></div>
       <div class="cell"><div class="label-11">Headquarters</div><div class="val">Santa Clara, CA</div></div>
-      <div class="cell" id="cellEmployees"><div class="label-11">Employees</div><div class="val">36,000</div></div>
+      <div class="cell"><div class="label-11">Employees</div><div class="val">36,000</div></div>
       <div class="cell"><div class="label-11">Fiscal year end</div><div class="val">January</div></div>
       <div class="cell"><div class="label-11">Free float</div><div class="val">96.1%</div></div>
-
-      <div class="chart-popup" id="chartPopup" hidden>
-        <div class="chart-popup__timestamp"><span class="date">June 22, 2026</span><span class="time" id="popTime">10:30 AM</span></div>
-        <div class="chart-popup__row">
-          <div class="chart-popup__stat">
-            <div class="label-11">Price</div>
-            <div class="chart-popup__val" id="popPrice">87.60</div>
-          </div>
-          <div class="chart-popup__stat">
-            <div class="label-11">Chg</div>
-            <div class="chart-popup__val" id="popChg">+0.94</div>
-          </div>
-          <div class="chart-popup__stat">
-            <div class="label-11">Turnover</div>
-            <div class="chart-popup__val" id="popTurnover">14.85M</div>
-          </div>
-        </div>
-        <div class="chart-popup__row">
-          <div class="chart-popup__stat">
-            <div class="label-11">Avg Prc</div>
-            <div class="chart-popup__val" id="popAvgPrc">45.22</div>
-          </div>
-          <div class="chart-popup__stat">
-            <div class="label-11">% Chg</div>
-            <div class="chart-popup__val" id="popPctChg">+2.85%</div>
-          </div>
-          <div class="chart-popup__stat">
-            <div class="label-11">Volume</div>
-            <div class="chart-popup__val" id="popVolume">47.34K</div>
-          </div>
-        </div>
-      </div>
     </div>
   </div>
 
@@ -871,9 +872,7 @@
   var chartSessionLabel = document.getElementById('chartSessionLabel');
   var chartSessionChange = document.getElementById('chartSessionChange');
   var chartCloseLabel = document.getElementById('chartCloseLabel');
-  var profileGrid = document.getElementById('profileGrid');
   var chartPopup = document.getElementById('chartPopup');
-  var cellEmployees = document.getElementById('cellEmployees');
   var popPrice = document.getElementById('popPrice');
   var popChg = document.getElementById('popChg');
   var popTurnover = document.getElementById('popTurnover');
@@ -922,14 +921,6 @@
     return h12 + ':' + (m < 10 ? '0' : '') + m + ' ' + ampm;
   }
 
-  function positionPopup() {
-    var gridRect = profileGrid.getBoundingClientRect();
-    var cellRect = cellEmployees.getBoundingClientRect();
-    var top = cellRect.top - gridRect.top - 20;
-    chartPopup.style.top = top + 'px';
-    chartPopup.style.height = (gridRect.height - top) + 'px';
-  }
-
   var RESTING_X = 101;
 
   function updateAt(clientX) {
@@ -969,14 +960,13 @@
   }
 
   function showInteraction(clientX) {
-    profileGrid.classList.add('popup-active');
+    priceBlockEl.classList.add('popup-active');
     chartPopup.hidden = false;
-    positionPopup();
     updateAt(clientX);
   }
   function hideInteraction() {
     updateAt(null);
-    profileGrid.classList.remove('popup-active');
+    priceBlockEl.classList.remove('popup-active');
     chartPopup.hidden = true;
   }
 
@@ -1097,6 +1087,11 @@
   var posSPReturnCAD = document.getElementById('posSPReturnCAD');
   var posSPReturnPctCAD = document.getElementById('posSPReturnPctCAD');
   var posAlpha = document.getElementById('posAlpha');
+  var posAlphaCAD = document.getElementById('posAlphaCAD');
+  var posAlphaCADPct = document.getElementById('posAlphaCADPct');
+  var posAlphaCADAhLine = document.getElementById('posAlphaCADAhLine');
+  var posAlphaCADAh = document.getElementById('posAlphaCADAh');
+  var posAlphaCADAhPct = document.getElementById('posAlphaCADAhPct');
   var posMarketValueAhLine = document.getElementById('posMarketValueAhLine');
   var posMarketValueAh = document.getElementById('posMarketValueAh');
   var posMarketValueAhPct = document.getElementById('posMarketValueAhPct');
@@ -1113,15 +1108,13 @@
   var posWeight = document.getElementById('posWeight');
   var CAD_RATE = 1.36995;
 
-  var pbAhBadge = document.getElementById('pbAhBadge');
   var pbAhChangeRow = document.getElementById('pbAhChangeRow');
   var marketStatusDot = document.getElementById('marketStatusDot');
   var headerAhDot = document.getElementById('headerAhDot');
+  var headerDotSep = document.getElementById('headerDotSep');
   var pbAhChange = document.getElementById('pbAhChange');
   var pbAhPriceInline = document.getElementById('pbAhPriceInline');
-  var posAhBadge = document.getElementById('posAhBadge');
-  var posAhBadgeLabel = document.getElementById('posAhBadgeLabel');
-  var pbAhBadgeLabel = document.getElementById('pbAhBadgeLabel');
+  var pbCloseLabel = document.getElementById('pbCloseLabel');
   /* 'full' | 'market-close' | 'after-hours' | 'pre-market' */
   var pageMode = 'full';
 
@@ -1204,23 +1197,21 @@
     pbPrice.textContent = pbDisplayPrice.toFixed(2);
     pbChangeAbs.textContent = fmtSigned(pbChange);
     pbChangePct.textContent = (pbPct >= 0 ? '+' : '') + pbPct.toFixed(2) + '%';
+    pbCloseLabel.hidden = pageMode === 'full';
     var marketOpen = pageMode === 'full';
-    headerAhDot.hidden = !showExt;
+    if (showExt) headerAhDot.removeAttribute('hidden'); else headerAhDot.setAttribute('hidden', '');
+    headerDotSep.hidden = showExt;
     marketStatusDot.classList.toggle('dot--green', marketOpen);
     marketStatusDot.classList.toggle('dot--red', !marketOpen);
     setSessionIcons();
 
-    /* Badges: the big price stays anchored to the close; a labeled
-       secondary row shows the session price + icon + delta so both are
-       visible at once. */
-    posAhBadge.hidden = !showExt;
-    posAhBadgeLabel.textContent = sessionLabel;
+    /* The big price stays anchored to the close; a secondary row shows the
+       session icon (moon/sunrise — no text label) + delta from close. */
     if (showExt) {
       var sinceCloseChg = sessionPrice - market.price;
       var sinceClosePct = (sinceCloseChg / market.price) * 100;
       pbAhPriceInline.textContent = sessionPrice.toFixed(2);
       pbAhChange.textContent = (sinceCloseChg >= 0 ? '+' : '') + sinceCloseChg.toFixed(2) + ' (' + (sinceClosePct >= 0 ? '+' : '') + sinceClosePct.toFixed(1) + '%)';
-      pbAhBadgeLabel.textContent = sessionLabel;
       pbAhChangeRow.hidden = false;
     } else {
       pbAhChangeRow.hidden = true;
@@ -1241,6 +1232,9 @@
     posSPReturnCAD.textContent = fmtSigned(spPL * CAD_RATE);
     posSPReturnPctCAD.textContent = spPctStr;
     posAlpha.textContent = (alphaPp >= 0 ? '+' : '') + alphaPp.toFixed(1) + 'pp';
+    var alphaDollar = unrealizedPL - spPL;
+    posAlphaCAD.textContent = fmtSigned(alphaDollar * CAD_RATE);
+    posAlphaCADPct.textContent = (alphaPp >= 0 ? '+' : '') + alphaPp.toFixed(1) + '%';
     posWeight.textContent = weight.toFixed(1) + '%';
     predTrackingVal.textContent = (alphaPp >= 0 ? '+' : '') + alphaPp.toFixed(1) + 'pp';
 
@@ -1251,6 +1245,7 @@
     posUnrealizedAhLine.hidden = !showExt;
     posSPReturnAhLine.hidden = !showExt;
     posAlphaAhLine.hidden = !showExt;
+    posAlphaCADAhLine.hidden = !showExt;
     posWeightAhLine.hidden = !showExt;
     if (showExt) {
       var ahMarketValue = sessionPrice * market.shares;
@@ -1268,6 +1263,9 @@
       posSPReturnAhPct.textContent = spPctStr;
       posAlphaAh.textContent = (ahAlphaPp >= 0 ? '+' : '') + ahAlphaPp.toFixed(1) + 'pp';
       posWeightAh.textContent = ahWeight.toFixed(1) + '%';
+      var ahAlphaDollar = ahUnrealizedPL - spPL;
+      posAlphaCADAh.textContent = fmtSigned(ahAlphaDollar * CAD_RATE);
+      posAlphaCADAhPct.textContent = (ahAlphaPp >= 0 ? '+' : '') + ahAlphaPp.toFixed(1) + '%';
     }
 
     /* Chart tooltip copy: "Full" stays exactly as-is (no label). Market
