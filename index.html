@@ -741,14 +741,32 @@ p { margin: 0; }
   letter-spacing: -0.15px;
   line-height: 20px;
 }
-.prediction-card .pred-tracking {
-  font-size: 11px;
+.pred-track-row {
+  display: flex;
+  gap: 24px;
+}
+.pred-track-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+.pred-track-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10.5px;
+  color: #929292;
+  letter-spacing: -0.2px;
+}
+.pred-track-val {
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: -0.24px;
   color: #30d158;
-  letter-spacing: -0.26px;
 }
-.prediction-card .pred-tracking.pred-tracking--behind {
-  color: #ff3533;
-}
+.pred-track-val.is-behind { color: #ff3533; }
 .pred-timeline {
   margin-top: 4px;
   display: flex;
@@ -1823,10 +1841,19 @@ p { margin: 0; }
     <div class="prediction-card">
       <div class="rich-card__head">
         <span class="label-11">Prediction</span>
-        <span class="version-chip">v1 <span class="chev">›</span></span>
+        <span class="version-chip">v2 <span class="chev">›</span></span>
       </div>
       <div class="pred-value">60% probability of 20%/yr over 3 years</div>
-      <div class="pred-tracking">Tracking <span id="predTrackingVal">+7.0 pp</span> vs S&amp;P</div>
+      <div class="pred-track-row">
+        <div class="pred-track-stat">
+          <span class="pred-track-label">vs S&amp;P · since purchase</span>
+          <span class="pred-track-val" id="predSincePurchaseVal">+6.9 pp</span>
+        </div>
+        <div class="pred-track-stat">
+          <span class="pred-track-label">vs S&amp;P · since last prediction</span>
+          <span class="pred-track-val" id="predTrackingVal">+7.0 pp</span>
+        </div>
+      </div>
 
       <div class="pred-timeline">
         <div class="pred-timeline__row">
@@ -2724,6 +2751,7 @@ p { margin: 0; }
   var pbChangeAbs = document.getElementById('pbChangeAbs');
   var pbChangePct = document.getElementById('pbChangePct');
   var predTrackingVal = document.getElementById('predTrackingVal');
+  var predSincePurchaseVal = document.getElementById('predSincePurchaseVal');
   var marketClock = document.getElementById('marketClock');
   var posMarketValueUSD = document.getElementById('posMarketValueUSD');
   var posMarketValuePct = document.getElementById('posMarketValuePct');
@@ -2905,12 +2933,17 @@ p { margin: 0; }
     posAlphaCAD.textContent = fmtSigned(alphaDollar * CAD_RATE);
     posWeight.textContent = weight.toFixed(1) + '%';
 
-    /* Prediction tracking — scoped strictly to the prediction's own elapsed
-       window, independent of the position's overall alpha above. A thesis
-       can be behind its prediction while the position is ahead overall. */
+    /* Prediction card shows two independently-sourced figures side by side:
+       "since purchase" reuses alphaPp verbatim (the same value driving the
+       Position section's Alpha, so the two can never diverge/disagree), and
+       "since last prediction" is scoped strictly to the prediction's own
+       elapsed window. A thesis can be behind its prediction while the
+       position is ahead overall, or vice versa — that's the point. */
+    predSincePurchaseVal.textContent = (alphaPp >= 0 ? '+' : '') + alphaPp.toFixed(1) + ' pp';
+    predSincePurchaseVal.classList.toggle('is-behind', alphaPp < 0);
     var predPp = market.predStockRetPct - market.predSPRetPct;
     predTrackingVal.textContent = (predPp >= 0 ? '+' : '') + predPp.toFixed(1) + ' pp';
-    predTrackingVal.parentElement.classList.toggle('pred-tracking--behind', predPp < 0);
+    predTrackingVal.classList.toggle('is-behind', predPp < 0);
 
     /* Badges design: an amber "after hours" line under each affected field,
        computed from the after-hours price, while the primary numbers above
