@@ -431,8 +431,8 @@ p { margin: 0; }
 }
 .rich-card__body {
   margin-top: 12px;
-  font-size: 14px;
-  color: #ffffff;
+  font-size: 13px;
+  color: #c7c7c7;
   letter-spacing: -0.15px;
   line-height: 1.5;
 }
@@ -496,7 +496,9 @@ p { margin: 0; }
   letter-spacing: -0.26px;
   line-height: 21.45px;
   padding: 0;
+  scrollbar-width: none;
 }
+.edit-textarea::-webkit-scrollbar { display: none; width: 0; height: 0; }
 .edit-textarea::placeholder {
   color: #6b6b6b;
 }
@@ -756,6 +758,80 @@ p { margin: 0; }
   color: #30d158;
 }
 .pred-track-val.is-behind { color: #ff3533; }
+.pred-track-valrow {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+.pred-track-arrow {
+  font-size: 8px;
+  line-height: 1;
+}
+.pred-track-arrow.is-up { color: #30d158; }
+.pred-track-arrow.is-down { color: #ff3533; }
+.pred-track-ref {
+  display: block;
+  font-size: 9px;
+  color: #6b6b6b;
+  letter-spacing: -0.15px;
+}
+.pred-trend-chart {
+  margin-top: 14px;
+}
+.pred-trend-chart__row {
+  position: relative;
+}
+.pred-trend-chart__svg {
+  width: 100%;
+  height: 68px;
+  display: block;
+  overflow: visible;
+}
+.pred-trend-zero-line {
+  stroke: #6b6b6b;
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+.pred-trend-sp-label {
+  position: absolute;
+  left: 0;
+  transform: translate(0, -100%);
+  margin-top: -3px;
+  font-size: 9.5px;
+  color: #929292;
+  letter-spacing: -0.1px;
+  pointer-events: none;
+}
+.pred-trend-line {
+  fill: none;
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+/* The line originates exactly on the S&P baseline and diverges to one side
+   only — never crosses back — so a single color for the whole stroke always
+   matches its direction: green if it ends above the line, red if below. */
+.pred-trend-line.is-up { stroke: #30d158; }
+.pred-trend-line.is-down { stroke: #ff3533; }
+.pred-trend-end-dot {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+.pred-trend-end-dot.is-up { background: #30d158; box-shadow: 0 0 0 3px rgba(48,209,88,0.25); }
+.pred-trend-end-dot.is-down { background: #ff3533; box-shadow: 0 0 0 3px rgba(255,53,51,0.25); }
+.pred-trend-chart__labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-size: 9px;
+  color: #6b6b6b;
+  letter-spacing: -0.15px;
+}
 .pred-timeline {
   margin-top: 4px;
   display: flex;
@@ -828,6 +904,12 @@ p { margin: 0; }
 /* ---------- Generic 2-col stat rows ---------- */
 .stat-section { margin: 0 20px; }
 .stat-section .section-header { margin-top: 40px; }
+.position-meta {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #929292;
+  letter-spacing: -0.24px;
+}
 .stat-grid-2 {
   display: flex;
   gap: 30px;
@@ -869,6 +951,7 @@ p { margin: 0; }
 .stat-value--positive .sub {
   color: #30d158;
 }
+.alpha-pp { font-size: 12px; letter-spacing: -0.3px; }
 .stat-value-15 .sub {
   font-size: 12px;
   color: #929292;
@@ -1255,7 +1338,7 @@ p { margin: 0; }
 .l1-tick-row.up .l1-tick-price { color: #30d158; }
 .l1-tick-row.down .l1-tick-price { color: #ff3533; }
 .l1-tick-volume { color: #c7c7c7; letter-spacing: -0.24px; }
-.l1-tick-side { text-align: right; font-weight: 500; }
+.l1-tick-side { text-align: right; font-weight: 500; font-size: 8px; }
 .l1-tick-row.up .l1-tick-side { color: #30d158; }
 .l1-tick-row.down .l1-tick-side { color: #ff3533; }
 .l1-tick-row.flat .l1-tick-side { color: #565b5e; }
@@ -1560,6 +1643,195 @@ p { margin: 0; }
   color: #ffffff;
   letter-spacing: -0.3px;
 }
+
+/* ---------- Thesis / Kill Criteria / Prediction detail overlays ---------- */
+.rich-card__box, .prediction-card { cursor: pointer; }
+.detail-overlay {
+  position: absolute;
+  inset: 14px;
+  border-radius: 30px;
+  background: #000000;
+  z-index: 200;
+  overflow-y: auto;
+  scrollbar-width: none;
+  padding: 24px 20px 40px;
+}
+.detail-overlay::-webkit-scrollbar { display: none; width: 0; height: 0; }
+.detail-overlay[hidden] { display: none; }
+.detail-overlay__header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.detail-overlay__title {
+  font-size: 18px;
+  color: #ffffff;
+  letter-spacing: -0.36px;
+}
+.detail-overlay__version {
+  margin-left: auto;
+  font-size: 11px;
+  color: #929292;
+  letter-spacing: -0.2px;
+  flex-shrink: 0;
+}
+.detail-overlay__section { margin-top: 28px; }
+.detail-overlay__label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  font-weight: 500;
+  color: #929292;
+}
+.detail-overlay__body {
+  margin-top: 12px;
+  font-size: 13.5px;
+  color: #ffffff;
+  line-height: 1.6;
+  letter-spacing: -0.2px;
+}
+/* ---------- CTA (canonical: text + 9x8 arrow, never a bordered/filled button — per II Design System §Typography·Link·Button·CTA and §Bottom Sheet) ---------- */
+.dt-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 1.5;
+  letter-spacing: -0.13px;
+  cursor: pointer;
+}
+.dt-cta.pri { color: #ffffff; }
+.dt-cta.sec { color: #929292; }
+.dt-cta:disabled { opacity: 0.35; cursor: default; }
+.dt-arr { width: 9px; height: 8px; flex-shrink: 0; }
+.dt-arr path { stroke: currentColor; stroke-width: 0.75; fill: none; stroke-linecap: square; }
+.dt-cta-open { margin-top: 32px; }
+.detail-overlay__edit { margin-top: 28px; }
+.detail-overlay__edit[hidden] { display: none; }
+.dt-input-box {
+  margin-top: 16px;
+  border: 0.5px solid #232627;
+  border-radius: 8px;
+  padding: 14px 16px;
+}
+.detail-overlay__edit .edit-textarea { min-height: 90px; }
+.dt-edit-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 24px;
+}
+.detail-overlay__history-head {
+  font-size: 11px;
+  font-weight: 500;
+  color: #929292;
+}
+.detail-history-list { margin-top: 6px; display: flex; flex-direction: column; }
+.detail-history-item {
+  padding: 13px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  cursor: pointer;
+}
+.detail-history-item:last-child { border-bottom: none; }
+.detail-history-item__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 14px;
+}
+.detail-history-version {
+  font-size: 14px;
+  font-weight: 500;
+  color: #ffffff;
+  letter-spacing: -0.28px;
+  flex-shrink: 0;
+}
+.detail-history-date {
+  font-size: 10px;
+  font-weight: 500;
+  color: #565b5e;
+  letter-spacing: -0.2px;
+}
+.detail-history-snippet {
+  margin-top: 8px;
+  font-size: 12.5px;
+  color: #929292;
+  letter-spacing: -0.2px;
+  line-height: 1.55;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.22s ease, opacity 0.18s ease;
+}
+.detail-history-item.open .detail-history-snippet {
+  max-height: 200px;
+  opacity: 1;
+}
+
+/* ---------- Prediction · calibration controls (adapted from the "06 · Pinned & Guided" prototype) ---------- */
+.cal-sentence {
+  font-size: 15px;
+  font-weight: 300;
+  letter-spacing: -0.24px;
+  line-height: 23px;
+  color: #ffffff;
+}
+.cal-sentence b { font-weight: 500; }
+.cal-sentence .blank {
+  color: #565b5e;
+  border-bottom: 1px solid #565b5e;
+  padding: 0 10px;
+}
+.cal-sentence .filled {
+  color: #c7c7c7;
+  font-weight: 400;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+.cal-sentence .live { color: #ffffff; background: rgba(255,255,255,0.06); }
+.cal-sentence .filled.live { font-weight: 500; }
+.cal-field { margin-top: 26px; }
+.cal-field__label {
+  font-size: 11px;
+  font-weight: 500;
+  color: #929292;
+}
+.cal-field__desc {
+  margin-top: 6px;
+  font-size: 11.5px;
+  font-weight: 300;
+  color: #929292;
+  letter-spacing: -0.057px;
+  line-height: 17px;
+}
+.cal-val { display: flex; align-items: baseline; justify-content: center; gap: 5px; margin-top: 14px; }
+.cal-val b { font-size: 26px; font-weight: 300; color: #ffffff; letter-spacing: -0.5px; }
+.cal-val span { font-size: 12px; font-weight: 300; color: #929292; }
+.cal-sl { margin-top: 12px; }
+.cal-sl-hit { position: relative; height: 38px; display: flex; align-items: center; touch-action: none; cursor: pointer; }
+.cal-sl-rail { position: relative; height: 1px; width: 100%; background: #3a3a3a; }
+.cal-sl-fill { position: absolute; left: 0; top: 0; height: 1px; background: #ffffff; width: 0%; }
+.cal-sl-thumb {
+  position: absolute; top: 50%; left: 0%; transform: translate(-50%,-50%);
+  width: 15px; height: 15px; border-radius: 8px; background: #ffffff;
+  box-shadow: 0 0 0 0 rgba(255,255,255,0.14); transition: box-shadow 0.16s;
+}
+.cal-sl-hit:active .cal-sl-thumb { box-shadow: 0 0 0 10px rgba(255,255,255,0.12); }
+.cal-caps { display: flex; justify-content: space-between; font-size: 10px; color: #929292; letter-spacing: 1.2px; margin-top: 2px; }
+.cal-seg { display: flex; border: 1px solid #1c1c1c; margin-top: 10px; }
+.cal-seg button {
+  flex: 1; height: 44px; font-size: 13px; font-weight: 300; color: #929292;
+  letter-spacing: 0.26px; border-right: 1px solid #1c1c1c; background: none; cursor: pointer; border-radius: 0;
+}
+.cal-seg button:last-child { border-right: none; }
+.cal-seg button.on { color: #ffffff; font-weight: 400; background: rgba(255,255,255,0.05); }
 </style>
 </head>
 <body>
@@ -1807,11 +2079,33 @@ p { margin: 0; }
       <div class="pred-track-row">
         <div class="pred-track-stat">
           <span class="pred-track-label">vs S&amp;P · since entry</span>
-          <span class="pred-track-val" id="predSincePurchaseVal">+6.9 pp</span>
+          <div class="pred-track-valrow">
+            <span class="pred-track-val" id="predSincePurchaseVal">+6.9 pp</span>
+            <span class="pred-track-arrow" id="predSincePurchaseArrow">▲</span>
+          </div>
+          <span class="pred-track-ref" id="predSincePurchaseRef">vs trailing +5.1 pp</span>
         </div>
         <div class="pred-track-stat">
           <span class="pred-track-label">vs S&amp;P · since current prediction</span>
-          <span class="pred-track-val" id="predTrackingVal">+7.0 pp</span>
+          <div class="pred-track-valrow">
+            <span class="pred-track-val" id="predTrackingVal">+7.0 pp</span>
+            <span class="pred-track-arrow" id="predTrackingArrow">▲</span>
+          </div>
+          <span class="pred-track-ref" id="predTrackingRef">vs trailing +6.2 pp</span>
+        </div>
+      </div>
+
+      <div class="pred-trend-chart">
+        <div class="pred-trend-chart__row">
+          <svg class="pred-trend-chart__svg" id="predTrendSvg" viewBox="0 0 300 56" preserveAspectRatio="none">
+            <line class="pred-trend-zero-line" id="predTrendZeroLine" x1="0" x2="300" y1="0" y2="0"></line>
+            <path class="pred-trend-line" id="predTrendEntryLine" d=""></path>
+          </svg>
+          <div class="pred-trend-sp-label" id="predTrendSpLabel">S&amp;P</div>
+          <div class="pred-trend-end-dot" id="predTrendEndDot"></div>
+        </div>
+        <div class="pred-trend-chart__labels">
+          <span>Oct</span><span>Dec</span><span>Feb</span><span>Apr</span><span>Jun</span>
         </div>
       </div>
 
@@ -1835,6 +2129,7 @@ p { margin: 0; }
   <!-- Position section -->
   <div class="stat-section" id="positionSection">
     <div class="section-header">Position <span class="chev">›</span></div>
+    <div class="position-meta">Entered 10.14.25 · Held 8 months</div>
 
     <div class="rich-card__empty" id="positionEmpty" hidden>
       <div class="warning-card">
@@ -1847,24 +2142,9 @@ p { margin: 0; }
       <div class="stat-grid-2">
         <div class="stat">
           <div class="label-11">Market Value</div>
-          <div class="stat-value-15"><span id="posMarketValueUSD">18,943.49</span> <span class="sub">USD</span> <span class="sub" id="posMarketValuePct">+1.0%</span></div>
+          <div class="stat-value-15"><span id="posMarketValueUSD">18,943.49</span> <span class="sub" id="posMarketValuePct">+1.0%</span></div>
           <div class="stat-sub-line"><span id="posMarketValueCAD">25,949.99</span> CAD <span id="posMarketValuePctCAD">+1.0%</span></div>
-          <div class="stat-ah-line" id="posMarketValueAhLine" hidden><svg class="ah-moon ah-moon--badge" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 1020.354 15.354z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="posMarketValueAh">18,970.24</span> USD <span id="posMarketValueAhPct">+1.2%</span></div>
-        </div>
-        <div class="stat">
-          <div class="label-11">Unrealized P/L</div>
-          <div class="stat-value-15"><span id="posUnrealizedUSD">+5,645.49</span> <span class="sub">USD</span> <span class="sub" id="posUnrealizedPct">+42.5%</span></div>
-          <div class="stat-sub-line"><span id="posUnrealizedCAD">+7,733.55</span> CAD <span id="posUnrealizedPctCAD">+42.5%</span></div>
-          <div class="stat-ah-line" id="posUnrealizedAhLine" hidden><svg class="ah-moon ah-moon--badge" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 1020.354 15.354z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="posUnrealizedAh">+5,671.16</span> USD <span id="posUnrealizedAhPct">+42.6%</span></div>
-        </div>
-      </div>
-
-      <div class="stat-grid-2">
-        <div class="stat">
-          <div class="label-11">S&amp;P 500 Return</div>
-          <div class="stat-value-15"><span id="posSPReturnUSD">+4,733.51</span> <span class="sub">USD</span> <span class="sub" id="posSPReturnPct">+35.6%</span></div>
-          <div class="stat-sub-line"><span id="posSPReturnCAD">+6,484.36</span> CAD <span id="posSPReturnPctCAD">+35.6%</span></div>
-          <div class="stat-ah-line" id="posSPReturnAhLine" hidden><svg class="ah-moon ah-moon--badge" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 1020.354 15.354z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="posSPReturnAh">+4,733.51</span> USD <span id="posSPReturnAhPct">+35.6%</span></div>
+          <div class="stat-ah-line" id="posMarketValueAhLine" hidden><svg class="ah-moon ah-moon--badge" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 1020.354 15.354z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="posMarketValueAh">18,970.24</span> <span id="posMarketValueAhPct">+1.2%</span></div>
         </div>
         <div class="stat">
           <div class="label-11">Portfolio Weight</div>
@@ -1875,25 +2155,38 @@ p { margin: 0; }
 
       <div class="stat-grid-2">
         <div class="stat">
-          <div class="label-11">Alpha</div>
-          <div class="stat-value-15 stat-value--positive" id="posAlpha">+6.9 <span class="sub">pp</span></div>
-          <div class="stat-ah-line" id="posAlphaAhLine" hidden><svg class="ah-moon ah-moon--badge" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 1020.354 15.354z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="posAlphaAh">+7.0 pp</span></div>
+          <div class="label-11">Book Cost</div>
+          <div class="stat-value-15"><span id="posBookCostUSD">13,298.00</span></div>
+          <div class="stat-sub-line"><span id="posBookCostCAD">18,217.85</span> CAD</div>
         </div>
         <div class="stat">
-          <div class="label-11">Alpha (CAD)</div>
-          <div class="stat-value-15 stat-value--positive"><span id="posAlphaCAD">+911.98</span> <span class="sub">CAD</span></div>
-          <div class="stat-ah-line" id="posAlphaCADAhLine" hidden><svg class="ah-moon ah-moon--badge" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 1020.354 15.354z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="posAlphaCADAh">+924.35</span> CAD <span id="posAlphaCADAhPct">+7.0%</span></div>
+          <div class="label-11">Avg. Cost / Share</div>
+          <div class="stat-value-15"><span id="posAvgCostUSD">61.47</span></div>
+          <div class="stat-sub-line"><span id="posAvgCostCAD">84.21</span> CAD</div>
+        </div>
+      </div>
+
+      <div class="stat-grid-2">
+        <div class="stat">
+          <div class="label-11">Unrealized P/L</div>
+          <div class="stat-value-15"><span id="posUnrealizedUSD">+5,645.49</span> <span class="sub" id="posUnrealizedPct">+42.5%</span></div>
+          <div class="stat-sub-line"><span id="posUnrealizedCAD">+7,733.55</span> CAD <span id="posUnrealizedPctCAD">+42.5%</span></div>
+          <div class="stat-ah-line" id="posUnrealizedAhLine" hidden><svg class="ah-moon ah-moon--badge" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 1020.354 15.354z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="posUnrealizedAh">+5,671.16</span> <span id="posUnrealizedAhPct">+42.6%</span></div>
+        </div>
+        <div class="stat">
+          <div class="label-11">S&amp;P 500 (same window)</div>
+          <div class="stat-value-15"><span id="posSPReturnUSD">+4,733.51</span> <span class="sub" id="posSPReturnPct">+35.6%</span></div>
+          <div class="stat-sub-line"><span id="posSPReturnCAD">+6,484.36</span> CAD <span id="posSPReturnPctCAD">+35.6%</span></div>
+          <div class="stat-ah-line" id="posSPReturnAhLine" hidden><svg class="ah-moon ah-moon--badge" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 1020.354 15.354z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="posSPReturnAh">+4,733.51</span> <span id="posSPReturnAhPct">+35.6%</span></div>
         </div>
       </div>
 
       <div class="stat-grid-2 pb-content">
         <div class="stat">
-          <div class="label-11">Held Since</div>
-          <div class="stat-value-15">Oct 14, 2025</div>
-        </div>
-        <div class="stat">
-          <div class="label-11">Holding Period</div>
-          <div class="stat-value-15">8 months</div>
+          <div class="label-11">Alpha</div>
+          <div class="stat-value-15 stat-value--positive"><span id="posAlphaUSD">+912.98</span> <span class="alpha-pp stat-value--positive" id="posAlpha">+6.9 pp</span></div>
+          <div class="stat-sub-line stat-value--positive"><span id="posAlphaCAD">+911.98</span> CAD <span class="alpha-pp stat-value--positive" id="posAlphaPpCad">+6.9 pp</span></div>
+          <div class="stat-ah-line" id="posAlphaAhLine" hidden><svg class="ah-moon ah-moon--badge" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 1020.354 15.354z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="posAlphaAh">+7.0 pp</span></div>
         </div>
       </div>
     </div>
@@ -2306,6 +2599,192 @@ p { margin: 0; }
       </div>
     </div>
   </div>
+
+<!-- Thesis detail overlay -->
+<div class="detail-overlay" id="thesisOverlay" hidden>
+  <div class="statusbar" style="margin:-24px -20px 20px">
+    <div class="statusbar__time">9:41</div>
+    <div class="statusbar__icons">
+      <svg width="18" height="12" viewBox="0 0 18 12" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="7" width="3" height="5" rx="0.5" fill="white"/><rect x="4.5" y="5" width="3" height="7" rx="0.5" fill="white"/><rect x="9" y="3" width="3" height="9" rx="0.5" fill="white"/><rect x="13.5" y="0" width="3" height="12" rx="0.5" fill="white"/></svg>
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 10.2C8.6 10.2 9.1 9.7 9.1 9.1C9.1 8.5 8.6 8 8 8C7.4 8 6.9 8.5 6.9 9.1C6.9 9.7 7.4 10.2 8 10.2Z" fill="white"/><path d="M4.8 6.8C5.7 5.9 6.8 5.5 8 5.5C9.2 5.5 10.3 5.9 11.2 6.8" stroke="white" stroke-width="1.2" stroke-linecap="round" fill="none"/><path d="M2 4.1C3.5 2.6 5.6 1.7 8 1.7C10.4 1.7 12.5 2.6 14 4.1" stroke="white" stroke-width="1.2" stroke-linecap="round" fill="none"/></svg>
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="0.5" y="0.5" width="21" height="11" rx="2.5" stroke="white" stroke-opacity="0.4"/><rect x="2" y="2" width="18" height="8" rx="1.5" fill="white"/><rect x="22.5" y="4" width="1.5" height="4" rx="0.7" fill="white" fill-opacity="0.4"/></svg>
+    </div>
+  </div>
+  <div class="detail-overlay__header">
+    <button type="button" class="ir-back-btn" data-detail-back="thesis" aria-label="Back">
+      <img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiB2aWV3Qm94PSIwIDAgMTYgMTYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJTVkciPgo8cGF0aCBpZD0iVmVjdG9yIiBkPSJNMTAuNSAzTDUuNSA4TDEwLjUgMTMiIHN0cm9rZT0iI0M3QzdDNyIgc3Ryb2tlLXdpZHRoPSIxLjQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L2c+Cjwvc3ZnPgo=" alt="">
+    </button>
+    <span class="detail-overlay__title">Thesis</span>
+    <span class="detail-overlay__version" id="thesisOverlayVersion">v4 · Oct 3, 2025</span>
+  </div>
+
+  <div class="detail-overlay__section" id="thesisOverlayView">
+    <div class="detail-overlay__label"><span>Current</span></div>
+    <div class="detail-overlay__body" id="thesisOverlayBody"></div>
+    <button type="button" class="dt-cta pri dt-cta-open" data-update-open="thesis">
+      <svg class="dt-arr" viewBox="0 0 9 8"><path d="M0.5 4 H7.5 M5 1 L8 4 L5 7"/></svg>Update
+    </button>
+  </div>
+
+  <div class="detail-overlay__edit" id="thesisOverlayEdit" hidden>
+    <div class="dt-input-box">
+      <textarea id="thesisOverlayInput" class="edit-textarea" maxlength="220" rows="4" placeholder="State why the market is wrong. Be specific enough to be proven wrong later."></textarea>
+    </div>
+    <div class="dt-edit-actions">
+      <button type="button" class="dt-cta sec" data-update-cancel="thesis">Cancel</button>
+      <button type="button" class="dt-cta pri" id="thesisOverlaySave" data-update-save="thesis" disabled>
+        <svg class="dt-arr" viewBox="0 0 9 8"><path d="M0.5 4 H7.5 M5 1 L8 4 L5 7"/></svg>Save as v5
+      </button>
+    </div>
+  </div>
+
+  <div class="detail-overlay__section">
+    <div class="detail-overlay__history-head"><span>Version History</span></div>
+    <div class="detail-history-list" id="thesisHistoryList"></div>
+  </div>
+</div>
+
+<!-- Kill Criteria detail overlay -->
+<div class="detail-overlay" id="killOverlay" hidden>
+  <div class="statusbar" style="margin:-24px -20px 20px">
+    <div class="statusbar__time">9:41</div>
+    <div class="statusbar__icons">
+      <svg width="18" height="12" viewBox="0 0 18 12" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="7" width="3" height="5" rx="0.5" fill="white"/><rect x="4.5" y="5" width="3" height="7" rx="0.5" fill="white"/><rect x="9" y="3" width="3" height="9" rx="0.5" fill="white"/><rect x="13.5" y="0" width="3" height="12" rx="0.5" fill="white"/></svg>
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 10.2C8.6 10.2 9.1 9.7 9.1 9.1C9.1 8.5 8.6 8 8 8C7.4 8 6.9 8.5 6.9 9.1C6.9 9.7 7.4 10.2 8 10.2Z" fill="white"/><path d="M4.8 6.8C5.7 5.9 6.8 5.5 8 5.5C9.2 5.5 10.3 5.9 11.2 6.8" stroke="white" stroke-width="1.2" stroke-linecap="round" fill="none"/><path d="M2 4.1C3.5 2.6 5.6 1.7 8 1.7C10.4 1.7 12.5 2.6 14 4.1" stroke="white" stroke-width="1.2" stroke-linecap="round" fill="none"/></svg>
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="0.5" y="0.5" width="21" height="11" rx="2.5" stroke="white" stroke-opacity="0.4"/><rect x="2" y="2" width="18" height="8" rx="1.5" fill="white"/><rect x="22.5" y="4" width="1.5" height="4" rx="0.7" fill="white" fill-opacity="0.4"/></svg>
+    </div>
+  </div>
+  <div class="detail-overlay__header">
+    <button type="button" class="ir-back-btn" data-detail-back="kill" aria-label="Back">
+      <img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiB2aWV3Qm94PSIwIDAgMTYgMTYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJTVkciPgo8cGF0aCBpZD0iVmVjdG9yIiBkPSJNMTAuNSAzTDUuNSA4TDEwLjUgMTMiIHN0cm9rZT0iI0M3QzdDNyIgc3Ryb2tlLXdpZHRoPSIxLjQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L2c+Cjwvc3ZnPgo=" alt="">
+    </button>
+    <span class="detail-overlay__title">Kill Criteria</span>
+    <span class="detail-overlay__version" id="killOverlayVersion">v4 · Oct 3, 2025</span>
+  </div>
+
+  <div class="detail-overlay__section" id="killOverlayView">
+    <div class="detail-overlay__label"><span id="killOverlayCount">1 Triggered</span></div>
+    <ul class="kill-list" id="killOverlayList" style="margin-top:12px"></ul>
+    <button type="button" class="dt-cta pri dt-cta-open" data-update-open="kill">
+      <svg class="dt-arr" viewBox="0 0 9 8"><path d="M0.5 4 H7.5 M5 1 L8 4 L5 7"/></svg>Update
+    </button>
+  </div>
+
+  <div class="detail-overlay__edit" id="killOverlayEdit" hidden>
+    <div class="detail-overlay__label"><span>One condition per line</span></div>
+    <div class="dt-input-box">
+      <textarea id="killOverlayInput" class="edit-textarea" rows="6" placeholder="The conditions that invalidate your thesis. Be specific — if any of these are met, the position no longer deserves capital."></textarea>
+    </div>
+    <div class="dt-edit-actions">
+      <button type="button" class="dt-cta sec" data-update-cancel="kill">Cancel</button>
+      <button type="button" class="dt-cta pri" id="killOverlaySave" data-update-save="kill" disabled>
+        <svg class="dt-arr" viewBox="0 0 9 8"><path d="M0.5 4 H7.5 M5 1 L8 4 L5 7"/></svg>Save as v5
+      </button>
+    </div>
+  </div>
+
+  <div class="detail-overlay__section">
+    <div class="detail-overlay__history-head"><span>Version History</span></div>
+    <div class="detail-history-list" id="killHistoryList"></div>
+  </div>
+</div>
+
+<!-- Prediction detail overlay -->
+<div class="detail-overlay" id="predOverlay" hidden>
+  <div class="statusbar" style="margin:-24px -20px 20px">
+    <div class="statusbar__time">9:41</div>
+    <div class="statusbar__icons">
+      <svg width="18" height="12" viewBox="0 0 18 12" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="7" width="3" height="5" rx="0.5" fill="white"/><rect x="4.5" y="5" width="3" height="7" rx="0.5" fill="white"/><rect x="9" y="3" width="3" height="9" rx="0.5" fill="white"/><rect x="13.5" y="0" width="3" height="12" rx="0.5" fill="white"/></svg>
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 10.2C8.6 10.2 9.1 9.7 9.1 9.1C9.1 8.5 8.6 8 8 8C7.4 8 6.9 8.5 6.9 9.1C6.9 9.7 7.4 10.2 8 10.2Z" fill="white"/><path d="M4.8 6.8C5.7 5.9 6.8 5.5 8 5.5C9.2 5.5 10.3 5.9 11.2 6.8" stroke="white" stroke-width="1.2" stroke-linecap="round" fill="none"/><path d="M2 4.1C3.5 2.6 5.6 1.7 8 1.7C10.4 1.7 12.5 2.6 14 4.1" stroke="white" stroke-width="1.2" stroke-linecap="round" fill="none"/></svg>
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="0.5" y="0.5" width="21" height="11" rx="2.5" stroke="white" stroke-opacity="0.4"/><rect x="2" y="2" width="18" height="8" rx="1.5" fill="white"/><rect x="22.5" y="4" width="1.5" height="4" rx="0.7" fill="white" fill-opacity="0.4"/></svg>
+    </div>
+  </div>
+  <div class="detail-overlay__header">
+    <button type="button" class="ir-back-btn" data-detail-back="pred" aria-label="Back">
+      <img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiB2aWV3Qm94PSIwIDAgMTYgMTYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJTVkciPgo8cGF0aCBpZD0iVmVjdG9yIiBkPSJNMTAuNSAzTDUuNSA4TDEwLjUgMTMiIHN0cm9rZT0iI0M3QzdDNyIgc3Ryb2tlLXdpZHRoPSIxLjQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L2c+Cjwvc3ZnPgo=" alt="">
+    </button>
+    <span class="detail-overlay__title">Prediction</span>
+    <span class="detail-overlay__version" id="predOverlayVersion">v2 · Jun 9, 2026</span>
+  </div>
+
+  <div class="detail-overlay__section" id="predOverlayView">
+    <div class="detail-overlay__label"><span>Current</span></div>
+    <div class="detail-overlay__body" id="predOverlayBody"></div>
+
+    <div class="pred-trend-chart" style="margin-top:22px">
+      <div class="pred-trend-chart__row">
+        <svg class="pred-trend-chart__svg" id="predTrendSvgLg" viewBox="0 0 300 56" preserveAspectRatio="none" style="height:110px">
+          <line class="pred-trend-zero-line" id="predTrendZeroLineLg" x1="0" x2="300" y1="0" y2="0"></line>
+          <path class="pred-trend-line" id="predTrendEntryLineLg" d=""></path>
+        </svg>
+        <div class="pred-trend-sp-label" id="predTrendSpLabelLg">S&amp;P</div>
+        <div class="pred-trend-end-dot" id="predTrendEndDotLg"></div>
+      </div>
+      <div class="pred-trend-chart__labels">
+        <span>Oct</span><span>Dec</span><span>Feb</span><span>Apr</span><span>Jun</span>
+      </div>
+    </div>
+
+    <button type="button" class="dt-cta pri dt-cta-open" data-update-open="pred">
+      <svg class="dt-arr" viewBox="0 0 9 8"><path d="M0.5 4 H7.5 M5 1 L8 4 L5 7"/></svg>Update
+    </button>
+  </div>
+
+  <div class="detail-overlay__edit" id="predOverlayEdit" hidden>
+    <div class="cal-sentence" id="calSentence"></div>
+
+    <div class="cal-field">
+      <div class="cal-field__label">Probability</div>
+      <div class="cal-field__desc">The likelihood you believe this investment achieves the selected return target over the selected horizon.</div>
+      <div class="cal-val"><b id="calProbVal">60</b><span>%</span></div>
+      <div class="cal-sl">
+        <div class="cal-sl-hit" id="calProbHit">
+          <div class="cal-sl-rail" id="calProbRail">
+            <div class="cal-sl-fill" id="calProbFill"></div>
+            <div class="cal-sl-thumb" id="calProbThumb"></div>
+          </div>
+        </div>
+        <div class="cal-caps"><span>0</span><span>100</span></div>
+      </div>
+    </div>
+
+    <div class="cal-field">
+      <div class="cal-field__label">Return Target</div>
+      <div class="cal-field__desc">The annual return you believe this investment can achieve.</div>
+      <div class="cal-val"><b id="calHurdleVal">20</b><span>% annualized</span></div>
+      <div class="cal-sl">
+        <div class="cal-sl-hit" id="calHurdleHit">
+          <div class="cal-sl-rail" id="calHurdleRail">
+            <div class="cal-sl-fill" id="calHurdleFill"></div>
+            <div class="cal-sl-thumb" id="calHurdleThumb"></div>
+          </div>
+        </div>
+        <div class="cal-caps"><span>15</span><span>100</span></div>
+      </div>
+    </div>
+
+    <div class="cal-field">
+      <div class="cal-field__label">Horizon</div>
+      <div class="cal-seg" id="calHorizonSeg">
+        <button type="button" data-h="1y">1 year</button>
+        <button type="button" data-h="3y">3 years</button>
+        <button type="button" data-h="5y">5+ years</button>
+      </div>
+    </div>
+
+    <div class="dt-edit-actions" style="margin-top:30px">
+      <button type="button" class="dt-cta sec" data-update-cancel="pred">Cancel</button>
+      <button type="button" class="dt-cta pri" id="predOverlaySave" data-update-save="pred">
+        <svg class="dt-arr" viewBox="0 0 9 8"><path d="M0.5 4 H7.5 M5 1 L8 4 L5 7"/></svg>Save
+      </button>
+    </div>
+  </div>
+
+  <div class="detail-overlay__section">
+    <div class="detail-overlay__history-head"><span>Version History</span></div>
+    <div class="detail-history-list" id="predHistoryList"></div>
+  </div>
+</div>
 </div>
 
 <script>
@@ -2651,7 +3130,7 @@ p { margin: 0; }
     v.textContent = size;
     var s = document.createElement('span');
     s.className = 'l1-tick-side';
-    s.textContent = status === 'up' ? '↑' : (status === 'down' ? '↓' : '—');
+    s.textContent = status === 'up' ? '▲' : (status === 'down' ? '▼' : '—');
     row.appendChild(t); row.appendChild(p); row.appendChild(v); row.appendChild(s);
     l1TickList.insertBefore(row, l1TickList.firstChild);
     while (l1TickList.children.length > l1RowLimit) l1TickList.removeChild(l1TickList.lastChild);
@@ -2742,11 +3221,186 @@ p { margin: 0; }
   var pbChangePct = document.getElementById('pbChangePct');
   var predTrackingVal = document.getElementById('predTrackingVal');
   var predSincePurchaseVal = document.getElementById('predSincePurchaseVal');
+  var predSincePurchaseArrow = document.getElementById('predSincePurchaseArrow');
+  var predSincePurchaseRef = document.getElementById('predSincePurchaseRef');
+  var predTrackingArrow = document.getElementById('predTrackingArrow');
+  var predTrackingRef = document.getElementById('predTrackingRef');
+  var predTrendEntryLine = document.getElementById('predTrendEntryLine');
+  var predTrendZeroLine = document.getElementById('predTrendZeroLine');
+  var predTrendSpLabel = document.getElementById('predTrendSpLabel');
+  var predTrendEndDot = document.getElementById('predTrendEndDot');
+  /* larger duplicate chart shown inside the Prediction detail overlay */
+  var predTrendEntryLineLg = document.getElementById('predTrendEntryLineLg');
+  var predTrendZeroLineLg = document.getElementById('predTrendZeroLineLg');
+  var predTrendSpLabelLg = document.getElementById('predTrendSpLabelLg');
+  var predTrendEndDotLg = document.getElementById('predTrendEndDotLg');
+  /* The "since current prediction" figure is text-only (no longer plotted) —
+     PRED_CURRENT_ANCHORS/PRED_CURRENT_POINTS still drive its trailing-average
+     arrow via the same noisyLine() generator used before. */
+  var PRED_CURRENT_ANCHORS = [3.1, 5.4, 7.4];
+  var PRED_ALPHA_POINTS = 60;
+  var PRED_CURRENT_POINTS = 24;
+  /* Trailing-average window for the trend arrows — per the meeting: not a
+     "vs yesterday" compare, but "vs your recent average" (the Whoop model
+     Aidan described), now that the dense series actually has enough points
+     to average over. */
+  var PRED_TRAILING_WINDOW = 7;
+  var PRED_CHART_W = 300, PRED_CHART_H = 56, PRED_CHART_PAD = 6;
+
+  function pseudoRandom(seed) {
+    var s = Math.sin(seed * 12.9898) * 43758.5453;
+    return s - Math.floor(s);
+  }
+
+  function interpolateAnchors(anchors, numPoints) {
+    var segments = anchors.length - 1;
+    var out = [];
+    for (var i = 0; i < numPoints; i++) {
+      var segF = (i / (numPoints - 1)) * segments;
+      var segIdx = Math.min(Math.floor(segF), segments - 1);
+      var localT = segF - segIdx;
+      out.push(anchors[segIdx] + (anchors[segIdx + 1] - anchors[segIdx]) * localT);
+    }
+    return out;
+  }
+
+  /* Small deterministic (non-flickering) noise layered on the interpolated
+     trend so the line reads as a real, jagged stock-style chart — the last
+     point stays exactly on the live value so it always matches the number
+     above it. */
+  function noisyLine(anchors, numPoints, noiseAmp, seedOffset) {
+    var base = interpolateAnchors(anchors, numPoints);
+    return base.map(function (v, i) {
+      if (i === numPoints - 1) return v;
+      return v + (pseudoRandom(i + seedOffset) - 0.5) * noiseAmp;
+    });
+  }
+
+  /* The "since entry" line must originate exactly on the S&P baseline (0) and
+     diverge to ONE side only — it should never cross back over the baseline,
+     so the whole stroke can be a single color (green if it ends up, red if
+     down). Noise is applied multiplicatively against an eased 0->target
+     curve, which preserves sign at every point since (1 + wiggle) > 0. */
+  function monotoneNoisyLine(target, numPoints, noiseAmp, seedOffset) {
+    var out = [];
+    for (var i = 0; i < numPoints; i++) {
+      if (i === 0) { out.push(0); continue; }
+      if (i === numPoints - 1) { out.push(target); continue; }
+      var t = i / (numPoints - 1);
+      var eased = Math.pow(t, 0.82);
+      var base = target * eased;
+      var wiggle = (pseudoRandom(i + seedOffset) - 0.5) * 2 * noiseAmp;
+      out.push(base * (1 + wiggle));
+    }
+    return out;
+  }
+
+  function chartY(v, minV, range) {
+    var usableH = PRED_CHART_H - PRED_CHART_PAD * 2;
+    return PRED_CHART_PAD + usableH - ((v - minV) / range) * usableH;
+  }
+
+  function seriesToXY(values, totalSlots, startSlot, minV, range) {
+    return values.map(function (v, i) {
+      var slot = startSlot + i;
+      var x = (slot / (totalSlots - 1)) * PRED_CHART_W;
+      return [x, chartY(v, minV, range)];
+    });
+  }
+
+  /* Catmull-Rom-style cubic smoothing so the dense noisy series reads as an
+     elegant curved line (like a real trading app) instead of a faceted
+     polyline, without losing any of the underlying jagged data. */
+  function smoothPathD(pts) {
+    if (pts.length < 2) return '';
+    var d = 'M' + pts[0][0].toFixed(1) + ',' + pts[0][1].toFixed(1);
+    for (var i = 0; i < pts.length - 1; i++) {
+      var p0 = pts[i === 0 ? i : i - 1];
+      var p1 = pts[i];
+      var p2 = pts[i + 1];
+      var p3 = pts[i + 2 < pts.length ? i + 2 : i + 1];
+      var c1x = p1[0] + (p2[0] - p0[0]) / 6;
+      var c1y = p1[1] + (p2[1] - p0[1]) / 6;
+      var c2x = p2[0] - (p3[0] - p1[0]) / 6;
+      var c2y = p2[1] - (p3[1] - p1[1]) / 6;
+      d += ' C' + c1x.toFixed(1) + ',' + c1y.toFixed(1) + ' ' + c2x.toFixed(1) + ',' + c2y.toFixed(1) + ' ' + p2[0].toFixed(1) + ',' + p2[1].toFixed(1);
+    }
+    return d;
+  }
+
+  function trailingAvg(series, window) {
+    var end = series.length - 1; /* exclude today itself */
+    var start = Math.max(0, end - window);
+    var sum = 0, count = 0;
+    for (var i = start; i < end; i++) { sum += series[i]; count++; }
+    return count ? sum / count : series[end];
+  }
+
+  function renderPredTrend(alphaPpVal, predPpVal) {
+    PRED_CURRENT_ANCHORS[PRED_CURRENT_ANCHORS.length - 1] = predPpVal;
+
+    /* Starts at 0 (the S&P baseline) and ends at the live value, staying on
+       that one side the whole way — see monotoneNoisyLine(). */
+    var alphaSeries = monotoneNoisyLine(alphaPpVal, PRED_ALPHA_POINTS, 0.22, 0);
+    var predSeries = noisyLine(PRED_CURRENT_ANCHORS, PRED_CURRENT_POINTS, 0.7, 17);
+    predSeries[predSeries.length - 1] = predPpVal;
+
+    var minV = Math.min(0, Math.min.apply(null, alphaSeries));
+    var maxV = Math.max(0, Math.max.apply(null, alphaSeries));
+    var range = (maxV - minV) || 1;
+
+    var alphaPts = seriesToXY(alphaSeries, PRED_ALPHA_POINTS, 0, minV, range);
+    var entryPath = smoothPathD(alphaPts);
+    var isUp = alphaPpVal >= 0;
+
+    [[predTrendEntryLine, predTrendZeroLine, predTrendSpLabel, predTrendEndDot],
+     [predTrendEntryLineLg, predTrendZeroLineLg, predTrendSpLabelLg, predTrendEndDotLg]].forEach(function (refs) {
+      var line = refs[0], zeroLine = refs[1], spLabel = refs[2], endDot = refs[3];
+      line.setAttribute('d', entryPath);
+      line.classList.toggle('is-up', isUp);
+      line.classList.toggle('is-down', !isUp);
+
+      /* Zero line = "matching the S&P exactly" — the one reference every pp
+         figure on this card is measured against, and the point the "since
+         entry" line originates from before diverging one way or the other. */
+      var zeroY = Math.max(PRED_CHART_PAD, Math.min(PRED_CHART_H - PRED_CHART_PAD, chartY(0, minV, range)));
+      zeroLine.setAttribute('y1', zeroY.toFixed(1));
+      zeroLine.setAttribute('y2', zeroY.toFixed(1));
+      spLabel.style.top = (zeroY / PRED_CHART_H * 100).toFixed(2) + '%';
+
+      var endPt = alphaPts[alphaPts.length - 1];
+      endDot.style.left = (endPt[0] / PRED_CHART_W * 100).toFixed(2) + '%';
+      endDot.style.top = (endPt[1] / PRED_CHART_H * 100).toFixed(2) + '%';
+      endDot.classList.toggle('is-up', isUp);
+      endDot.classList.toggle('is-down', !isUp);
+    });
+
+    /* Arrows: today's value vs the trailing average of the last
+       PRED_TRAILING_WINDOW points — direction matters independently of
+       whether the figure itself is currently positive or negative. */
+    var alphaAvg = trailingAvg(alphaSeries, PRED_TRAILING_WINDOW);
+    var alphaUp = alphaPpVal >= alphaAvg;
+    predSincePurchaseArrow.textContent = alphaUp ? '▲' : '▼';
+    predSincePurchaseArrow.classList.toggle('is-up', alphaUp);
+    predSincePurchaseArrow.classList.toggle('is-down', !alphaUp);
+    predSincePurchaseRef.textContent = 'vs trailing avg ' + (alphaAvg >= 0 ? '+' : '') + alphaAvg.toFixed(1) + ' pp';
+
+    var predAvg = trailingAvg(predSeries, PRED_TRAILING_WINDOW);
+    var predUp = predPpVal >= predAvg;
+    predTrackingArrow.textContent = predUp ? '▲' : '▼';
+    predTrackingArrow.classList.toggle('is-up', predUp);
+    predTrackingArrow.classList.toggle('is-down', !predUp);
+    predTrackingRef.textContent = 'vs trailing avg ' + (predAvg >= 0 ? '+' : '') + predAvg.toFixed(1) + ' pp';
+  }
   var marketClock = document.getElementById('marketClock');
   var posMarketValueUSD = document.getElementById('posMarketValueUSD');
   var posMarketValuePct = document.getElementById('posMarketValuePct');
   var posMarketValueCAD = document.getElementById('posMarketValueCAD');
   var posMarketValuePctCAD = document.getElementById('posMarketValuePctCAD');
+  var posBookCostUSD = document.getElementById('posBookCostUSD');
+  var posBookCostCAD = document.getElementById('posBookCostCAD');
+  var posAvgCostUSD = document.getElementById('posAvgCostUSD');
+  var posAvgCostCAD = document.getElementById('posAvgCostCAD');
   var posUnrealizedUSD = document.getElementById('posUnrealizedUSD');
   var posUnrealizedPct = document.getElementById('posUnrealizedPct');
   var posUnrealizedCAD = document.getElementById('posUnrealizedCAD');
@@ -2756,10 +3410,9 @@ p { margin: 0; }
   var posSPReturnCAD = document.getElementById('posSPReturnCAD');
   var posSPReturnPctCAD = document.getElementById('posSPReturnPctCAD');
   var posAlpha = document.getElementById('posAlpha');
+  var posAlphaUSD = document.getElementById('posAlphaUSD');
   var posAlphaCAD = document.getElementById('posAlphaCAD');
-  var posAlphaCADAhLine = document.getElementById('posAlphaCADAhLine');
-  var posAlphaCADAh = document.getElementById('posAlphaCADAh');
-  var posAlphaCADAhPct = document.getElementById('posAlphaCADAhPct');
+  var posAlphaPpCad = document.getElementById('posAlphaPpCad');
   var posMarketValueAhLine = document.getElementById('posMarketValueAhLine');
   var posMarketValueAh = document.getElementById('posMarketValueAh');
   var posMarketValueAhPct = document.getElementById('posMarketValueAhPct');
@@ -2912,6 +3565,10 @@ p { margin: 0; }
     posUnrealizedPct.textContent = (unrealizedPLPct >= 0 ? '+' : '') + unrealizedPLPct.toFixed(1) + '%';
     posUnrealizedCAD.textContent = fmtSigned(unrealizedPL * CAD_RATE);
     posUnrealizedPctCAD.textContent = (unrealizedPLPct >= 0 ? '+' : '') + unrealizedPLPct.toFixed(1) + '%';
+    posBookCostUSD.textContent = fmtMoney(market.costBasis);
+    posBookCostCAD.textContent = fmtMoney(market.costBasis * CAD_RATE);
+    posAvgCostUSD.textContent = (market.costBasis / market.shares).toFixed(2);
+    posAvgCostCAD.textContent = (market.costBasis / market.shares * CAD_RATE).toFixed(2);
     var spPL = market.costBasis * (market.spPLPct / 100);
     var spPctStr = (market.spPLPct >= 0 ? '+' : '') + market.spPLPct.toFixed(1) + '%';
     posSPReturnUSD.textContent = fmtSigned(spPL);
@@ -2919,7 +3576,9 @@ p { margin: 0; }
     posSPReturnCAD.textContent = fmtSigned(spPL * CAD_RATE);
     posSPReturnPctCAD.textContent = spPctStr;
     posAlpha.textContent = (alphaPp >= 0 ? '+' : '') + alphaPp.toFixed(1) + ' pp';
+    posAlphaPpCad.textContent = posAlpha.textContent;
     var alphaDollar = unrealizedPL - spPL;
+    posAlphaUSD.textContent = fmtSigned(alphaDollar);
     posAlphaCAD.textContent = fmtSigned(alphaDollar * CAD_RATE);
     posWeight.textContent = weight.toFixed(1) + '%';
 
@@ -2934,6 +3593,7 @@ p { margin: 0; }
     var predPp = market.predStockRetPct - market.predSPRetPct;
     predTrackingVal.textContent = (predPp >= 0 ? '+' : '') + predPp.toFixed(1) + ' pp';
     predTrackingVal.classList.toggle('is-behind', predPp < 0);
+    renderPredTrend(alphaPp, predPp);
 
     /* Badges design: an amber "after hours" line under each affected field,
        computed from the after-hours price, while the primary numbers above
@@ -2942,7 +3602,6 @@ p { margin: 0; }
     posUnrealizedAhLine.hidden = !showExt;
     posSPReturnAhLine.hidden = !showExt;
     posAlphaAhLine.hidden = !showExt;
-    posAlphaCADAhLine.hidden = !showExt;
     posWeightAhLine.hidden = !showExt;
     if (showExt) {
       var ahMarketValue = sessionPrice * market.shares;
@@ -2960,9 +3619,6 @@ p { margin: 0; }
       posSPReturnAhPct.textContent = spPctStr;
       posAlphaAh.textContent = (ahAlphaPp >= 0 ? '+' : '') + ahAlphaPp.toFixed(1) + ' pp';
       posWeightAh.textContent = ahWeight.toFixed(1) + '%';
-      var ahAlphaDollar = ahUnrealizedPL - spPL;
-      posAlphaCADAh.textContent = fmtSigned(ahAlphaDollar * CAD_RATE);
-      posAlphaCADAhPct.textContent = (ahAlphaPp >= 0 ? '+' : '') + ahAlphaPp.toFixed(1) + '%';
     }
 
     /* Chart tooltip copy: "Full" stays exactly as-is (no label). Market
@@ -3047,6 +3703,341 @@ p { margin: 0; }
   irTrigger.addEventListener('click', openIrOverlay);
   irTrigger.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') openIrOverlay(); });
   irBackBtn.addEventListener('click', closeIrOverlay);
+
+  /* ---------- Thesis / Kill Criteria / Prediction detail overlays ---------- */
+  var DETAIL = {
+    thesis: {
+      overlay: document.getElementById('thesisOverlay'),
+      viewEl: document.getElementById('thesisOverlayView'),
+      versionEl: document.getElementById('thesisOverlayVersion'),
+      bodyEl: document.getElementById('thesisOverlayBody'),
+      editEl: document.getElementById('thesisOverlayEdit'),
+      input: document.getElementById('thesisOverlayInput'),
+      saveBtn: document.getElementById('thesisOverlaySave'),
+      historyEl: document.getElementById('thesisHistoryList'),
+      state: {
+        version: 4, date: 'Oct 3, 2025',
+        text: "Data Center is the load-bearing segment: hyperscaler capex keeps compounding, and Kestrel's platform lock-in lets software margins expand faster than unit costs.",
+        history: [
+          { version: 1, date: 'Feb 18, 2025', text: 'Kestrel is a picks-and-shovels play on hyperscaler capex — sell into the buildout, not the eventual winner.' },
+          { version: 2, date: 'May 22, 2025', text: 'Narrowed to Data Center specifically: that segment carries the growth, the rest of the business is cyclical ballast.' },
+          { version: 3, date: 'Aug 11, 2025', text: 'Added platform lock-in as a second leg — software attach rate is the margin story, not just unit volume.' }
+        ]
+      }
+    },
+    kill: {
+      overlay: document.getElementById('killOverlay'),
+      viewEl: document.getElementById('killOverlayView'),
+      versionEl: document.getElementById('killOverlayVersion'),
+      listEl: document.getElementById('killOverlayList'),
+      countEl: document.getElementById('killOverlayCount'),
+      editEl: document.getElementById('killOverlayEdit'),
+      input: document.getElementById('killOverlayInput'),
+      saveBtn: document.getElementById('killOverlaySave'),
+      historyEl: document.getElementById('killHistoryList'),
+      state: {
+        version: 4, date: 'Oct 3, 2025',
+        items: [
+          { text: 'Data Center revenue growth falls below 25% YoY for two consecutive quarters', status: 'muted' },
+          { text: 'Gross margin compresses below 68%', status: 'red', sub: 'Triggered — margin fell to 68%, at your threshold.' },
+          { text: 'Loses a top-3 hyperscaler customer', status: 'muted' },
+          { text: 'A credible second-source competitor ships at scale', status: 'amber2', sub: 'Needs attention — qualification announced last week.' },
+          { text: 'Capex intensity guided higher without revenue acceleration to match', status: 'muted' }
+        ],
+        history: [
+          { version: 1, date: 'Feb 18, 2025', text: 'Data Center revenue growth falls below 25% YoY · Loses a top-3 hyperscaler customer' },
+          { version: 2, date: 'May 22, 2025', text: 'Data Center revenue growth falls below 25% YoY · Loses a top-3 hyperscaler customer · Gross margin compresses below 70%' },
+          { version: 3, date: 'Aug 11, 2025', text: 'Gross margin compresses below 68% · Loses a top-3 hyperscaler customer · Capex intensity guided higher without revenue acceleration to match' }
+        ]
+      }
+    },
+    pred: {
+      overlay: document.getElementById('predOverlay'),
+      viewEl: document.getElementById('predOverlayView'),
+      versionEl: document.getElementById('predOverlayVersion'),
+      bodyEl: document.getElementById('predOverlayBody'),
+      editEl: document.getElementById('predOverlayEdit'),
+      saveBtn: document.getElementById('predOverlaySave'),
+      historyEl: document.getElementById('predHistoryList'),
+      state: {
+        version: 2, date: 'Jun 9, 2026', prob: 60, hurdle: 20, horizon: '3y',
+        history: [
+          { version: 1, date: 'Oct 3, 2025', prob: 55, hurdle: 18, horizon: '3y' }
+        ]
+      }
+    }
+  };
+
+  var HORIZON_LABEL = { '1y': '1 year', '3y': '3 years', '5y': '5+ years' };
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; });
+  }
+
+  function renderHistoryList(el, entries, snippetFn) {
+    el.innerHTML = entries.slice().reverse().map(function (h) {
+      return '<div class="detail-history-item">' +
+        '<div class="detail-history-item__row">' +
+          '<span class="detail-history-version">v' + h.version + '</span>' +
+          '<span class="detail-history-date">' + h.date + '</span>' +
+        '</div>' +
+        '<div class="detail-history-snippet">' + snippetFn(h) + '</div>' +
+      '</div>';
+    }).join('');
+    el.querySelectorAll('.detail-history-item').forEach(function (row) {
+      row.addEventListener('click', function () { row.classList.toggle('open'); });
+    });
+  }
+
+  function renderThesisOverlay() {
+    var s = DETAIL.thesis.state;
+    DETAIL.thesis.versionEl.textContent = 'v' + s.version + ' · ' + s.date;
+    DETAIL.thesis.bodyEl.textContent = s.text;
+    renderHistoryList(DETAIL.thesis.historyEl, s.history, function (h) { return escapeHtml(h.text); });
+  }
+
+  function renderKillOverlay() {
+    var s = DETAIL.kill.state;
+    var triggeredCount = s.items.filter(function (it) { return it.status === 'red'; }).length;
+    DETAIL.kill.versionEl.textContent = 'v' + s.version + ' · ' + s.date;
+    DETAIL.kill.countEl.textContent = triggeredCount + ' Triggered';
+    DETAIL.kill.listEl.innerHTML = s.items.map(function (it) {
+      return '<li class="kill-item"><span class="dot dot--' + it.status + '"></span>' +
+        '<div class="kill-item__text"><div class="kill-item__title">' + escapeHtml(it.text) + '</div>' +
+        (it.sub ? '<div class="kill-item__sub">' + escapeHtml(it.sub) + '</div>' : '') + '</div></li>';
+    }).join('');
+    renderHistoryList(DETAIL.kill.historyEl, s.history, function (h) { return escapeHtml(h.text); });
+  }
+
+  function predSentenceHTML(s) {
+    return '<b>KSTL</b> has a ' + s.prob + '% chance of compounding at ' + s.hurdle + '%/yr or more over ' + HORIZON_LABEL[s.horizon] + '.';
+  }
+
+  function renderPredOverlay() {
+    var s = DETAIL.pred.state;
+    DETAIL.pred.versionEl.textContent = 'v' + s.version + ' · ' + s.date;
+    DETAIL.pred.bodyEl.innerHTML = predSentenceHTML(s);
+    renderHistoryList(DETAIL.pred.historyEl, s.history, function (h) {
+      return escapeHtml(h.prob + '% chance of compounding at ' + h.hurdle + '%/yr or more over ' + HORIZON_LABEL[h.horizon] + '.');
+    });
+  }
+
+  renderThesisOverlay();
+  renderKillOverlay();
+  renderPredOverlay();
+
+  function openDetailOverlay(key) { DETAIL[key].overlay.hidden = false; }
+  function closeDetailOverlay(key) { DETAIL[key].overlay.hidden = true; closeUpdateEdit(key); }
+
+  document.querySelectorAll('[data-detail-back]').forEach(function (btn) {
+    btn.addEventListener('click', function () { closeDetailOverlay(btn.getAttribute('data-detail-back')); });
+  });
+
+  document.querySelector('.rich-card[data-state-target="thesis"] .rich-card__box').addEventListener('click', function () { openDetailOverlay('thesis'); });
+  document.querySelector('.rich-card[data-state-target="kill"] .rich-card__box').addEventListener('click', function () { openDetailOverlay('kill'); });
+  document.querySelector('.prediction-card').addEventListener('click', function (e) {
+    if (e.target.closest('.dt-cta')) return;
+    openDetailOverlay('pred');
+  });
+
+  /* ---------- Update flow: Thesis / Kill Criteria (textarea) ---------- */
+  function openUpdateEdit(key) {
+    var d = DETAIL[key];
+    d.viewEl.hidden = true;
+    d.editEl.hidden = false;
+    if (key === 'thesis') { d.input.value = d.state.text; d.saveBtn.disabled = false; }
+    if (key === 'kill') { d.input.value = d.state.items.map(function (it) { return it.text; }).join('\n'); d.saveBtn.disabled = false; }
+    if (key === 'pred') { openCalEditor(); }
+  }
+  function closeUpdateEdit(key) {
+    var d = DETAIL[key];
+    d.editEl.hidden = true;
+    d.viewEl.hidden = false;
+  }
+
+  document.querySelectorAll('[data-update-open]').forEach(function (btn) {
+    btn.addEventListener('click', function (e) { e.stopPropagation(); openUpdateEdit(btn.getAttribute('data-update-open')); });
+  });
+  document.querySelectorAll('[data-update-cancel]').forEach(function (btn) {
+    btn.addEventListener('click', function (e) { e.stopPropagation(); closeUpdateEdit(btn.getAttribute('data-update-cancel')); });
+  });
+
+  function todayLabel() {
+    return new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+
+  [['thesis', DETAIL.thesis], ['kill', DETAIL.kill]].forEach(function (pair) {
+    pair[1].input.addEventListener('input', function () {
+      pair[1].saveBtn.disabled = !pair[1].input.value.trim();
+    });
+  });
+
+  document.getElementById('thesisOverlaySave').addEventListener('click', function (e) {
+    e.stopPropagation();
+    var d = DETAIL.thesis, s = d.state;
+    var text = d.input.value.trim();
+    if (!text) return;
+    s.history.push({ version: s.version, date: s.date, text: s.text });
+    s.version += 1; s.date = todayLabel(); s.text = text;
+    renderThesisOverlay();
+    closeUpdateEdit('thesis');
+    syncThesisCard();
+  });
+
+  document.getElementById('killOverlaySave').addEventListener('click', function (e) {
+    e.stopPropagation();
+    var d = DETAIL.kill, s = d.state;
+    var lines = d.input.value.split('\n').map(function (l) { return l.trim(); }).filter(Boolean);
+    if (!lines.length) return;
+    s.history.push({ version: s.version, date: s.date, text: s.items.map(function (it) { return it.text; }).join(' · ') });
+    s.version += 1; s.date = todayLabel();
+    /* a freshly saved version starts clean — triggers get re-evaluated going forward */
+    s.items = lines.map(function (t) { return { text: t, status: 'muted' }; });
+    renderKillOverlay();
+    closeUpdateEdit('kill');
+    syncKillCard();
+  });
+
+  /* Reflect the saved version back onto the compact summary cards on the memo page. */
+  function syncThesisCard() {
+    var s = DETAIL.thesis.state;
+    document.querySelector('.rich-card[data-state-target="thesis"] .rich-card__body').textContent = s.text;
+    document.querySelectorAll('.rich-card[data-state-target="thesis"] .version-chip').forEach(function (el) {
+      el.innerHTML = 'v' + s.version + ' <span class="chev">›</span>';
+    });
+  }
+  function syncKillCard() {
+    var s = DETAIL.kill.state;
+    var triggeredCount = s.items.filter(function (it) { return it.status === 'red'; }).length;
+    document.querySelector('.kill-title').textContent = 'Kill Criteria — ' + triggeredCount + ' Triggered';
+    document.querySelector('.rich-card[data-state-target="kill"] .kill-list').innerHTML = DETAIL.kill.listEl.innerHTML;
+    document.querySelectorAll('.rich-card[data-state-target="kill"] .version-chip').forEach(function (el) {
+      el.innerHTML = 'v' + s.version + ' <span class="chev">›</span>';
+    });
+  }
+
+  /* ---------- Update flow: Prediction (calibration controls, adapted from the
+     "06 · Pinned & Guided" prototype in Stock Prediction/index.html) ---------- */
+  var calEdit = { prob: 60, hurdle: 20, horizon: '3y', focus: null };
+  var calSentenceEl = document.getElementById('calSentence');
+  var calProbVal = document.getElementById('calProbVal');
+  var calProbHit = document.getElementById('calProbHit');
+  var calProbRail = document.getElementById('calProbRail');
+  var calProbFill = document.getElementById('calProbFill');
+  var calProbThumb = document.getElementById('calProbThumb');
+  var calHurdleVal = document.getElementById('calHurdleVal');
+  var calHurdleHit = document.getElementById('calHurdleHit');
+  var calHurdleRail = document.getElementById('calHurdleRail');
+  var calHurdleFill = document.getElementById('calHurdleFill');
+  var calHurdleThumb = document.getElementById('calHurdleThumb');
+  var calHorizonSeg = document.getElementById('calHorizonSeg');
+  var calFocusTimer = null;
+
+  function calFlashFocus(field) {
+    calEdit.focus = field;
+    renderCalSentence();
+    clearTimeout(calFocusTimer);
+    calFocusTimer = setTimeout(function () { calEdit.focus = null; renderCalSentence(); }, 900);
+  }
+
+  function renderCalSentence() {
+    var cell = function (key, val) {
+      var live = calEdit.focus === key ? ' live' : '';
+      return '<span class="filled' + live + '">' + val + '</span>';
+    };
+    calSentenceEl.innerHTML = '<b>KSTL</b> has a ' + cell('prob', calEdit.prob + '%') +
+      ' chance of compounding at ' + cell('hurdle', calEdit.hurdle + '%/yr') +
+      ' or more over ' + cell('horizon', HORIZON_LABEL[calEdit.horizon]) + '.';
+  }
+
+  function renderCalControls() {
+    calProbVal.textContent = calEdit.prob;
+    var pp = (calEdit.prob - 0) / (100 - 0);
+    calProbFill.style.width = (pp * 100) + '%';
+    calProbThumb.style.left = (pp * 100) + '%';
+
+    calHurdleVal.textContent = calEdit.hurdle;
+    var hp = (calEdit.hurdle - 15) / (100 - 15);
+    calHurdleFill.style.width = (hp * 100) + '%';
+    calHurdleThumb.style.left = (hp * 100) + '%';
+
+    calHorizonSeg.querySelectorAll('button').forEach(function (b) {
+      b.classList.toggle('on', b.getAttribute('data-h') === calEdit.horizon);
+    });
+    renderCalSentence();
+  }
+
+  /* Shared drag/tap wiring for the two calibration sliders — Probability
+     snaps to 10% steps (its data model is discrete), Return Target is
+     continuous 1% steps. */
+  function wireCalSlider(hit, rail, min, max, step, onChange) {
+    var dragging = false;
+    function valueAt(clientX) {
+      var r = rail.getBoundingClientRect();
+      if (!r.width) return null;
+      var p = Math.max(0, Math.min(1, (clientX - r.left) / r.width));
+      var v = min + p * (max - min);
+      return Math.round(v / step) * step;
+    }
+    function apply(clientX) {
+      var v = valueAt(clientX);
+      if (v == null) return;
+      onChange(Math.max(min, Math.min(max, v)));
+    }
+    hit.addEventListener('pointerdown', function (e) {
+      dragging = true;
+      hit.setPointerCapture(e.pointerId);
+      apply(e.clientX);
+    });
+    hit.addEventListener('pointermove', function (e) { if (dragging) apply(e.clientX); });
+    hit.addEventListener('pointerup', function () { dragging = false; });
+    hit.addEventListener('pointercancel', function () { dragging = false; });
+  }
+
+  wireCalSlider(calProbHit, calProbRail, 0, 100, 10, function (v) {
+    calEdit.prob = v;
+    renderCalControls();
+    calFlashFocus('prob');
+  });
+  wireCalSlider(calHurdleHit, calHurdleRail, 15, 100, 1, function (v) {
+    calEdit.hurdle = v;
+    renderCalControls();
+    calFlashFocus('hurdle');
+  });
+
+  calHorizonSeg.addEventListener('click', function (e) {
+    var b = e.target.closest('button');
+    if (!b) return;
+    calEdit.horizon = b.getAttribute('data-h');
+    renderCalControls();
+    calFlashFocus('horizon');
+  });
+
+  function openCalEditor() {
+    var s = DETAIL.pred.state;
+    calEdit.prob = s.prob; calEdit.hurdle = s.hurdle; calEdit.horizon = s.horizon; calEdit.focus = null;
+    renderCalControls();
+  }
+
+  document.getElementById('predOverlaySave').addEventListener('click', function (e) {
+    e.stopPropagation();
+    var s = DETAIL.pred.state;
+    s.history.push({ version: s.version, date: s.date, prob: s.prob, hurdle: s.hurdle, horizon: s.horizon });
+    s.version += 1; s.date = todayLabel();
+    s.prob = calEdit.prob; s.hurdle = calEdit.hurdle; s.horizon = calEdit.horizon;
+    renderPredOverlay();
+    closeUpdateEdit('pred');
+    syncPredCard();
+  });
+
+  function syncPredCard() {
+    var s = DETAIL.pred.state;
+    document.querySelector('.pred-value').textContent =
+      s.prob + '% probability of ' + s.hurdle + '%/yr over ' + HORIZON_LABEL[s.horizon];
+    document.querySelectorAll('.prediction-card .version-chip').forEach(function (el) {
+      el.innerHTML = 'v' + s.version + ' <span class="chev">›</span>';
+    });
+  }
 
   /* ---------- Burger menu + page-state preview switcher ---------- */
   var burgerBtn = document.getElementById('burgerBtn');
