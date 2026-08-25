@@ -603,7 +603,7 @@ p { margin: 0; }
 
 /* ---------- Notes card ---------- */
 .notes-card {
-  margin: 30px 20px 0;
+  margin: 8px 20px 0;
   min-height: 58px;
   background: #0a0a0a;
   border: 1px solid rgba(255,255,255,0.11);
@@ -716,13 +716,46 @@ p { margin: 0; }
 }
 
 .prediction-card {
+  position: relative;
+  z-index: 0;
   margin-top: 40px;
   background: rgba(48,209,88,0.1);
   border: 1px solid rgba(255,255,255,0.11);
   padding: 17px 18px 16px 22px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 16px;
+}
+/* One faded "now" line running behind the entire card, from the top of the
+   trend chart down through the goal bar, so the two sections read as a
+   single shared timeline rather than two separately-drawn markers that can
+   drift out of alignment. Sits behind all normal card content (z-index: -1
+   against the card's own stacking context) so any text it runs under stays
+   fully legible; the individual now-line/pace-marker it replaces are hidden
+   via .pred-trend-now-line and .pred-goal__pace below. */
+.pred-timeline-connector {
+  position: absolute;
+  width: 1px;
+  background: rgba(255,255,255,0.5);
+  z-index: -1;
+  pointer-events: none;
+}
+.pred-timeline-connector__label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translate(-50%, -100%);
+  margin-top: -4px;
+  font-size: 10px;
+  color: rgba(255,255,255,0.6);
+  white-space: nowrap;
+  letter-spacing: -0.1px;
+}
+/* Superseded by .pred-timeline-connector above — kept in the DOM (still
+   positioned by the same render logic) purely as internal geometry the
+   connector reads its own position from. */
+#predTrendNowLine, .pred-goal__pace {
+  opacity: 0;
 }
 .prediction-card .label-11 { text-transform: capitalize; }
 .prediction-card .pred-value {
@@ -776,7 +809,7 @@ p { margin: 0; }
   letter-spacing: -0.15px;
 }
 .pred-trend-chart {
-  margin-top: 14px;
+  margin-top: 24px;
 }
 .pred-trend-chart__row {
   position: relative;
@@ -788,7 +821,7 @@ p { margin: 0; }
   overflow: visible;
 }
 .pred-trend-zero-line {
-  stroke: #6b6b6b;
+  stroke: #c9a24b;
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
 }
@@ -796,11 +829,18 @@ p { margin: 0; }
   position: absolute;
   left: 0;
   transform: translate(0, -100%);
-  margin-top: -3px;
-  font-size: 9.5px;
-  color: #929292;
+  margin-top: -4px;
+  font-size: 10.5px;
+  color: #c9a24b;
   letter-spacing: -0.1px;
   pointer-events: none;
+}
+.pred-trend-now-line {
+  stroke: #ffffff;
+  stroke-width: 1.5;
+  opacity: 0.9;
+  vector-effect: non-scaling-stroke;
+  filter: drop-shadow(0 0 2px rgba(255,255,255,0.6));
 }
 .pred-trend-line {
   fill: none;
@@ -814,6 +854,13 @@ p { margin: 0; }
    matches its direction: green if it ends above the line, red if below. */
 .pred-trend-line.is-up { stroke: #30d158; }
 .pred-trend-line.is-down { stroke: #ff3533; }
+/* Prior (superseded) prediction versions — same shape generator as the live
+   line, just muted gray so they read as "behind" it, not competing with it. */
+.pred-trend-line--ver {
+  stroke: #6b6b6b;
+  stroke-width: 1.3;
+  opacity: 0.6;
+}
 .pred-trend-end-dot {
   position: absolute;
   width: 6px;
@@ -824,45 +871,163 @@ p { margin: 0; }
 }
 .pred-trend-end-dot.is-up { background: #30d158; box-shadow: 0 0 0 3px rgba(48,209,88,0.25); }
 .pred-trend-end-dot.is-down { background: #ff3533; box-shadow: 0 0 0 3px rgba(255,53,51,0.25); }
+.pred-trend-end-dot--ver {
+  width: 5px;
+  height: 5px;
+  background: #6b6b6b;
+  box-shadow: 0 0 0 3px rgba(107,107,107,0.25);
+}
+/* v1/v2/v3 dots are tappable — each reveals that version's own probability
+   and target in a small popover, like Dave's own demo of clicking into V1.
+   The visible dot stays its normal size; ::after just widens the actual hit
+   area so it's still comfortably tappable on a phone. */
+.pred-trend-end-dot.is-tappable {
+  pointer-events: auto;
+  cursor: pointer;
+}
+.pred-trend-end-dot.is-tappable::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 26px;
+  height: 26px;
+  transform: translate(-50%, -50%);
+}
+.pred-ver-popover {
+  position: absolute;
+  transform: translate(-50%, calc(-100% - 9px));
+  background: #0a0a0a;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 4px;
+  padding: 6px 9px;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 3;
+}
+.pred-ver-popover[hidden] { display: none; }
+.pred-ver-popover__ver {
+  font-size: 10px;
+  font-weight: 500;
+  color: #ffffff;
+  margin-right: 5px;
+}
+.pred-ver-popover__date {
+  font-size: 10px;
+  color: #6b6b6b;
+}
+.pred-ver-popover__desc {
+  font-size: 10px;
+  color: #c7c7c7;
+  margin-top: 2px;
+}
+.pred-trend-ver-label {
+  position: absolute;
+  font-size: 10.5px;
+  color: #929292;
+  letter-spacing: -0.1px;
+  transform: translate(7px, -50%);
+  pointer-events: none;
+  white-space: nowrap;
+}
 .pred-trend-chart__labels {
   display: flex;
   justify-content: space-between;
-  margin-top: 6px;
-  font-size: 9px;
+  margin-top: 10px;
+  font-size: 10px;
   color: #6b6b6b;
   letter-spacing: -0.15px;
 }
-.pred-timeline {
-  margin-top: 4px;
+.pred-goal {
+  margin-top: 18px;
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
-.pred-timeline__row {
+.pred-goal__row {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
 }
-.pred-timeline__row .label-11 { text-transform: capitalize; }
-.pred-timeline__left {
+.pred-goal__row .label-11 { text-transform: capitalize; }
+.pred-goal__target-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.pred-goal__target {
   font-size: 11px;
   color: #929292;
   letter-spacing: -0.22px;
 }
-.pred-timeline__bar {
+.pred-goal__info-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  border: 1px solid #6b6b6b;
+  color: #929292;
+  font-size: 9px;
+  font-style: italic;
+  font-family: Georgia, 'Times New Roman', serif;
+  line-height: 1;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.pred-goal__info-btn.is-open { border-color: #c7c7c7; color: #e3e2e2; }
+.pred-goal__info {
+  font-size: 10px;
+  color: #929292;
+  letter-spacing: -0.1px;
+  margin-top: -4px;
+}
+.pred-goal__info[hidden] { display: none; }
+.pred-goal__bar {
+  position: relative;
   height: 4px;
   border-radius: 0;
   background: rgba(255,255,255,0.12);
-  overflow: hidden;
 }
-.pred-timeline__fill {
+.pred-goal__fill {
   height: 100%;
   border-radius: 0;
-  background: #ffffff;
+  background: #6b6b6b;
+  position: relative;
+  z-index: 1;
 }
-.pred-timeline__range {
+.pred-goal__fill.is-behind { background: #ff3533; }
+.pred-goal__pace {
+  position: absolute;
+  top: -3px;
+  bottom: -3px;
+  width: 2px;
+  background: #ffffff;
+  box-shadow: 0 0 4px rgba(255,255,255,0.7);
+  transform: translateX(-1px);
+  z-index: 2;
+}
+.pred-goal__row--sub {
+  font-size: 11px;
+  letter-spacing: -0.2px;
+}
+.pred-goal__row--sub span:first-child { color: #929292; }
+.pred-goal__row--sub .is-ahead { color: #e3e2e2; }
+.pred-goal__row--sub .is-behind { color: #ff3533; }
+.pred-goal__status {
+  font-size: 11px;
+  letter-spacing: -0.2px;
+}
+.pred-goal__status.is-ahead { color: #30d158; }
+.pred-goal__status.is-behind { color: #ff3533; }
+.pred-goal__resolves {
   display: flex;
   justify-content: space-between;
+  margin-top: 4px;
+}
+.pred-goal__resolves .label-11 { text-transform: capitalize; }
+.pred-goal__resolves span:last-child {
   font-size: 11px;
   color: #929292;
   letter-spacing: -0.2px;
@@ -995,7 +1160,7 @@ p { margin: 0; }
 }
 .chart-popup {
   position: absolute;
-  top: -40px;
+  top: -130px;
   left: 0;
   right: 0;
   background: #0a0a0a;
@@ -1003,18 +1168,26 @@ p { margin: 0; }
   border-radius: 2px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 20px;
   padding: 12px 22px 14px;
   z-index: 2;
 }
 .chart-popup[hidden] { display: none; }
 .chart-popup__timestamp {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
   font-size: 10px;
   letter-spacing: -0.2px;
   line-height: 1.3;
 }
 .chart-popup__timestamp .date { color: #929292; }
 .chart-popup__timestamp .time { color: #ffffff; margin-left: 5px; }
+.chart-popup__target-badge {
+  color: #8fb0c9;
+  white-space: nowrap;
+}
 .chart-popup__row {
   display: flex;
   justify-content: space-between;
@@ -1030,6 +1203,14 @@ p { margin: 0; }
   font-size: 14px;
   color: #ffffff;
   letter-spacing: -0.15px;
+}
+.chart-popup__val.is-ahead { color: #30d158; }
+.chart-popup__val.is-behind { color: #ff3533; }
+.chart-popup__val.is-spx { color: #c9a24b; }
+.chart-popup__subval {
+  font-size: 11px;
+  color: #c9a24b;
+  letter-spacing: -0.1px;
 }
 
 /* ---------- Chart section ---------- */
@@ -1121,6 +1302,19 @@ p { margin: 0; }
   height: 179px;
 }
 .chart-canvas svg { position: absolute; top: 0; left: 0; }
+/* S&P 500 + target lines share the price line's own coordinate space (so
+   nothing reflows when they appear) but stay invisible until the user is
+   actually scrubbing the chart — idle state is always just the one line. */
+#chartSpxPath, #chartTargetPath {
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+#chartSpxPath { stroke: #c9a24b; stroke-width: 1.3; }
+#chartTargetPath { stroke: #8fb0c9; stroke-width: 1.2; stroke-dasharray: 4 3; }
+.chart-canvas-wrap.is-scrubbing #chartSpxPath,
+.chart-canvas-wrap.is-scrubbing #chartTargetPath {
+  opacity: 1;
+}
 .chart-volume {
   position: relative;
   width: 100%;
@@ -1134,9 +1328,12 @@ p { margin: 0; }
   flex: 1;
   min-width: 0;
   border-radius: 1px;
+  transition: background-color 0.15s ease;
 }
-.chart-volume .bar.up { background: rgba(48,209,88,0.55); }
-.chart-volume .bar.down { background: rgba(255,53,51,0.55); }
+.chart-volume .bar.up { background: rgba(48,209,88,0.28); }
+.chart-volume .bar.down { background: rgba(255,53,51,0.28); }
+.chart-canvas-wrap.is-scrubbing .chart-volume .bar.up { background: rgba(48,209,88,0.55); }
+.chart-canvas-wrap.is-scrubbing .chart-volume .bar.down { background: rgba(255,53,51,0.55); }
 .chart-hairline {
   position: absolute;
   top: -19px;
@@ -1150,6 +1347,14 @@ p { margin: 0; }
   height: 4.36px;
   border-radius: 50%;
   background: #ffffff;
+  animation: chartDotPulse 2s cubic-bezier(0.45,0,0.55,1) infinite;
+}
+@keyframes chartDotPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0.35); }
+  50% { box-shadow: 0 0 0 4px rgba(255,255,255,0.18); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .chart-dot { animation: none; }
 }
 .chart-tabline {
   height: 1px;
@@ -1241,6 +1446,52 @@ p { margin: 0; }
   color: #ffffff;
   letter-spacing: -0.28px;
 }
+.l1-tns-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.l1-tns-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.l1-tns-collapse-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+.l1-tns-collapse-btn .chev {
+  font-weight: 300;
+  font-size: 16px;
+  color: #ffffff;
+  line-height: 16px;
+  position: relative;
+  top: -1px;
+  display: inline-block;
+  transform: rotate(90deg);
+  transition: transform 0.18s;
+}
+.l1-tns-collapse-btn.collapsed .chev { transform: rotate(-90deg); }
+.l1-tns-preview {
+  font-size: 12px;
+  letter-spacing: -0.2px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  transition: opacity 0.15s;
+}
+.l1-tns-preview[hidden] { display: none; }
+.l1-tns-preview__sep { color: #5a5a5a; }
+.l1-tns-preview__vol { color: #929292; }
+.l1-tns-preview.is-up .l1-tns-preview__price,
+.l1-tns-preview.is-up .l1-tns-preview__arrow { color: #30d158; }
+.l1-tns-preview.is-down .l1-tns-preview__price,
+.l1-tns-preview.is-down .l1-tns-preview__arrow { color: #ff3533; }
+.l1-tns-body[hidden] { display: none; }
 .l1-row-picker { position: relative; }
 .l1-row-picker__btn {
   font-family: inherit;
@@ -1250,7 +1501,7 @@ p { margin: 0; }
   border: none;
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 6px;
   cursor: pointer;
   padding: 4px;
 }
@@ -1958,26 +2209,6 @@ p { margin: 0; }
     </div>
   </div>
 
-  <!-- Notes card -->
-  <div class="notes-card" id="notesCard">
-    <div class="notes-idle" id="notesIdle"><span>Notes</span></div>
-    <div class="notes-display" id="notesDisplay" hidden>
-      <div class="label-11">Notes</div>
-      <div class="notes-display__text" id="notesDisplayText"></div>
-    </div>
-    <div class="notes-edit" id="notesEdit" hidden>
-      <textarea id="notesInput" class="edit-textarea notes-textarea" rows="2" placeholder="Record a thought, a thesis, a question."></textarea>
-      <div class="edit-footer">
-        <span class="label-11">Notes</span>
-        <button type="button" class="arrow-btn" id="notesSend" disabled aria-label="Save note">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M3 12H21M21 12L14 5M21 12L14 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </button>
-      </div>
-    </div>
-  </div>
-
   <!-- Memo section -->
   <div class="memo-section">
     <div class="section-header--row">
@@ -2071,9 +2302,12 @@ p { margin: 0; }
     </div>
 
     <div class="prediction-card">
+      <div class="pred-timeline-connector" id="predTimelineConnector" hidden>
+        <span class="pred-timeline-connector__label" id="predTimelineLabel"></span>
+      </div>
       <div class="rich-card__head">
         <span class="label-11">Prediction</span>
-        <span class="version-chip">v2 <span class="chev">›</span></span>
+        <span class="version-chip">v3 <span class="chev">›</span></span>
       </div>
       <div class="pred-value">60% probability of 20%/yr over 3 years</div>
       <div class="pred-track-row">
@@ -2099,29 +2333,73 @@ p { margin: 0; }
         <div class="pred-trend-chart__row">
           <svg class="pred-trend-chart__svg" id="predTrendSvg" viewBox="0 0 300 56" preserveAspectRatio="none">
             <line class="pred-trend-zero-line" id="predTrendZeroLine" x1="0" x2="300" y1="0" y2="0"></line>
+            <path class="pred-trend-line pred-trend-line--ver" id="predTrendV1Line" d=""></path>
+            <path class="pred-trend-line pred-trend-line--ver" id="predTrendV2Line" d=""></path>
             <path class="pred-trend-line" id="predTrendEntryLine" d=""></path>
+            <line class="pred-trend-now-line" id="predTrendNowLine" x1="0" x2="0" y1="0" y2="56"></line>
           </svg>
           <div class="pred-trend-sp-label" id="predTrendSpLabel">S&amp;P</div>
+          <div class="pred-trend-end-dot pred-trend-end-dot--ver" id="predTrendV1Dot"></div>
+          <span class="pred-trend-ver-label" id="predTrendV1Label">v1</span>
+          <div class="pred-trend-end-dot pred-trend-end-dot--ver" id="predTrendV2Dot"></div>
+          <span class="pred-trend-ver-label" id="predTrendV2Label">v2</span>
           <div class="pred-trend-end-dot" id="predTrendEndDot"></div>
+          <span class="pred-trend-ver-label" id="predTrendV3Label">v3</span>
+          <div class="pred-ver-popover" id="predVerPopover" hidden>
+            <span class="pred-ver-popover__ver" id="predVerPopoverVer">v1</span>
+            <span class="pred-ver-popover__date" id="predVerPopoverDate">Oct 3, 2025</span>
+            <div class="pred-ver-popover__desc" id="predVerPopoverDesc">55% probability of 18%/yr</div>
+          </div>
         </div>
-        <div class="pred-trend-chart__labels">
-          <span>Oct</span><span>Dec</span><span>Feb</span><span>Apr</span><span>Jun</span>
-        </div>
+        <div class="pred-trend-chart__labels" id="predTrendLabels"></div>
       </div>
 
-      <div class="pred-timeline">
-        <div class="pred-timeline__row">
-          <span class="label-11">Time</span>
-          <span class="pred-timeline__left" id="predTimeLeft">2y 4mo left</span>
+      <div class="pred-goal">
+        <div class="pred-goal__row">
+          <span class="label-11">Against Target</span>
+          <span class="pred-goal__target-wrap">
+            <span class="pred-goal__target" id="predGoalTarget">72.8% goal</span>
+            <div class="pred-goal__info-btn" id="predGoalInfoBtn" role="button" tabindex="0" aria-label="What does this number mean?" aria-expanded="false">i</div>
+          </span>
         </div>
-        <div class="pred-timeline__bar">
-          <div class="pred-timeline__fill" id="predTimeFill" style="width: 22%"></div>
+        <div class="pred-goal__info" id="predGoalInfo" hidden></div>
+        <div class="pred-goal__bar">
+          <div class="pred-goal__fill" id="predGoalFill" style="width: 0%"></div>
+          <div class="pred-goal__pace" id="predGoalPace" style="left: 0%"></div>
         </div>
-        <div class="pred-timeline__range" id="predTimeRange"><span>Oct 2025</span><span>Oct 2028</span></div>
+        <div class="pred-goal__row pred-goal__row--sub">
+          <span id="predGoalSoFar">+0.0% so far</span>
+          <span id="predGoalNeeded">0.0% ahead of pace</span>
+        </div>
+        <div class="pred-goal__status" id="predGoalStatus">Running ahead of pace</div>
+        <div class="pred-goal__resolves">
+          <span class="label-11">Resolves</span>
+          <span>Oct 2028</span>
+        </div>
       </div>
     </div>
 
     <a class="link-row" href="#">Research Note <span class="chev">›</span></a>
+  </div>
+
+  <!-- Notes card -->
+  <div class="notes-card" id="notesCard">
+    <div class="notes-idle" id="notesIdle"><span>Notes</span></div>
+    <div class="notes-display" id="notesDisplay" hidden>
+      <div class="label-11">Notes</div>
+      <div class="notes-display__text" id="notesDisplayText"></div>
+    </div>
+    <div class="notes-edit" id="notesEdit" hidden>
+      <textarea id="notesInput" class="edit-textarea notes-textarea" rows="2" placeholder="Record a thought, a thesis, a question."></textarea>
+      <div class="edit-footer">
+        <span class="label-11">Notes</span>
+        <button type="button" class="arrow-btn" id="notesSend" disabled aria-label="Save note">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 12H21M21 12L14 5M21 12L14 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
   </div>
 
   <div class="divider"></div>
@@ -2228,7 +2506,10 @@ p { margin: 0; }
       </span>
 
       <div class="chart-popup" id="chartPopup" hidden>
-        <div class="chart-popup__timestamp"><span class="date">June 22, 2026</span><span class="time" id="popTime">10:30 AM</span></div>
+        <div class="chart-popup__timestamp">
+          <span class="chart-popup__ts-left"><span class="date">June 22, 2026</span><span class="time" id="popTime">10:30 AM</span></span>
+          <span class="chart-popup__target-badge">Target 20%/yr</span>
+        </div>
         <div class="chart-popup__row">
           <div class="chart-popup__stat">
             <div class="label-11">Price</div>
@@ -2257,6 +2538,21 @@ p { margin: 0; }
             <div class="chart-popup__val" id="popVolume">47.34K</div>
           </div>
         </div>
+        <div class="chart-popup__row">
+          <div class="chart-popup__stat">
+            <div class="label-11">Position</div>
+            <div class="chart-popup__val" id="popPosPct">+18.0%</div>
+          </div>
+          <div class="chart-popup__stat">
+            <div class="label-11">vs S&amp;P</div>
+            <div class="chart-popup__val is-spx" id="popVsSpx">+7.0 pp</div>
+            <div class="chart-popup__subval" id="popSpxPct">(S&amp;P 500 +11.0%)</div>
+          </div>
+          <div class="chart-popup__stat">
+            <div class="label-11">vs Target</div>
+            <div class="chart-popup__val" id="popVsTarget">Ahead</div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -2266,23 +2562,11 @@ p { margin: 0; }
       <div class="chart-dot" id="chartDot" style="left: 99px; top: 142px;"></div>
 
       <div class="chart-canvas" id="chartCanvas">
-        <div class="chart-seg" style="position:absolute; left:0.6px; top:0; width:158.5px; height:179px;">
-          <svg width="158.5" height="179" viewBox="0 0 158.5 179" preserveAspectRatio="none" fill="none">
-            <path id="chartPathA" d="M0.75 122.227C0.75 121.136 4.41667 84.8216 6.25 66.8005L11.25 63.6203L16.25 77.2497L20.25 14.5543L25.75 2.74209L30.25 43.1761L34.75 45.4477L40.75 52.2624L44.25 39.5416L59.25 119.955L63.75 91.7878L74.25 156.755L78.75 176.29L83.75 150.849L87.75 167.204L92.25 174.473L98.25 147.214L103.25 136.765L107.75 122.227L112.25 155.392L115.25 156.755L126.25 138.582L130.75 143.58L136.75 149.031L139.75 179.016L145.75 174.473L149.25 181.742L155.25 167.204L159.25 181.742" stroke="white" stroke-width="1.5" stroke-linecap="square" transform="scale(0.994,1)"/>
-          </svg>
-        </div>
-
-        <div class="chart-seg" style="position:absolute; left:159.3px; top:79.05px; width:158px; height:99.949px; transform:scaleX(-1);">
-          <svg width="158" height="99.949" viewBox="0 0 159.754 102.842" preserveAspectRatio="none" fill="none">
-            <path id="chartPathB" d="M0.75 68.4068C0.75 67.7979 4.4051 47.5206 6.23265 37.458L11.2169 35.6823L16.2011 43.2926L20.1885 8.285L25.6711 1.68936L30.1569 24.2667L34.6427 25.5351L40.6238 29.3403L44.1128 22.2373L59.0655 67.1384L63.5513 51.4103L74.0181 87.6863L78.5039 98.5945L83.4882 84.3885L87.4756 93.5209L91.9614 97.5798L97.9424 82.3591L102.927 76.5245L107.412 68.4068L111.898 86.9253L114.889 87.6863L125.854 77.5392L130.34 80.3296L136.321 83.3738L139.312 100.117L145.293 97.5798L148.782 101.639L154.763 93.5209L158.75 101.639" stroke="white" stroke-width="1.5" stroke-linecap="square"/>
-          </svg>
-        </div>
-
-        <div class="chart-seg" style="position:absolute; left:318.3px; top:130.74px; width:28.41px; height:16.466px; transform:scaleX(-1);">
-          <svg width="28.41" height="16.466" viewBox="0 0 30.4178 18.4831" preserveAspectRatio="none" fill="none">
-            <path id="chartPathC" d="M0.972461 0.972461L6.95354 3.32475L9.94406 16.2623L15.9251 14.3021L19.4141 17.4385L25.3952 11.1657L29.3826 17.4385" stroke="white" stroke-width="1.5" stroke-linecap="square"/>
-          </svg>
-        </div>
+        <svg id="chartSvg" width="348" height="179" viewBox="0 0 348 179" fill="none">
+          <path id="chartSpxPath" d="" fill="none" vector-effect="non-scaling-stroke"></path>
+          <path id="chartTargetPath" d="" fill="none" vector-effect="non-scaling-stroke"></path>
+          <path id="chartLinePath" d="" stroke="white" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="round" fill="none" vector-effect="non-scaling-stroke"></path>
+        </svg>
       </div>
 
       <div class="chart-volume" id="chartVolume"></div>
@@ -2324,31 +2608,46 @@ p { margin: 0; }
     </div>
 
     <div class="l1-tns-header">
-      <span class="l1-tns-title">Time &amp; Sales</span>
-      <div class="l1-row-picker">
-        <button type="button" class="l1-row-picker__btn" id="l1RowPickerBtn">10 <span class="chev">›</span></button>
-        <div class="l1-row-picker__menu" id="l1RowPickerMenu" hidden>
-          <button type="button" class="l1-row-picker__item active" data-rows="10">10</button>
-          <button type="button" class="l1-row-picker__item" data-rows="20">20</button>
-          <button type="button" class="l1-row-picker__item" data-rows="40">40</button>
+      <div class="l1-tns-left">
+        <span class="l1-tns-title">Time &amp; Sales</span>
+        <div class="l1-row-picker" id="l1RowPicker" hidden>
+          <button type="button" class="l1-row-picker__btn" id="l1RowPickerBtn">10 <span class="chev">›</span></button>
+          <div class="l1-row-picker__menu" id="l1RowPickerMenu" hidden>
+            <button type="button" class="l1-row-picker__item active" data-rows="10">10</button>
+            <button type="button" class="l1-row-picker__item" data-rows="20">20</button>
+            <button type="button" class="l1-row-picker__item" data-rows="40">40</button>
+          </div>
+        </div>
+      </div>
+      <div class="l1-tns-right">
+        <span class="l1-tns-preview" id="l1TnsPreview">
+          <span class="l1-tns-preview__price" id="l1TnsPreviewPrice">87.60</span>
+          <span class="l1-tns-preview__arrow" id="l1TnsPreviewArrow">▲</span>
+          <span class="l1-tns-preview__sep">/</span>
+          <span class="l1-tns-preview__vol" id="l1TnsPreviewVol">100</span>
+        </span>
+        <div class="l1-tns-collapse-btn collapsed" id="l1CollapseBtn" role="button" tabindex="0" aria-label="Expand Time &amp; Sales">
+          <span class="chev">›</span>
         </div>
       </div>
     </div>
 
-    <div class="l1-tns-tabs">
-      <button type="button" class="l1-tns-tab active" id="l1TabTick">Tick by Tick</button>
-      <button type="button" class="l1-tns-tab" id="l1TabVolume">Volume Analysis</button>
-    </div>
+    <div class="l1-tns-body" id="l1TnsBody" hidden>
+      <div class="l1-tns-tabs">
+        <button type="button" class="l1-tns-tab active" id="l1TabTick">Tick by Tick</button>
+        <button type="button" class="l1-tns-tab" id="l1TabVolume">Volume Analysis</button>
+      </div>
 
-    <div class="l1-tns-cols" id="l1TickCols">
-      <span>Time</span><span>Price</span><span>Volume</span><span class="l1-tns-col-side">Side</span>
-    </div>
-    <div class="l1-tns-cols" id="l1VolumeCols" hidden>
-      <span>Price</span><span></span><span></span><span class="l1-tns-col-side">Volume</span>
-    </div>
+      <div class="l1-tns-cols" id="l1TickCols">
+        <span>Time</span><span>Price</span><span>Volume</span><span class="l1-tns-col-side">Side</span>
+      </div>
+      <div class="l1-tns-cols" id="l1VolumeCols" hidden>
+        <span>Price</span><span></span><span></span><span class="l1-tns-col-side">Volume</span>
+      </div>
 
-    <div class="l1-tns-list" id="l1TickList"></div>
-    <div class="l1-tns-list" id="l1VolumeList" hidden></div>
+      <div class="l1-tns-list" id="l1TickList"></div>
+      <div class="l1-tns-list" id="l1VolumeList" hidden></div>
+    </div>
   </div>
 
   <!-- Key stats grid -->
@@ -2704,7 +3003,7 @@ p { margin: 0; }
       <img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiB2aWV3Qm94PSIwIDAgMTYgMTYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJTVkciPgo8cGF0aCBpZD0iVmVjdG9yIiBkPSJNMTAuNSAzTDUuNSA4TDEwLjUgMTMiIHN0cm9rZT0iI0M3QzdDNyIgc3Ryb2tlLXdpZHRoPSIxLjQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L2c+Cjwvc3ZnPgo=" alt="">
     </button>
     <span class="detail-overlay__title">Prediction</span>
-    <span class="detail-overlay__version" id="predOverlayVersion">v2 · Jun 9, 2026</span>
+    <span class="detail-overlay__version" id="predOverlayVersion">v3 · Jun 18, 2026</span>
   </div>
 
   <div class="detail-overlay__section" id="predOverlayView">
@@ -2715,14 +3014,20 @@ p { margin: 0; }
       <div class="pred-trend-chart__row">
         <svg class="pred-trend-chart__svg" id="predTrendSvgLg" viewBox="0 0 300 56" preserveAspectRatio="none" style="height:110px">
           <line class="pred-trend-zero-line" id="predTrendZeroLineLg" x1="0" x2="300" y1="0" y2="0"></line>
+          <path class="pred-trend-line pred-trend-line--ver" id="predTrendV1LineLg" d=""></path>
+          <path class="pred-trend-line pred-trend-line--ver" id="predTrendV2LineLg" d=""></path>
           <path class="pred-trend-line" id="predTrendEntryLineLg" d=""></path>
+          <line class="pred-trend-now-line" id="predTrendNowLineLg" x1="0" x2="0" y1="0" y2="56"></line>
         </svg>
         <div class="pred-trend-sp-label" id="predTrendSpLabelLg">S&amp;P</div>
+        <div class="pred-trend-end-dot pred-trend-end-dot--ver" id="predTrendV1DotLg"></div>
+        <span class="pred-trend-ver-label" id="predTrendV1LabelLg">v1</span>
+        <div class="pred-trend-end-dot pred-trend-end-dot--ver" id="predTrendV2DotLg"></div>
+        <span class="pred-trend-ver-label" id="predTrendV2LabelLg">v2</span>
         <div class="pred-trend-end-dot" id="predTrendEndDotLg"></div>
+        <span class="pred-trend-ver-label" id="predTrendV3LabelLg">v3</span>
       </div>
-      <div class="pred-trend-chart__labels">
-        <span>Oct</span><span>Dec</span><span>Feb</span><span>Apr</span><span>Jun</span>
-      </div>
+      <div class="pred-trend-chart__labels" id="predTrendLabelsLg"></div>
     </div>
 
     <button type="button" class="dt-cta pri dt-cta-open" data-update-open="pred">
@@ -2918,16 +3223,6 @@ p { margin: 0; }
     if (!notesEdit.hidden && !notesCard.contains(e.target)) closeNotesEdit();
   });
 
-  /* ---------- Chart tabs ---------- */
-  var chartTabs = document.getElementById('chartTabs');
-  chartTabs.addEventListener('click', function (e) {
-    var el = e.target.closest('span');
-    if (!el) return;
-    var current = chartTabs.querySelectorAll('span');
-    for (var i = 0; i < current.length; i++) current[i].classList.remove('active');
-    el.classList.add('active');
-  });
-
   /* ---------- Chart hover / drag interactivity ---------- */
   var chartCanvasWrap = document.getElementById('chartCanvasWrap');
   var chartHairline = document.getElementById('chartHairline');
@@ -2949,21 +3244,136 @@ p { margin: 0; }
   var popPctChg = document.getElementById('popPctChg');
   var popVolume = document.getElementById('popVolume');
   var popTime = document.getElementById('popTime');
+  var popPosPct = document.getElementById('popPosPct');
+  var popSpxPct = document.getElementById('popSpxPct');
+  var popVsSpx = document.getElementById('popVsSpx');
+  var popVsTarget = document.getElementById('popVsTarget');
 
-  /* Vertices lifted directly from the exported chart vector paths, mapped into canvas pixel space */
-  var rawA = [[0.75,122.227],[6.25,66.8005],[11.25,63.6203],[16.25,77.2497],[20.25,14.5543],[25.75,2.74209],[30.25,43.1761],[34.75,45.4477],[40.75,52.2624],[44.25,39.5416],[59.25,119.955],[63.75,91.7878],[74.25,156.755],[78.75,176.29],[83.75,150.849],[87.75,167.204],[92.25,174.473],[98.25,147.214],[103.25,136.765],[107.75,122.227],[112.25,155.392],[115.25,156.755],[126.25,138.582],[130.75,143.58],[136.75,149.031],[139.75,179.016],[145.75,174.473],[149.25,181.742],[155.25,167.204],[159.25,181.742]];
-  var rawB = [[0.75,68.4068],[6.23265,37.458],[11.2169,35.6823],[16.2011,43.2926],[20.1885,8.285],[25.6711,1.68936],[30.1569,24.2667],[34.6427,25.5351],[40.6238,29.3403],[44.1128,22.2373],[59.0655,67.1384],[63.5513,51.4103],[74.0181,87.6863],[78.5039,98.5945],[83.4882,84.3885],[87.4756,93.5209],[91.9614,97.5798],[97.9424,82.3591],[102.927,76.5245],[107.412,68.4068],[111.898,86.9253],[114.889,87.6863],[125.854,77.5392],[130.34,80.3296],[136.321,83.3738],[139.312,100.117],[145.293,97.5798],[148.782,101.639],[154.763,93.5209],[158.75,101.639]];
-  var rawC = [[0.972461,0.972461],[6.95354,3.32475],[9.94406,16.2623],[15.9251,14.3021],[19.4141,17.4385],[25.3952,11.1657],[29.3826,17.4385]];
+  /* ---------- Chart data ----------
+     One master ~10-year daily history for the stock and for the S&P, built
+     ONCE. Every range tab just slices a window out of the SAME master
+     series (instead of generating an unrelated random dataset per tab), so
+     1W is literally the tail end of 1M, which is the tail end of 6M, etc. —
+     they can never disagree about which way the stock has been moving.
+     Longer ranges sample more real (unsmoothed) days rather than fewer/
+     calmer ones, so MAX still reads as a genuinely volatile stock, not a
+     smoothed-out straight trend line. */
+  var chartLinePath = document.getElementById('chartLinePath');
+  var chartSpxPath = document.getElementById('chartSpxPath');
+  var chartTargetPath = document.getElementById('chartTargetPath');
+  var CHART_W = 348, CHART_H = 179;
+  var CHART_NOW = new Date(2026, 5, 22); /* matches the frozen "today" used elsewhere in this file */
+  var TODAY_PRICE = 87.60;
+  var TARGET_ANNUAL_RATE = 0.20; /* matches the Prediction card's "20%/yr" target */
+  var RESTING_FRAC = 0.289; /* preserves the original design's default hairline position */
+  var MASTER_DAYS = 3652; /* ~10 years of daily history behind every range */
 
-  var SEG_A = { left: 0.6, top: 0 };
-  var SEG_B = { left: 159.3, top: 79.05, width: 158 };
-  var SEG_C = { left: 318.3, top: 130.74, width: 28.41 };
+  /* `points` = real days sliced from the master walk (more = more genuine
+     day-to-day texture, not synthetic). `subPer`/`noiseAmp` control the
+     extra tapered-noise sub-points added between each pair of real points
+     (see densifyWithNoise) so the rendered line never reads as a handful of
+     straight segments, even at a glance. 5Y/max get the biggest noiseAmp
+     bump since a sparse sample of a decade-long walk otherwise looks calmer
+     than it should. */
+  var CHART_RANGES = {
+    '1D':  { spanDays: 1,           points: 60,  fmt: 'time',      subPer: 2, noiseAmp: 0.08 },
+    '1w':  { spanDays: 7,           points: 40,  fmt: 'weekday',   subPer: 4, noiseAmp: 0.22 },
+    '1M':  { spanDays: 30,          points: 40,  fmt: 'day',       subPer: 3, noiseAmp: 0.32 },
+    '6M':  { spanDays: 182,         points: 100, fmt: 'day',       subPer: 2, noiseAmp: 0.30 },
+    'YTD': { spanDays: 264,         points: 110, fmt: 'day',       subPer: 2, noiseAmp: 0.30 },
+    '1Y':  { spanDays: 365,         points: 130, fmt: 'month',     subPer: 2, noiseAmp: 0.32 },
+    '5Y':  { spanDays: 1826,        points: 160, fmt: 'monthyear', subPer: 2, noiseAmp: 0.55 },
+    'max': { spanDays: MASTER_DAYS, points: 180, fmt: 'year',      subPer: 2, noiseAmp: 0.60 }
+  };
+  var MONTHS_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  var WEEKDAYS_SHORT = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+  /* Daily random walk with drift, Brownian-bridge-corrected so it lands
+     exactly on totalChangePct by the last day. Values are cumulative %
+     change from day 0 (n days ago) — real per-day noise throughout, never
+     smoothed away regardless of how many days the walk spans. */
+  function buildDailyWalk(n, dailyVolPct, totalChangePct, seedOffset) {
+    var drift = totalChangePct / n;
+    var vals = [0];
+    for (var i = 1; i <= n; i++) {
+      vals.push(vals[i - 1] + drift + (pseudoRandom(i + seedOffset) - 0.5) * dailyVolPct);
+    }
+    var err = totalChangePct - vals[n];
+    for (var i = 1; i <= n; i++) vals[i] += err * (i / n);
+    return vals;
+  }
+
+  var MASTER_STOCK_PCT = buildDailyWalk(MASTER_DAYS, 1.8, 340, 11); /* volatile grower, ~10x over 10y */
+  var MASTER_SPX_PCT = buildDailyWalk(MASTER_DAYS, 1.05, 95, 23); /* steadier benchmark */
+
+  /* Picks `count` REAL (not averaged) days out of the last `spanDays` of a
+     master walk, then rebases so the slice's own first day reads as 0% —
+     each range measures the move from ITS window's start. */
+  function sliceMasterPct(master, spanDays, count) {
+    var n = master.length - 1;
+    var startIdx = Math.max(0, n - spanDays);
+    var span = n - startIdx;
+    var actualCount = Math.min(count, span + 1);
+    var out = [];
+    for (var i = 0; i < actualCount; i++) {
+      var idx = startIdx + Math.round((i / (actualCount - 1)) * span);
+      out.push(master[idx]);
+    }
+    var base = out[0];
+    return out.map(function (v) { return v - base; });
+  }
+
+  /* 1D has no intraday resolution in the daily master walk, so it gets its
+     own fine-grained walk that still bridges the exact same yesterday->today
+     boundary the master series already committed to. */
+  function buildIntradayPct(startPct, endPct, n, vol, seedOffset) {
+    var target = endPct - startPct;
+    var drift = target / (n - 1);
+    var vals = [0];
+    for (var i = 1; i < n; i++) {
+      vals.push(vals[i - 1] + drift + (pseudoRandom(i + seedOffset) - 0.5) * vol);
+    }
+    var err = target - vals[n - 1];
+    for (var i = 1; i < n; i++) vals[i] += err * (i / (n - 1));
+    return vals;
+  }
+
+  /* Inserts `subPer` extra points between every pair of consecutive real
+     values, each offset by sine-tapered noise that is zero exactly at the
+     real anchors (so the true macro data is never displaced) and peaks
+     mid-segment — turns a sparse set of real samples into a visibly busier
+     line without changing where it starts, ends, or which way it trends. */
+  function densifyWithNoise(arr, subPer, noiseAmp, seedOffset) {
+    if (!subPer) return arr.slice();
+    var out = [];
+    for (var i = 0; i < arr.length - 1; i++) {
+      var a = arr[i], b = arr[i + 1];
+      out.push(a);
+      for (var j = 1; j <= subPer; j++) {
+        var t = j / (subPer + 1);
+        var base = a + t * (b - a);
+        var taper = Math.sin(Math.PI * t);
+        var noise = (pseudoRandom(i * 97 + j * 13 + seedOffset) - 0.5) * 2 * noiseAmp * taper;
+        out.push(base + noise);
+      }
+    }
+    out.push(arr[arr.length - 1]);
+    return out;
+  }
+
+  function valueAtFrac(arr, frac) {
+    var idx = Math.max(0, Math.min(arr.length - 1, frac * (arr.length - 1)));
+    var i0 = Math.floor(idx), i1 = Math.min(i0 + 1, arr.length - 1);
+    var t = idx - i0;
+    return arr[i0] + t * (arr[i1] - arr[i0]);
+  }
 
   var points = [];
-  rawA.forEach(function (p) { points.push({ x: SEG_A.left + p[0], y: SEG_A.top + p[1] }); });
-  rawB.forEach(function (p) { points.push({ x: SEG_B.left + (SEG_B.width - p[0]), y: SEG_B.top + p[1] }); });
-  rawC.forEach(function (p) { points.push({ x: SEG_C.left + (SEG_C.width - p[0]), y: SEG_C.top + p[1] }); });
-  points.sort(function (a, b) { return a.x - b.x; });
+  var CHART_MIN_X = 0, CHART_MAX_X = CHART_W, CHART_MIN_Y = 0, CHART_MAX_Y = CHART_H;
+  var DAY_HIGH = 88.60, DAY_LOW = 86.20, PREV_CLOSE = 86.66;
+  var CHART_RANGE_SPAN_DAYS = 1, CHART_RANGE_FMT = 'time';
+  var RESTING_X = RESTING_FRAC * CHART_W;
+  var currentStockPct = [0], currentSpxPct = [0], currentTargetPct = [0];
 
   function yForX(x) {
     if (x <= points[0].x) return points[0].y;
@@ -2977,10 +3387,6 @@ p { margin: 0; }
     return points[points.length - 1].y;
   }
 
-  var CHART_MIN_X = points[0].x, CHART_MAX_X = points[points.length - 1].x;
-  var CHART_MIN_Y = 0, CHART_MAX_Y = 179;
-  var DAY_HIGH = 88.60, DAY_LOW = 86.20, PREV_CLOSE = 86.66;
-
   function formatTime(frac) {
     var startMin = 9 * 60 + 30, endMin = 16 * 60;
     var mins = startMin + frac * (endMin - startMin);
@@ -2990,7 +3396,77 @@ p { margin: 0; }
     return h12 + ':' + (m < 10 ? '0' : '') + m + ' ' + ampm;
   }
 
-  var RESTING_X = 101;
+  /* Non-time ranges show a date instead, interpolated between "spanDays ago"
+     and today (the same frozen CHART_NOW used across this file). */
+  function formatRangeLabel(frac, fmt, spanDays) {
+    if (fmt === 'time') return formatTime(frac);
+    var spanMs = spanDays * 86400000;
+    var d = new Date(CHART_NOW.getTime() - spanMs + frac * spanMs);
+    if (fmt === 'weekday') return WEEKDAYS_SHORT[d.getDay()] + ', ' + MONTHS_SHORT[d.getMonth()] + ' ' + d.getDate();
+    if (fmt === 'day') return MONTHS_SHORT[d.getMonth()] + ' ' + d.getDate();
+    if (fmt === 'month' || fmt === 'monthyear') return MONTHS_SHORT[d.getMonth()] + ' ' + d.getFullYear();
+    if (fmt === 'year') return String(d.getFullYear());
+    return formatTime(frac);
+  }
+
+  function renderChartRange(rangeKey) {
+    var cfg = CHART_RANGES[rangeKey] || CHART_RANGES['1D'];
+    var n = MASTER_STOCK_PCT.length - 1;
+    var stockPct, spxPct;
+
+    if (rangeKey === '1D') {
+      stockPct = buildIntradayPct(MASTER_STOCK_PCT[n - 1], MASTER_STOCK_PCT[n], cfg.points, 0.55, 501);
+      spxPct = buildIntradayPct(MASTER_SPX_PCT[n - 1], MASTER_SPX_PCT[n], cfg.points, 0.32, 502);
+    } else {
+      stockPct = sliceMasterPct(MASTER_STOCK_PCT, cfg.spanDays, cfg.points);
+      spxPct = sliceMasterPct(MASTER_SPX_PCT, cfg.spanDays, cfg.points);
+    }
+
+    stockPct = densifyWithNoise(stockPct, cfg.subPer, cfg.noiseAmp, 601);
+    spxPct = densifyWithNoise(spxPct, cfg.subPer, cfg.noiseAmp * 0.6, 602);
+
+    /* Target = smooth compounding curve at the prediction's target rate,
+       sharing the same window-start origin as the stock/S&P lines. */
+    var targetPct = stockPct.map(function (v, i) {
+      var t = i / (stockPct.length - 1);
+      var yearsElapsed = (cfg.spanDays * t) / 365;
+      return (Math.pow(1 + TARGET_ANNUAL_RATE, yearsElapsed) - 1) * 100;
+    });
+
+    var startPrice = TODAY_PRICE / (1 + stockPct[stockPct.length - 1] / 100);
+
+    /* Shared Y-domain across stock + S&P + target so toggling the overlay
+       lines on hover never reshapes or rescales the always-visible line. */
+    var allPct = stockPct.concat(spxPct).concat(targetPct);
+    var minPct = Math.min.apply(null, allPct), maxPct = Math.max.apply(null, allPct);
+    var rangePct = (maxPct - minPct) || 1;
+    function pctToXY(arr) {
+      return arr.map(function (p, i) {
+        return { x: (i / (arr.length - 1)) * CHART_W, y: CHART_H - ((p - minPct) / rangePct) * CHART_H };
+      });
+    }
+
+    points = pctToXY(stockPct);
+    function toPairs(pts) { return pts.map(function (p) { return [p.x, p.y]; }); }
+    chartLinePath.setAttribute('d', smoothPathD(toPairs(points)));
+    chartSpxPath.setAttribute('d', smoothPathD(toPairs(pctToXY(spxPct))));
+    chartTargetPath.setAttribute('d', smoothPathD(toPairs(pctToXY(targetPct))));
+
+    CHART_MIN_X = points[0].x;
+    CHART_MAX_X = points[points.length - 1].x;
+    DAY_HIGH = startPrice * (1 + maxPct / 100);
+    DAY_LOW = startPrice * (1 + minPct / 100);
+    PREV_CLOSE = startPrice;
+    CHART_RANGE_SPAN_DAYS = cfg.spanDays;
+    CHART_RANGE_FMT = cfg.fmt;
+    RESTING_X = CHART_MIN_X + RESTING_FRAC * (CHART_MAX_X - CHART_MIN_X);
+    currentStockPct = stockPct;
+    currentSpxPct = spxPct;
+    currentTargetPct = targetPct;
+
+    buildVolumeBars();
+    updateAt(null);
+  }
 
   function updateAt(clientX) {
     var rect = chartCanvasWrap.getBoundingClientRect();
@@ -3007,16 +3483,11 @@ p { margin: 0; }
     var price = DAY_LOW + (1 - (y - CHART_MIN_Y) / (CHART_MAX_Y - CHART_MIN_Y)) * (DAY_HIGH - DAY_LOW);
     var chg = price - PREV_CLOSE;
     var pct = (chg / PREV_CLOSE) * 100;
+    var label = formatRangeLabel(frac, CHART_RANGE_FMT, CHART_RANGE_SPAN_DAYS);
 
-    if (clientX === null) {
-      chartPrice.textContent = '87.60';
-      chartChange.textContent = '+1.54 (+1.2%)';
-      chartTimeFloat.textContent = '10:30 AM';
-    } else {
-      chartPrice.textContent = price.toFixed(2);
-      chartChange.textContent = (chg >= 0 ? '+' : '') + chg.toFixed(2) + ' (' + (pct >= 0 ? '+' : '') + pct.toFixed(1) + '%)';
-      chartTimeFloat.textContent = formatTime(frac);
-    }
+    chartPrice.textContent = price.toFixed(2);
+    chartChange.textContent = (chg >= 0 ? '+' : '') + chg.toFixed(2) + ' (' + (pct >= 0 ? '+' : '') + pct.toFixed(1) + '%)';
+    chartTimeFloat.textContent = label;
     chartTimeFloat.style.left = Math.max(0, Math.min(x - 28, rect.width - 60)) + 'px';
 
     popPrice.textContent = price.toFixed(2);
@@ -3025,16 +3496,32 @@ p { margin: 0; }
     popAvgPrc.textContent = ((DAY_HIGH + DAY_LOW) / 2).toFixed(2);
     popTurnover.textContent = (10 + frac * 8).toFixed(2) + 'M';
     popVolume.textContent = (30 + frac * 25).toFixed(2) + 'K';
-    popTime.textContent = clientX === null ? '10:30 AM' : formatTime(frac);
+    popTime.textContent = label;
+
+    /* Position vs S&P vs target, evaluated at this same scrub point. */
+    var stockPctHere = valueAtFrac(currentStockPct, frac);
+    var spxPctHere = valueAtFrac(currentSpxPct, frac);
+    var targetPctHere = valueAtFrac(currentTargetPct, frac);
+    var vsSpx = stockPctHere - spxPctHere;
+    var vsTarget = stockPctHere - targetPctHere;
+
+    popPosPct.textContent = (stockPctHere >= 0 ? '+' : '') + stockPctHere.toFixed(1) + '%';
+    popSpxPct.textContent = '(S&P 500 ' + (spxPctHere >= 0 ? '+' : '') + spxPctHere.toFixed(1) + '%)';
+    popVsSpx.textContent = (vsSpx >= 0 ? '+' : '') + vsSpx.toFixed(1) + ' pp';
+    popVsTarget.textContent = vsTarget >= 0 ? 'Ahead' : 'Behind';
+    popVsTarget.classList.toggle('is-ahead', vsTarget >= 0);
+    popVsTarget.classList.toggle('is-behind', vsTarget < 0);
   }
 
   function showInteraction(clientX) {
     chartPopup.hidden = false;
+    chartCanvasWrap.classList.add('is-scrubbing');
     updateAt(clientX);
   }
   function hideInteraction() {
     updateAt(null);
     chartPopup.hidden = true;
+    chartCanvasWrap.classList.remove('is-scrubbing');
   }
 
   chartCanvasWrap.addEventListener('mousemove', function (e) { updateAt(e.clientX); });
@@ -3046,7 +3533,8 @@ p { margin: 0; }
 
   /* ---------- Volume bars (colored by trend of the underlying price line) ---------- */
   var chartVolumeEl = document.getElementById('chartVolume');
-  (function buildVolumeBars() {
+  function buildVolumeBars() {
+    chartVolumeEl.innerHTML = '';
     var BAR_COUNT = 42;
     var frag = document.createDocumentFragment();
     var prevY = null;
@@ -3064,7 +3552,19 @@ p { margin: 0; }
       frag.appendChild(bar);
     }
     chartVolumeEl.appendChild(frag);
-  })();
+  }
+
+  /* ---------- Chart tabs ---------- */
+  var chartTabs = document.getElementById('chartTabs');
+  chartTabs.addEventListener('click', function (e) {
+    var el = e.target.closest('span');
+    if (!el) return;
+    var current = chartTabs.querySelectorAll('span');
+    for (var i = 0; i < current.length; i++) current[i].classList.remove('active');
+    el.classList.add('active');
+    renderChartRange(el.getAttribute('data-range'));
+  });
+  renderChartRange('1D');
 
   /* ---------- Order Book - Level 1 (live) ---------- */
   var l1Bid = document.getElementById('l1Bid');
@@ -3134,6 +3634,12 @@ p { margin: 0; }
     row.appendChild(t); row.appendChild(p); row.appendChild(v); row.appendChild(s);
     l1TickList.insertBefore(row, l1TickList.firstChild);
     while (l1TickList.children.length > l1RowLimit) l1TickList.removeChild(l1TickList.lastChild);
+
+    l1TnsPreviewPrice.textContent = priceStr;
+    l1TnsPreviewArrow.textContent = s.textContent;
+    l1TnsPreviewVol.textContent = size;
+    l1TnsPreview.classList.toggle('is-up', status === 'up');
+    l1TnsPreview.classList.toggle('is-down', status === 'down');
 
     l1Trades.unshift({ price: priceStr, size: size, status: status });
     if (l1Trades.length > 100) l1Trades.length = 100;
@@ -3213,6 +3719,25 @@ p { margin: 0; }
     l1TickCols.hidden = true;
   });
 
+  var l1CollapseBtn = document.getElementById('l1CollapseBtn');
+  var l1TnsBody = document.getElementById('l1TnsBody');
+  var l1TnsPreview = document.getElementById('l1TnsPreview');
+  var l1TnsPreviewPrice = document.getElementById('l1TnsPreviewPrice');
+  var l1TnsPreviewArrow = document.getElementById('l1TnsPreviewArrow');
+  var l1TnsPreviewVol = document.getElementById('l1TnsPreviewVol');
+  var l1RowPicker = document.getElementById('l1RowPicker');
+  function toggleL1TnsCollapse() {
+    l1TnsBody.hidden = !l1TnsBody.hidden;
+    l1CollapseBtn.classList.toggle('collapsed', l1TnsBody.hidden);
+    l1CollapseBtn.setAttribute('aria-label', l1TnsBody.hidden ? 'Expand Time & Sales' : 'Collapse Time & Sales');
+    l1TnsPreview.hidden = !l1TnsBody.hidden;
+    l1RowPicker.hidden = l1TnsBody.hidden;
+  }
+  l1CollapseBtn.addEventListener('click', toggleL1TnsCollapse);
+  l1CollapseBtn.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleL1TnsCollapse(); }
+  });
+
   /* ---------- Live market simulation (header, price block, position stats) ---------- */
   var headerPrice = document.getElementById('headerPrice');
   var headerChg = document.getElementById('headerChg');
@@ -3229,11 +3754,62 @@ p { margin: 0; }
   var predTrendZeroLine = document.getElementById('predTrendZeroLine');
   var predTrendSpLabel = document.getElementById('predTrendSpLabel');
   var predTrendEndDot = document.getElementById('predTrendEndDot');
+  var predTrendNowLine = document.getElementById('predTrendNowLine');
+  var predTrendV1Line = document.getElementById('predTrendV1Line');
+  var predTrendV2Line = document.getElementById('predTrendV2Line');
+  var predTrendV1Dot = document.getElementById('predTrendV1Dot');
+  var predTrendV2Dot = document.getElementById('predTrendV2Dot');
+  var predTrendV1Label = document.getElementById('predTrendV1Label');
+  var predTrendV2Label = document.getElementById('predTrendV2Label');
+  var predTrendV3Label = document.getElementById('predTrendV3Label');
+  var predTrendLabels = document.getElementById('predTrendLabels');
   /* larger duplicate chart shown inside the Prediction detail overlay */
   var predTrendEntryLineLg = document.getElementById('predTrendEntryLineLg');
   var predTrendZeroLineLg = document.getElementById('predTrendZeroLineLg');
   var predTrendSpLabelLg = document.getElementById('predTrendSpLabelLg');
   var predTrendEndDotLg = document.getElementById('predTrendEndDotLg');
+  var predTrendNowLineLg = document.getElementById('predTrendNowLineLg');
+  var predTrendV1LineLg = document.getElementById('predTrendV1LineLg');
+  var predTrendV2LineLg = document.getElementById('predTrendV2LineLg');
+  var predTrendV1DotLg = document.getElementById('predTrendV1DotLg');
+  var predTrendV2DotLg = document.getElementById('predTrendV2DotLg');
+  var predTrendV1LabelLg = document.getElementById('predTrendV1LabelLg');
+  var predTrendV2LabelLg = document.getElementById('predTrendV2LabelLg');
+  var predTrendV3LabelLg = document.getElementById('predTrendV3LabelLg');
+  var predTrendLabelsLg = document.getElementById('predTrendLabelsLg');
+  var predGoalTarget = document.getElementById('predGoalTarget');
+  var predGoalFill = document.getElementById('predGoalFill');
+  var predGoalPace = document.getElementById('predGoalPace');
+  var predGoalSoFar = document.getElementById('predGoalSoFar');
+  var predGoalNeeded = document.getElementById('predGoalNeeded');
+  var predGoalStatus = document.getElementById('predGoalStatus');
+  var predTimelineConnector = document.getElementById('predTimelineConnector');
+  var predTimelineLabel = document.getElementById('predTimelineLabel');
+  var predTrendSvg = document.getElementById('predTrendSvg');
+  var predGoalBar = document.querySelector('.pred-goal__bar');
+  var predGoalInfoBtn = document.getElementById('predGoalInfoBtn');
+  var predGoalInfo = document.getElementById('predGoalInfo');
+  var predVerPopover = document.getElementById('predVerPopover');
+  var predVerPopoverVer = document.getElementById('predVerPopoverVer');
+  var predVerPopoverDate = document.getElementById('predVerPopoverDate');
+  var predVerPopoverDesc = document.getElementById('predVerPopoverDesc');
+  /* Fixed dates (matching the rest of this file's "frozen demo clock"
+     convention) driving both the pace marker and the compounded target. */
+  var PRED_GOAL_START = new Date(2025, 9, 14);
+  var PRED_GOAL_END = new Date(2028, 9, 14);
+  var PRED_GOAL_NOW = new Date(2026, 5, 22);
+  var PRED_GOAL_PCT = (Math.pow(1.20, 3) - 1) * 100; /* 20%/yr compounded over 3 years */
+  predGoalInfo.textContent = '20%/yr compounded over 3 years = ' + PRED_GOAL_PCT.toFixed(1) + '% total return.';
+  function togglePredGoalInfo() {
+    var opening = predGoalInfo.hidden;
+    predGoalInfo.hidden = !opening;
+    predGoalInfoBtn.classList.toggle('is-open', opening);
+    predGoalInfoBtn.setAttribute('aria-expanded', opening ? 'true' : 'false');
+  }
+  predGoalInfoBtn.addEventListener('click', function (e) { e.stopPropagation(); togglePredGoalInfo(); });
+  predGoalInfoBtn.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); togglePredGoalInfo(); }
+  });
   /* The "since current prediction" figure is text-only (no longer plotted) —
      PRED_CURRENT_ANCHORS/PRED_CURRENT_POINTS still drive its trailing-average
      arrow via the same noisyLine() generator used before. */
@@ -3246,6 +3822,32 @@ p { margin: 0; }
      to average over. */
   var PRED_TRAILING_WINDOW = 7;
   var PRED_CHART_W = 300, PRED_CHART_H = 56, PRED_CHART_PAD = 6;
+
+  /* Fraction of the 3-year goal window that has elapsed as of "now" — the one
+     number that the trend chart's "now" line, the truncated version lines,
+     and the goal bar's pace marker all key off of, so the two sections read
+     as a single shared timeline instead of two independent ones. */
+  function predTimeFrac() {
+    var totalDays = Math.round((PRED_GOAL_END - PRED_GOAL_START) / 86400000);
+    var elapsedDays = Math.round((PRED_GOAL_NOW - PRED_GOAL_START) / 86400000);
+    return Math.max(0, Math.min(1, elapsedDays / totalDays));
+  }
+
+  /* Yearly checkpoints across the full 3-year span (entry -> resolves), in
+     place of the old Oct/Dec/Feb/Apr/Jun labels, which only ever made sense
+     for a ~9-month window. */
+  function buildPredTimelineLabels() {
+    var years = Math.round((PRED_GOAL_END - PRED_GOAL_START) / (365.25 * 86400000));
+    var labels = [];
+    for (var i = 0; i <= years; i++) {
+      var d = new Date(PRED_GOAL_START.getFullYear() + i, PRED_GOAL_START.getMonth(), PRED_GOAL_START.getDate());
+      labels.push(MONTHS_SHORT[d.getMonth()] + " '" + String(d.getFullYear()).slice(-2));
+    }
+    return labels;
+  }
+  var predTimelineLabelsHTML = buildPredTimelineLabels().map(function (l) { return '<span>' + l + '</span>'; }).join('');
+  predTrendLabels.innerHTML = predTimelineLabelsHTML;
+  predTrendLabelsLg.innerHTML = predTimelineLabelsHTML;
 
   function pseudoRandom(seed) {
     var s = Math.sin(seed * 12.9898) * 43758.5453;
@@ -3341,24 +3943,52 @@ p { margin: 0; }
 
     /* Starts at 0 (the S&P baseline) and ends at the live value, staying on
        that one side the whole way — see monotoneNoisyLine(). */
-    var alphaSeries = monotoneNoisyLine(alphaPpVal, PRED_ALPHA_POINTS, 0.22, 0);
+    var alphaSeries = monotoneNoisyLine(alphaPpVal, PRED_ALPHA_POINTS, 0.008, 0);
     var predSeries = noisyLine(PRED_CURRENT_ANCHORS, PRED_CURRENT_POINTS, 0.7, 17);
     predSeries[predSeries.length - 1] = predPpVal;
 
-    var minV = Math.min(0, Math.min.apply(null, alphaSeries));
-    var maxV = Math.max(0, Math.max.apply(null, alphaSeries));
+    /* Prior (superseded) prediction versions — same shape generator as the
+       live v3 line, scaled down with their own noise seeds so they read as
+       related-but-distinct tracks that always stay behind it. */
+    var v1Series = monotoneNoisyLine(alphaPpVal * 0.42, PRED_ALPHA_POINTS, 0.01, 31);
+    var v2Series = monotoneNoisyLine(alphaPpVal * 0.7, PRED_ALPHA_POINTS, 0.01, 47);
+
+    var minV = Math.min(0, Math.min.apply(null, alphaSeries), Math.min.apply(null, v1Series), Math.min.apply(null, v2Series));
+    var maxV = Math.max(0, Math.max.apply(null, alphaSeries), Math.max.apply(null, v1Series), Math.max.apply(null, v2Series));
     var range = (maxV - minV) || 1;
 
-    var alphaPts = seriesToXY(alphaSeries, PRED_ALPHA_POINTS, 0, minV, range);
+    /* Every one of these lines only has real ground to stand on up through
+       "now" — the same point the goal bar's pace marker sits at — so they're
+       compressed into that leading slice of the chart instead of stretching
+       across the full 3-year span the way the old single line used to. */
+    var timeFrac = predTimeFrac();
+    function toTruncatedXY(series) {
+      var pts = seriesToXY(series, PRED_ALPHA_POINTS, 0, minV, range);
+      pts.forEach(function (p) { p[0] *= timeFrac; });
+      return pts;
+    }
+    var alphaPts = toTruncatedXY(alphaSeries);
+    var v1Pts = toTruncatedXY(v1Series);
+    var v2Pts = toTruncatedXY(v2Series);
     var entryPath = smoothPathD(alphaPts);
+    var v1Path = smoothPathD(v1Pts);
+    var v2Path = smoothPathD(v2Pts);
     var isUp = alphaPpVal >= 0;
+    var nowX = (timeFrac * PRED_CHART_W).toFixed(1);
 
-    [[predTrendEntryLine, predTrendZeroLine, predTrendSpLabel, predTrendEndDot],
-     [predTrendEntryLineLg, predTrendZeroLineLg, predTrendSpLabelLg, predTrendEndDotLg]].forEach(function (refs) {
-      var line = refs[0], zeroLine = refs[1], spLabel = refs[2], endDot = refs[3];
+    [[predTrendEntryLine, predTrendZeroLine, predTrendSpLabel, predTrendEndDot, predTrendNowLine, predTrendV1Line, predTrendV2Line, predTrendV1Dot, predTrendV2Dot, predTrendV1Label, predTrendV2Label, predTrendV3Label],
+     [predTrendEntryLineLg, predTrendZeroLineLg, predTrendSpLabelLg, predTrendEndDotLg, predTrendNowLineLg, predTrendV1LineLg, predTrendV2LineLg, predTrendV1DotLg, predTrendV2DotLg, predTrendV1LabelLg, predTrendV2LabelLg, predTrendV3LabelLg]
+    ].forEach(function (refs) {
+      var line = refs[0], zeroLine = refs[1], spLabel = refs[2], endDot = refs[3], nowLine = refs[4],
+          v1Line = refs[5], v2Line = refs[6], v1Dot = refs[7], v2Dot = refs[8],
+          v1Label = refs[9], v2Label = refs[10], v3Label = refs[11];
       line.setAttribute('d', entryPath);
       line.classList.toggle('is-up', isUp);
       line.classList.toggle('is-down', !isUp);
+      v1Line.setAttribute('d', v1Path);
+      v2Line.setAttribute('d', v2Path);
+      nowLine.setAttribute('x1', nowX);
+      nowLine.setAttribute('x2', nowX);
 
       /* Zero line = "matching the S&P exactly" — the one reference every pp
          figure on this card is measured against, and the point the "since
@@ -3373,6 +4003,20 @@ p { margin: 0; }
       endDot.style.top = (endPt[1] / PRED_CHART_H * 100).toFixed(2) + '%';
       endDot.classList.toggle('is-up', isUp);
       endDot.classList.toggle('is-down', !isUp);
+      v3Label.style.left = endDot.style.left;
+      v3Label.style.top = endDot.style.top;
+
+      var v1End = v1Pts[v1Pts.length - 1];
+      v1Dot.style.left = (v1End[0] / PRED_CHART_W * 100).toFixed(2) + '%';
+      v1Dot.style.top = (v1End[1] / PRED_CHART_H * 100).toFixed(2) + '%';
+      v1Label.style.left = v1Dot.style.left;
+      v1Label.style.top = v1Dot.style.top;
+
+      var v2End = v2Pts[v2Pts.length - 1];
+      v2Dot.style.left = (v2End[0] / PRED_CHART_W * 100).toFixed(2) + '%';
+      v2Dot.style.top = (v2End[1] / PRED_CHART_H * 100).toFixed(2) + '%';
+      v2Label.style.left = v2Dot.style.left;
+      v2Label.style.top = v2Dot.style.top;
     });
 
     /* Arrows: today's value vs the trailing average of the last
@@ -3392,6 +4036,115 @@ p { margin: 0; }
     predTrackingArrow.classList.toggle('is-down', !predUp);
     predTrackingRef.textContent = 'vs trailing avg ' + (predAvg >= 0 ? '+' : '') + predAvg.toFixed(1) + ' pp';
   }
+
+  /* "Against Target" — actualPct is the position's own realized return
+     (not vs S&P), compared to the compounded 20%/yr-over-3-years goal and
+     to where a straight-line pace to that goal would put you by now. */
+  function renderPredGoal(actualPct) {
+    var timeFrac = predTimeFrac();
+    var onPacePct = PRED_GOAL_PCT * timeFrac;
+    var gap = actualPct - onPacePct;
+    var ahead = gap >= 0;
+    var reached = actualPct >= PRED_GOAL_PCT;
+
+    predGoalTarget.textContent = PRED_GOAL_PCT.toFixed(1) + '% goal';
+    predGoalFill.style.width = Math.max(0, Math.min(100, (actualPct / PRED_GOAL_PCT) * 100)).toFixed(1) + '%';
+    predGoalFill.classList.toggle('is-behind', !ahead && !reached);
+    predGoalPace.style.left = (timeFrac * 100).toFixed(1) + '%';
+
+    predGoalSoFar.textContent = (actualPct >= 0 ? '+' : '') + actualPct.toFixed(1) + '% so far';
+    predGoalNeeded.textContent = ahead
+      ? (Math.abs(gap).toFixed(1) + '% ahead of pace')
+      : (Math.abs(gap).toFixed(1) + '% needed by now');
+    predGoalNeeded.classList.toggle('is-ahead', ahead);
+    predGoalNeeded.classList.toggle('is-behind', !ahead);
+
+    predGoalStatus.textContent = reached
+      ? 'Target reached — not yet realized'
+      : (ahead ? 'Running ahead of pace' : 'Running behind pace');
+    predGoalStatus.classList.toggle('is-ahead', ahead || reached);
+    predGoalStatus.classList.toggle('is-behind', !ahead && !reached);
+  }
+
+  /* "2y 3mo remaining" — the gap between now and the goal's resolve date,
+     shown at the top of the timeline connector the same way the main stock
+     chart floats a time label above its hairline. */
+  function predTimeRemainingLabel() {
+    var from = PRED_GOAL_NOW, to = PRED_GOAL_END;
+    var months = (to.getFullYear() - from.getFullYear()) * 12 + (to.getMonth() - from.getMonth());
+    if (to.getDate() < from.getDate()) months -= 1;
+    if (months < 0) months = 0;
+    var years = Math.floor(months / 12);
+    var rem = months % 12;
+    var parts = [];
+    if (years) parts.push(years + 'y');
+    parts.push(rem + 'mo');
+    return parts.join(' ') + ' remaining';
+  }
+
+  /* One line spanning from the top of the trend chart down through the goal
+     bar, positioned from the chart's own timeFrac rather than by measuring
+     the (now-hidden) individual now-line/pace-marker elements, so it can
+     never visually drift out of alignment with either of them. */
+  function renderPredTimelineConnector() {
+    var cardRect = document.querySelector('.prediction-card').getBoundingClientRect();
+    var svgRect = predTrendSvg.getBoundingClientRect();
+    var barRect = predGoalBar.getBoundingClientRect();
+    var x = svgRect.left + predTimeFrac() * svgRect.width;
+    predTimelineConnector.style.left = (x - cardRect.left).toFixed(1) + 'px';
+    predTimelineConnector.style.top = (svgRect.top - cardRect.top).toFixed(1) + 'px';
+    predTimelineConnector.style.height = Math.max(0, barRect.bottom - svgRect.top).toFixed(1) + 'px';
+    predTimelineLabel.textContent = predTimeRemainingLabel();
+    predTimelineConnector.hidden = false;
+  }
+
+  /* Tappable v1/v2/v3 dots — mirrors Dave's own demo of clicking into a prior
+     version and seeing its own probability/target. v1 and v2 read from the
+     saved history entries; v3 (current) reads the live state directly.
+     DETAIL is defined further below in the file, but this only runs on a
+     click, well after the whole script (and DETAIL) has finished loading. */
+  function predVerData(key) {
+    var s = DETAIL.pred.state;
+    if (key === 'v3') return { ver: 'v' + s.version, date: s.date, prob: s.prob, hurdle: s.hurdle };
+    var h = s.history[key === 'v1' ? 0 : 1];
+    return { ver: 'v' + h.version, date: h.date, prob: h.prob, hurdle: h.hurdle };
+  }
+  var predVerPopoverOpenKey = null;
+  function showPredVerPopover(key, dotEl) {
+    var d = predVerData(key);
+    predVerPopoverVer.textContent = d.ver;
+    predVerPopoverDate.textContent = d.date;
+    predVerPopoverDesc.textContent = d.prob + '% probability of ' + d.hurdle + '%/yr';
+    var rowRect = dotEl.closest('.pred-trend-chart__row').getBoundingClientRect();
+    var dotRect = dotEl.getBoundingClientRect();
+    predVerPopover.style.left = (dotRect.left + dotRect.width / 2 - rowRect.left).toFixed(1) + 'px';
+    predVerPopover.style.top = (dotRect.top - rowRect.top).toFixed(1) + 'px';
+    predVerPopover.hidden = false;
+    predVerPopoverOpenKey = key;
+  }
+  function hidePredVerPopover() {
+    predVerPopover.hidden = true;
+    predVerPopoverOpenKey = null;
+  }
+  [['v1', predTrendV1Dot], ['v2', predTrendV2Dot], ['v3', predTrendEndDot]].forEach(function (pair) {
+    var key = pair[0], dot = pair[1];
+    dot.classList.add('is-tappable');
+    dot.setAttribute('role', 'button');
+    dot.setAttribute('tabindex', '0');
+    dot.setAttribute('aria-label', key + ' prediction details');
+    function toggle() {
+      if (predVerPopoverOpenKey === key) hidePredVerPopover();
+      else showPredVerPopover(key, dot);
+    }
+    dot.addEventListener('click', function (e) { e.stopPropagation(); toggle(); });
+    dot.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); toggle(); }
+    });
+  });
+  document.addEventListener('click', function (e) {
+    if (!predVerPopover.hidden && !predVerPopover.contains(e.target) && !e.target.closest('.pred-trend-end-dot')) hidePredVerPopover();
+  });
+
   var marketClock = document.getElementById('marketClock');
   var posMarketValueUSD = document.getElementById('posMarketValueUSD');
   var posMarketValuePct = document.getElementById('posMarketValuePct');
@@ -3594,6 +4347,8 @@ p { margin: 0; }
     predTrackingVal.textContent = (predPp >= 0 ? '+' : '') + predPp.toFixed(1) + ' pp';
     predTrackingVal.classList.toggle('is-behind', predPp < 0);
     renderPredTrend(alphaPp, predPp);
+    renderPredGoal(unrealizedPLPct);
+    renderPredTimelineConnector();
 
     /* Badges design: an amber "after hours" line under each affected field,
        computed from the after-hours price, while the primary numbers above
@@ -3760,9 +4515,10 @@ p { margin: 0; }
       saveBtn: document.getElementById('predOverlaySave'),
       historyEl: document.getElementById('predHistoryList'),
       state: {
-        version: 2, date: 'Jun 9, 2026', prob: 60, hurdle: 20, horizon: '3y',
+        version: 3, date: 'Jun 18, 2026', prob: 60, hurdle: 20, horizon: '3y',
         history: [
-          { version: 1, date: 'Oct 3, 2025', prob: 55, hurdle: 18, horizon: '3y' }
+          { version: 1, date: 'Oct 3, 2025', prob: 55, hurdle: 18, horizon: '3y' },
+          { version: 2, date: 'Jun 9, 2026', prob: 58, hurdle: 20, horizon: '3y' }
         ]
       }
     }
@@ -4090,33 +4846,6 @@ p { margin: 0; }
   });
 
   applyPageState('full');
-
-  /* ---------- Prediction timeline (time left in the 3-year window) ---------- */
-  (function () {
-    var start = new Date(2025, 9, 14);
-    var end = new Date(2028, 9, 14);
-    var now = new Date(2026, 5, 22);
-    var totalDays = Math.round((end - start) / 86400000);
-    var elapsedDays = Math.round((now - start) / 86400000);
-    var daysLeft = totalDays - elapsedDays;
-    var pct = Math.max(0, Math.min(100, (elapsedDays / totalDays) * 100));
-
-    var label;
-    if (daysLeft < 100) {
-      label = daysLeft + ' days left';
-    } else {
-      var months = (end.getFullYear() - now.getFullYear()) * 12 + (end.getMonth() - now.getMonth());
-      if (end.getDate() < now.getDate()) months -= 1;
-      var years = Math.floor(months / 12);
-      var remMonths = months % 12;
-      var parts = [];
-      if (years > 0) parts.push(years + 'y');
-      if (remMonths > 0 || years === 0) parts.push(remMonths + 'mo');
-      label = parts.join(' ') + ' left';
-    }
-    document.getElementById('predTimeLeft').textContent = label;
-    document.getElementById('predTimeFill').style.width = pct.toFixed(1) + '%';
-  })();
 })();
 </script>
 </body>
