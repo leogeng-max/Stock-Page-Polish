@@ -716,8 +716,6 @@ p { margin: 0; }
 }
 
 .prediction-card {
-  position: relative;
-  z-index: 0;
   margin-top: 40px;
   background: rgba(48,209,88,0.1);
   border: 1px solid rgba(255,255,255,0.11);
@@ -725,37 +723,6 @@ p { margin: 0; }
   display: flex;
   flex-direction: column;
   gap: 16px;
-}
-/* One faded "now" line running behind the entire card, from the top of the
-   trend chart down through the goal bar, so the two sections read as a
-   single shared timeline rather than two separately-drawn markers that can
-   drift out of alignment. Sits behind all normal card content (z-index: -1
-   against the card's own stacking context) so any text it runs under stays
-   fully legible; the individual now-line/pace-marker it replaces are hidden
-   via .pred-trend-now-line and .pred-goal__pace below. */
-.pred-timeline-connector {
-  position: absolute;
-  width: 1px;
-  background: rgba(255,255,255,0.5);
-  z-index: -1;
-  pointer-events: none;
-}
-.pred-timeline-connector__label {
-  position: absolute;
-  top: 0;
-  left: 0;
-  transform: translate(-50%, -100%);
-  margin-top: -4px;
-  font-size: 10px;
-  color: rgba(255,255,255,0.6);
-  white-space: nowrap;
-  letter-spacing: -0.1px;
-}
-/* Superseded by .pred-timeline-connector above — kept in the DOM (still
-   positioned by the same render logic) purely as internal geometry the
-   connector reads its own position from. */
-#predTrendNowLine, .pred-goal__pace {
-  opacity: 0;
 }
 .prediction-card .label-11 { text-transform: capitalize; }
 .prediction-card .pred-value {
@@ -788,9 +755,8 @@ p { margin: 0; }
   font-size: 15px;
   font-weight: 500;
   letter-spacing: -0.24px;
-  color: #30d158;
+  color: #ffffff;
 }
-.pred-track-val.is-behind { color: #ff3533; }
 .pred-track-valrow {
   display: flex;
   align-items: baseline;
@@ -834,13 +800,6 @@ p { margin: 0; }
   color: #c9a24b;
   letter-spacing: -0.1px;
   pointer-events: none;
-}
-.pred-trend-now-line {
-  stroke: #ffffff;
-  stroke-width: 1.5;
-  opacity: 0.9;
-  vector-effect: non-scaling-stroke;
-  filter: drop-shadow(0 0 2px rgba(255,255,255,0.6));
 }
 .pred-trend-line {
   fill: none;
@@ -1015,15 +974,9 @@ p { margin: 0; }
 .pred-goal__row--sub span:first-child { color: #929292; }
 .pred-goal__row--sub .is-ahead { color: #e3e2e2; }
 .pred-goal__row--sub .is-behind { color: #ff3533; }
-.pred-goal__status {
-  font-size: 11px;
-  letter-spacing: -0.2px;
-}
-.pred-goal__status.is-ahead { color: #30d158; }
-.pred-goal__status.is-behind { color: #ff3533; }
 .pred-goal__resolves {
   display: flex;
-  justify-content: space-between;
+  gap: 6px;
   margin-top: 4px;
 }
 .pred-goal__resolves .label-11 { text-transform: capitalize; }
@@ -1112,11 +1065,11 @@ p { margin: 0; }
 }
 .stat-ah-line[hidden] { display: none; }
 .stat-ah-line .dot { flex-shrink: 0; }
-.stat-value--positive,
-.stat-value--positive .sub {
-  color: #30d158;
-}
+.stat-alpha-line { color: #ffffff; }
 .alpha-pp { font-size: 12px; letter-spacing: -0.3px; }
+.stat-arrow { font-size: 10px; margin-left: 2px; }
+.stat-arrow.is-up { color: #30d158; }
+.stat-arrow.is-down { color: #ff3533; }
 .stat-value-15 .sub {
   font-size: 12px;
   color: #929292;
@@ -1341,6 +1294,29 @@ p { margin: 0; }
   width: 0.5px;
   background: rgba(255,255,255,0.5);
 }
+/* Marks the actual position-entry date on the chart canvas — only shown for
+   ranges wide enough to include it (YTD/1Y/5Y/MAX), so "Position" always has
+   a visible anchor point instead of an invisible off-screen reference. */
+.chart-entry-line {
+  position: absolute;
+  top: 0;
+  height: 179px;
+  width: 0;
+  border-left: 1px dashed rgba(255,255,255,0.35);
+  pointer-events: none;
+  z-index: 1;
+}
+.chart-entry-line[hidden] { display: none; }
+.chart-entry-label {
+  position: absolute;
+  top: -15px;
+  font-size: 9.5px;
+  color: #929292;
+  letter-spacing: -0.2px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.chart-entry-label[hidden] { display: none; }
 .chart-dot {
   position: absolute;
   width: 4.36px;
@@ -2302,9 +2278,6 @@ p { margin: 0; }
     </div>
 
     <div class="prediction-card">
-      <div class="pred-timeline-connector" id="predTimelineConnector" hidden>
-        <span class="pred-timeline-connector__label" id="predTimelineLabel"></span>
-      </div>
       <div class="rich-card__head">
         <span class="label-11">Prediction</span>
         <span class="version-chip">v3 <span class="chev">›</span></span>
@@ -2317,7 +2290,6 @@ p { margin: 0; }
             <span class="pred-track-val" id="predSincePurchaseVal">+6.9 pp</span>
             <span class="pred-track-arrow" id="predSincePurchaseArrow">▲</span>
           </div>
-          <span class="pred-track-ref" id="predSincePurchaseRef">vs trailing +5.1 pp</span>
         </div>
         <div class="pred-track-stat">
           <span class="pred-track-label">vs S&amp;P · since current prediction</span>
@@ -2325,7 +2297,6 @@ p { margin: 0; }
             <span class="pred-track-val" id="predTrackingVal">+7.0 pp</span>
             <span class="pred-track-arrow" id="predTrackingArrow">▲</span>
           </div>
-          <span class="pred-track-ref" id="predTrackingRef">vs trailing +6.2 pp</span>
         </div>
       </div>
 
@@ -2336,7 +2307,6 @@ p { margin: 0; }
             <path class="pred-trend-line pred-trend-line--ver" id="predTrendV1Line" d=""></path>
             <path class="pred-trend-line pred-trend-line--ver" id="predTrendV2Line" d=""></path>
             <path class="pred-trend-line" id="predTrendEntryLine" d=""></path>
-            <line class="pred-trend-now-line" id="predTrendNowLine" x1="0" x2="0" y1="0" y2="56"></line>
           </svg>
           <div class="pred-trend-sp-label" id="predTrendSpLabel">S&amp;P</div>
           <div class="pred-trend-end-dot pred-trend-end-dot--ver" id="predTrendV1Dot"></div>
@@ -2371,7 +2341,6 @@ p { margin: 0; }
           <span id="predGoalSoFar">+0.0% so far</span>
           <span id="predGoalNeeded">0.0% ahead of pace</span>
         </div>
-        <div class="pred-goal__status" id="predGoalStatus">Running ahead of pace</div>
         <div class="pred-goal__resolves">
           <span class="label-11">Resolves</span>
           <span>Oct 2028</span>
@@ -2462,8 +2431,8 @@ p { margin: 0; }
       <div class="stat-grid-2 pb-content">
         <div class="stat">
           <div class="label-11">Alpha</div>
-          <div class="stat-value-15 stat-value--positive"><span id="posAlphaUSD">+912.98</span> <span class="alpha-pp stat-value--positive" id="posAlpha">+6.9 pp</span></div>
-          <div class="stat-sub-line stat-value--positive"><span id="posAlphaCAD">+911.98</span> CAD <span class="alpha-pp stat-value--positive" id="posAlphaPpCad">+6.9 pp</span></div>
+          <div class="stat-value-15 stat-alpha-line"><span id="posAlphaUSD">+912.98</span> <span class="alpha-pp" id="posAlpha">+6.9 pp</span> <span class="stat-arrow" id="posAlphaArrow">▲</span></div>
+          <div class="stat-sub-line stat-alpha-line"><span id="posAlphaCAD">+911.98</span> CAD <span class="alpha-pp" id="posAlphaPpCad">+6.9 pp</span> <span class="stat-arrow" id="posAlphaArrowCad">▲</span></div>
           <div class="stat-ah-line" id="posAlphaAhLine" hidden><svg class="ah-moon ah-moon--badge" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 1020.354 15.354z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="posAlphaAh">+7.0 pp</span></div>
         </div>
       </div>
@@ -2560,6 +2529,8 @@ p { margin: 0; }
       <span class="chart-time-float" id="chartTimeFloat" style="left: 73px;">10:30 AM</span>
       <div class="chart-hairline" id="chartHairline" style="left: 101px;"></div>
       <div class="chart-dot" id="chartDot" style="left: 99px; top: 142px;"></div>
+      <div class="chart-entry-line" id="chartEntryLine" hidden></div>
+      <span class="chart-entry-label" id="chartEntryLabel" hidden>Entered · Oct 14, 2025</span>
 
       <div class="chart-canvas" id="chartCanvas">
         <svg id="chartSvg" width="348" height="179" viewBox="0 0 348 179" fill="none">
@@ -3017,7 +2988,6 @@ p { margin: 0; }
           <path class="pred-trend-line pred-trend-line--ver" id="predTrendV1LineLg" d=""></path>
           <path class="pred-trend-line pred-trend-line--ver" id="predTrendV2LineLg" d=""></path>
           <path class="pred-trend-line" id="predTrendEntryLineLg" d=""></path>
-          <line class="pred-trend-now-line" id="predTrendNowLineLg" x1="0" x2="0" y1="0" y2="56"></line>
         </svg>
         <div class="pred-trend-sp-label" id="predTrendSpLabelLg">S&amp;P</div>
         <div class="pred-trend-end-dot pred-trend-end-dot--ver" id="predTrendV1DotLg"></div>
@@ -3227,6 +3197,8 @@ p { margin: 0; }
   var chartCanvasWrap = document.getElementById('chartCanvasWrap');
   var chartHairline = document.getElementById('chartHairline');
   var chartDot = document.getElementById('chartDot');
+  var chartEntryLine = document.getElementById('chartEntryLine');
+  var chartEntryLabel = document.getElementById('chartEntryLabel');
   var chartTime = document.getElementById('chartTime');
   var chartTimeFloat = document.getElementById('chartTimeFloat');
   var chartTooltip = document.getElementById('chartTooltip');
@@ -3265,7 +3237,6 @@ p { margin: 0; }
   var CHART_NOW = new Date(2026, 5, 22); /* matches the frozen "today" used elsewhere in this file */
   var TODAY_PRICE = 87.60;
   var TARGET_ANNUAL_RATE = 0.20; /* matches the Prediction card's "20%/yr" target */
-  var RESTING_FRAC = 0.289; /* preserves the original design's default hairline position */
   var MASTER_DAYS = 3652; /* ~10 years of daily history behind every range */
 
   /* `points` = real days sliced from the master walk (more = more genuine
@@ -3276,14 +3247,14 @@ p { margin: 0; }
      bump since a sparse sample of a decade-long walk otherwise looks calmer
      than it should. */
   var CHART_RANGES = {
-    '1D':  { spanDays: 1,           points: 60,  fmt: 'time',      subPer: 2, noiseAmp: 0.08 },
-    '1w':  { spanDays: 7,           points: 40,  fmt: 'weekday',   subPer: 4, noiseAmp: 0.22 },
-    '1M':  { spanDays: 30,          points: 40,  fmt: 'day',       subPer: 3, noiseAmp: 0.32 },
-    '6M':  { spanDays: 182,         points: 100, fmt: 'day',       subPer: 2, noiseAmp: 0.30 },
-    'YTD': { spanDays: 264,         points: 110, fmt: 'day',       subPer: 2, noiseAmp: 0.30 },
-    '1Y':  { spanDays: 365,         points: 130, fmt: 'month',     subPer: 2, noiseAmp: 0.32 },
-    '5Y':  { spanDays: 1826,        points: 160, fmt: 'monthyear', subPer: 2, noiseAmp: 0.55 },
-    'max': { spanDays: MASTER_DAYS, points: 180, fmt: 'year',      subPer: 2, noiseAmp: 0.60 }
+    '1D':  { spanDays: 1,           points: 90,  fmt: 'time',      subPer: 3, noiseAmp: 0.32, lineExtent: 0.8 },
+    '1w':  { spanDays: 7,           points: 55,  fmt: 'weekday',   subPer: 4, noiseAmp: 0.34 },
+    '1M':  { spanDays: 30,          points: 60,  fmt: 'day',       subPer: 4, noiseAmp: 0.55 },
+    '6M':  { spanDays: 182,         points: 140, fmt: 'day',       subPer: 3, noiseAmp: 0.55 },
+    'YTD': { spanDays: 264,         points: 110, fmt: 'day',       subPer: 3, noiseAmp: 0.42 },
+    '1Y':  { spanDays: 365,         points: 130, fmt: 'month',     subPer: 3, noiseAmp: 0.44 },
+    '5Y':  { spanDays: 1826,        points: 160, fmt: 'monthyear', subPer: 2, noiseAmp: 0.60 },
+    'max': { spanDays: MASTER_DAYS, points: 260, fmt: 'year',      subPer: 3, noiseAmp: 0.95 }
   };
   var MONTHS_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   var WEEKDAYS_SHORT = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -3303,8 +3274,56 @@ p { margin: 0; }
     return vals;
   }
 
-  var MASTER_STOCK_PCT = buildDailyWalk(MASTER_DAYS, 1.8, 340, 11); /* volatile grower, ~10x over 10y */
-  var MASTER_SPX_PCT = buildDailyWalk(MASTER_DAYS, 1.05, 95, 23); /* steadier benchmark */
+  /* Same bridge technique as buildDailyWalk, just starting from an arbitrary
+     value/day instead of always from (0, day 0) — used to stitch two
+     consecutive walk segments together at a specific pinned midpoint. */
+  function buildWalkSegment(startVal, endVal, days, dailyVolPct, seedOffset) {
+    var drift = (endVal - startVal) / days;
+    var vals = [startVal];
+    for (var i = 1; i <= days; i++) {
+      vals.push(vals[i - 1] + drift + (pseudoRandom(i + seedOffset) - 0.5) * dailyVolPct);
+    }
+    var err = endVal - vals[days];
+    for (var i = 1; i <= days; i++) vals[i] += err * (i / days);
+    return vals;
+  }
+
+  /* Matches "Entered 10.14.25" on the Position section (and PRED_GOAL_START
+     on the Prediction card) — the one fixed date every "since entry" figure
+     on this chart (Position/S&P/vs Target in the popup, plus the dashed
+     entry marker) is measured from, instead of wherever the currently
+     selected range tab happens to start. */
+  var POSITION_ENTRY_DATE = new Date(2025, 9, 14);
+  var ENTRY_DAYS_AGO = Math.round((CHART_NOW - POSITION_ENTRY_DATE) / 86400000);
+  var ENTRY_IDX = MASTER_DAYS - ENTRY_DAYS_AGO;
+  chartEntryLabel.textContent = 'Entered · ' + MONTHS_SHORT[POSITION_ENTRY_DATE.getMonth()] + ' ' +
+    POSITION_ENTRY_DATE.getDate() + ', ' + POSITION_ENTRY_DATE.getFullYear();
+
+  /* Must match market.costBasis / market.shares / market.price further below
+     — duplicated as a literal here because this master series is built
+     before `market` exists in the script's top-to-bottom load order. Pins
+     the walk to imply exactly this price on the entry day, so "Position" at
+     today's scrub point lines up with the real Unrealized P/L% shown
+     elsewhere on the page instead of drifting off on its own independent
+     random draw. */
+  var POSITION_ENTRY_PRICE = (18950 - 5652) / (18950 / 87.60);
+  var STOCK_TOTAL_CHANGE_PCT = 340; /* volatile grower, ~10x over 10y, by the final day */
+  /* "Since entry" everywhere else on this chart is read via simple
+     subtraction between two master-array values (matching the rest of the
+     file's convention, e.g. sliceMasterPct's own rebase) rather than true
+     compounding — so the entry-day value has to be derived the same way:
+     picked so that (total - entry) equals the real price return, not the
+     compounded one. */
+  var STOCK_ENTRY_TARGET_PCT = STOCK_TOTAL_CHANGE_PCT - (TODAY_PRICE / POSITION_ENTRY_PRICE - 1) * 100;
+  /* The post-entry segment uses noticeably less daily noise than the
+     pre-entry history: with noise this large relative to the ~0.17%/day
+     average drift since entry, a short (1D/1W/1M) slice of pure random walk
+     reads as directionless chop far more often than not — a real recent
+     winning stretch should still look like it's clearly going somewhere,
+     even zoomed into a week or a month of it. */
+  var MASTER_STOCK_PCT = buildWalkSegment(0, STOCK_ENTRY_TARGET_PCT, ENTRY_IDX, 1.8, 11)
+    .concat(buildWalkSegment(STOCK_ENTRY_TARGET_PCT, STOCK_TOTAL_CHANGE_PCT, MASTER_DAYS - ENTRY_IDX, 1.3, 1011).slice(1));
+  var MASTER_SPX_PCT = buildDailyWalk(MASTER_DAYS, 0.9, 95, 23); /* steadier benchmark, but still visibly real */
 
   /* Picks `count` REAL (not averaged) days out of the last `spanDays` of a
      master walk, then rebases so the slice's own first day reads as 0% —
@@ -3372,8 +3391,9 @@ p { margin: 0; }
   var CHART_MIN_X = 0, CHART_MAX_X = CHART_W, CHART_MIN_Y = 0, CHART_MAX_Y = CHART_H;
   var DAY_HIGH = 88.60, DAY_LOW = 86.20, PREV_CLOSE = 86.66;
   var CHART_RANGE_SPAN_DAYS = 1, CHART_RANGE_FMT = 'time';
-  var RESTING_X = RESTING_FRAC * CHART_W;
+  var RESTING_X = CHART_W; /* default (non-hover) crosshair always sits at "today" */
   var currentStockPct = [0], currentSpxPct = [0], currentTargetPct = [0];
+  var currentEntryInView = false, currentEntryFrac = 0;
 
   function yForX(x) {
     if (x <= points[0].x) return points[0].y;
@@ -3413,9 +3433,18 @@ p { margin: 0; }
     var cfg = CHART_RANGES[rangeKey] || CHART_RANGES['1D'];
     var n = MASTER_STOCK_PCT.length - 1;
     var stockPct, spxPct;
+    var sliceStartIdx = rangeKey === '1D' ? (n - 1) : Math.max(0, n - cfg.spanDays);
 
     if (rangeKey === '1D') {
-      stockPct = buildIntradayPct(MASTER_STOCK_PCT[n - 1], MASTER_STOCK_PCT[n], cfg.points, 0.55, 501);
+      /* A single real day's move is small enough that per-day noise alone
+         can make it a coin flip which way it nets out — use the trailing
+         week's average daily drift as today's implied target instead of
+         that one literal (possibly-flat-or-down-by-chance) day, so 1D
+         reads as a continuation of the actual recent trend rather than an
+         independent roll of the dice. */
+      var recentDrift = (MASTER_STOCK_PCT[n] - MASTER_STOCK_PCT[n - 5]) / 5;
+      var dayTarget = MASTER_STOCK_PCT[n - 1] + recentDrift;
+      stockPct = buildIntradayPct(MASTER_STOCK_PCT[n - 1], dayTarget, cfg.points, 0.35, 501);
       spxPct = buildIntradayPct(MASTER_SPX_PCT[n - 1], MASTER_SPX_PCT[n], cfg.points, 0.32, 502);
     } else {
       stockPct = sliceMasterPct(MASTER_STOCK_PCT, cfg.spanDays, cfg.points);
@@ -3423,34 +3452,101 @@ p { margin: 0; }
     }
 
     stockPct = densifyWithNoise(stockPct, cfg.subPer, cfg.noiseAmp, 601);
-    spxPct = densifyWithNoise(spxPct, cfg.subPer, cfg.noiseAmp * 0.6, 602);
+    spxPct = densifyWithNoise(spxPct, cfg.subPer, cfg.noiseAmp * 0.85, 602);
 
-    /* Target = smooth compounding curve at the prediction's target rate,
-       sharing the same window-start origin as the stock/S&P lines. */
+    /* "Since entry" framing: Position/S&P/Target always measure from the day
+       the user actually entered (Oct 14, 2025), never from wherever the
+       selected range tab happens to start — otherwise "Position" means a
+       different thing on every tab. Stock/S&P just need a constant shift
+       (both already share the master walk's cumulative scale, so the offset
+       between "since range start" and "since entry" is the same at every
+       point in the slice); the target curve is derived straight from
+       calendar time instead. */
+    var stockEntryOffset = MASTER_STOCK_PCT[sliceStartIdx] - MASTER_STOCK_PCT[ENTRY_IDX];
+    var spxEntryOffset = MASTER_SPX_PCT[sliceStartIdx] - MASTER_SPX_PCT[ENTRY_IDX];
+    var stockPctSinceEntry = stockPct.map(function (v) { return v + stockEntryOffset; });
+    var spxPctSinceEntry = spxPct.map(function (v) { return v + spxEntryOffset; });
+
+    var rangeStartMs = CHART_NOW.getTime() - cfg.spanDays * 86400000;
+    var nowMs = CHART_NOW.getTime();
+    var entryMs = POSITION_ENTRY_DATE.getTime();
+    var entryInView = entryMs > rangeStartMs && entryMs < nowMs;
+    var entryFrac = entryInView ? (entryMs - rangeStartMs) / (nowMs - rangeStartMs) : 0;
+
     var targetPct = stockPct.map(function (v, i) {
       var t = i / (stockPct.length - 1);
-      var yearsElapsed = (cfg.spanDays * t) / 365;
-      return (Math.pow(1 + TARGET_ANNUAL_RATE, yearsElapsed) - 1) * 100;
+      var pointMs = rangeStartMs + t * (nowMs - rangeStartMs);
+      var yearsSinceEntry = Math.max(0, (pointMs - entryMs) / (365 * 86400000));
+      return (Math.pow(1 + TARGET_ANNUAL_RATE, yearsSinceEntry) - 1) * 100;
     });
+
+    /* The S&P/target comparison lines only mean something from entry
+       forward — truncate them there instead of drawing a "since entry"
+       comparison over days before the position even existed. Ranges short
+       enough that entry predates the whole window (1D/1W/1M/6M) just draw
+       across the full width, since every visible point is already after
+       entry. */
+    var overlayStartIdx = entryInView ? Math.round(entryFrac * (stockPct.length - 1)) : 0;
+
+    /* Position the overlay lines so the GAP between them and the white line
+       always equals the true "vs S&P" / "vs Target" since entry — not just
+       at the entry point, at every point — so the stock's real, consistent
+       outperformance shows up as a real, consistent visual gap instead of
+       two independent random walks crossing back and forth. Since
+       stockPctSinceEntry = stockPct + stockEntryOffset (a constant), holding
+       stockPct[i] - display[i] == stockPctSinceEntry[i] - trueSinceEntry[i]
+       reduces to a single constant shift per line — which, as a side effect,
+       also makes them land exactly on the white line at the entry point
+       itself (both true-since-entry series read 0 there), so the "one
+       continuous line" look on YTD/1Y/5Y/MAX falls out for free. Only the
+       drawn path is affected — the popup's own Position/S&P/vs Target
+       figures keep reading spxPctSinceEntry/targetPct directly.
+
+       On short ranges the true gap (months of outperformance) can be many
+       times wider than the stock's own move within just this window — left
+       uncapped, the shared Y-scale has to stretch to fit that whole gap,
+       squeezing the white line's real day-to-day texture down to a barely-
+       visible sliver. Capping the shift at a few multiples of the white
+       line's own local range keeps "consistently below" true without
+       letting the offset swallow the scale; long ranges never hit the cap
+       (their own move is already the dominant number), so their exact
+       intersection-at-entry behavior is untouched. */
+    var stockOwnRange = Math.max.apply(null, stockPct) - Math.min.apply(null, stockPct);
+    var maxShift = Math.max(stockOwnRange * 3, 4);
+    var cappedShift = Math.max(-maxShift, Math.min(maxShift, stockEntryOffset));
+    var spxDisplayPct = spxPctSinceEntry.map(function (v) { return v - cappedShift; });
+    var targetDisplayPct = targetPct.map(function (v) { return v - cappedShift; });
 
     var startPrice = TODAY_PRICE / (1 + stockPct[stockPct.length - 1] / 100);
 
     /* Shared Y-domain across stock + S&P + target so toggling the overlay
        lines on hover never reshapes or rescales the always-visible line. */
-    var allPct = stockPct.concat(spxPct).concat(targetPct);
+    var allPct = stockPct.concat(spxDisplayPct.slice(overlayStartIdx)).concat(targetDisplayPct.slice(overlayStartIdx));
     var minPct = Math.min.apply(null, allPct), maxPct = Math.max.apply(null, allPct);
-    var rangePct = (maxPct - minPct) || 1;
-    function pctToXY(arr) {
-      return arr.map(function (p, i) {
-        return { x: (i / (arr.length - 1)) * CHART_W, y: CHART_H - ((p - minPct) / rangePct) * CHART_H };
+    /* The bezier smoothing can overshoot slightly past its real data points
+       between sharp direction changes — a small padding margin on the scale
+       (not on DAY_HIGH/DAY_LOW, which stay tied to the real min/max) keeps
+       that overshoot from ever getting clipped by the SVG's own edges. */
+    var yPad = (maxPct - minPct) * 0.06;
+    var yMinPct = minPct - yPad, yMaxPct = maxPct + yPad;
+    var rangePct = (yMaxPct - yMinPct) || 1;
+    /* 1D reserves the trailing slice of the canvas as empty space (matching
+       how most trading apps draw the intraday chart short of the day's
+       close instead of stretching today-so-far across the full width) —
+       every other range still fills edge-to-edge. */
+    var lineExtent = cfg.lineExtent || 1;
+    function pctToXY(arr, startIdx) {
+      startIdx = startIdx || 0;
+      return arr.slice(startIdx).map(function (p, i) {
+        return { x: ((i + startIdx) / (arr.length - 1)) * CHART_W * lineExtent, y: CHART_H - ((p - yMinPct) / rangePct) * CHART_H };
       });
     }
 
     points = pctToXY(stockPct);
     function toPairs(pts) { return pts.map(function (p) { return [p.x, p.y]; }); }
     chartLinePath.setAttribute('d', smoothPathD(toPairs(points)));
-    chartSpxPath.setAttribute('d', smoothPathD(toPairs(pctToXY(spxPct))));
-    chartTargetPath.setAttribute('d', smoothPathD(toPairs(pctToXY(targetPct))));
+    chartSpxPath.setAttribute('d', smoothPathD(toPairs(pctToXY(spxDisplayPct, overlayStartIdx))));
+    chartTargetPath.setAttribute('d', smoothPathD(toPairs(pctToXY(targetDisplayPct, overlayStartIdx))));
 
     CHART_MIN_X = points[0].x;
     CHART_MAX_X = points[points.length - 1].x;
@@ -3459,10 +3555,25 @@ p { margin: 0; }
     PREV_CLOSE = startPrice;
     CHART_RANGE_SPAN_DAYS = cfg.spanDays;
     CHART_RANGE_FMT = cfg.fmt;
-    RESTING_X = CHART_MIN_X + RESTING_FRAC * (CHART_MAX_X - CHART_MIN_X);
-    currentStockPct = stockPct;
-    currentSpxPct = spxPct;
+    RESTING_X = CHART_MAX_X; /* default (non-hover) crosshair always sits at "today", on every range */
+    currentStockPct = stockPctSinceEntry;
+    currentSpxPct = spxPctSinceEntry;
     currentTargetPct = targetPct;
+    currentEntryInView = entryInView;
+    currentEntryFrac = entryFrac;
+
+    /* Dashed "Entered" marker — only shown when the entry date actually
+       falls inside the currently selected range. */
+    if (entryInView) {
+      var entryX = entryFrac * CHART_W;
+      chartEntryLine.style.left = entryX.toFixed(1) + 'px';
+      chartEntryLabel.style.left = Math.max(0, Math.min(entryX - 40, CHART_W - 90)).toFixed(1) + 'px';
+      chartEntryLine.hidden = false;
+      chartEntryLabel.hidden = false;
+    } else {
+      chartEntryLine.hidden = true;
+      chartEntryLabel.hidden = true;
+    }
 
     buildVolumeBars();
     updateAt(null);
@@ -3488,7 +3599,8 @@ p { margin: 0; }
     chartPrice.textContent = price.toFixed(2);
     chartChange.textContent = (chg >= 0 ? '+' : '') + chg.toFixed(2) + ' (' + (pct >= 0 ? '+' : '') + pct.toFixed(1) + '%)';
     chartTimeFloat.textContent = label;
-    chartTimeFloat.style.left = Math.max(0, Math.min(x - 28, rect.width - 60)) + 'px';
+    var timeFloatW = chartTimeFloat.offsetWidth;
+    chartTimeFloat.style.left = Math.max(0, Math.min(x - timeFloatW / 2, rect.width - timeFloatW)) + 'px';
 
     popPrice.textContent = price.toFixed(2);
     popChg.textContent = (chg >= 0 ? '+' : '') + chg.toFixed(2);
@@ -3498,10 +3610,15 @@ p { margin: 0; }
     popVolume.textContent = (30 + frac * 25).toFixed(2) + 'K';
     popTime.textContent = label;
 
-    /* Position vs S&P vs target, evaluated at this same scrub point. */
-    var stockPctHere = valueAtFrac(currentStockPct, frac);
-    var spxPctHere = valueAtFrac(currentSpxPct, frac);
-    var targetPctHere = valueAtFrac(currentTargetPct, frac);
+    /* Position vs S&P vs target, evaluated at this same scrub point — but
+       never before the entry date. All three read exactly 0 there by
+       construction, so clamping to it just holds them flat for any point
+       before the position existed, instead of showing a hypothetical
+       "since entry" figure for a date nobody actually held anything. */
+    var statFrac = currentEntryInView ? Math.max(frac, currentEntryFrac) : frac;
+    var stockPctHere = valueAtFrac(currentStockPct, statFrac);
+    var spxPctHere = valueAtFrac(currentSpxPct, statFrac);
+    var targetPctHere = valueAtFrac(currentTargetPct, statFrac);
     var vsSpx = stockPctHere - spxPctHere;
     var vsTarget = stockPctHere - targetPctHere;
 
@@ -3536,19 +3653,28 @@ p { margin: 0; }
   function buildVolumeBars() {
     chartVolumeEl.innerHTML = '';
     var BAR_COUNT = 42;
+    /* Mirrors the price line's own empty trailing space (1D only) — bars
+       past the line's actual extent stay blank instead of implying trading
+       activity that hasn't happened yet. */
+    var realBarCount = Math.round(BAR_COUNT * (CHART_MAX_X / CHART_W));
     var frag = document.createDocumentFragment();
     var prevY = null;
     for (var i = 0; i < BAR_COUNT; i++) {
-      var x = CHART_MIN_X + (i + 0.5) / BAR_COUNT * (CHART_MAX_X - CHART_MIN_X);
-      var y = yForX(x);
-      var seed = Math.sin(i * 12.9898) * 43758.5453;
-      var rnd = seed - Math.floor(seed);
-      var h = 8 + rnd * 32;
-      var up = prevY === null ? true : y < prevY;
-      prevY = y;
       var bar = document.createElement('div');
-      bar.className = 'bar ' + (up ? 'up' : 'down');
-      bar.style.height = h.toFixed(1) + 'px';
+      if (i < realBarCount) {
+        var x = CHART_MIN_X + (i + 0.5) / realBarCount * (CHART_MAX_X - CHART_MIN_X);
+        var y = yForX(x);
+        var seed = Math.sin(i * 12.9898) * 43758.5453;
+        var rnd = seed - Math.floor(seed);
+        var h = 8 + rnd * 32;
+        var up = prevY === null ? true : y < prevY;
+        prevY = y;
+        bar.className = 'bar ' + (up ? 'up' : 'down');
+        bar.style.height = h.toFixed(1) + 'px';
+      } else {
+        bar.className = 'bar';
+        bar.style.height = '0px';
+      }
       frag.appendChild(bar);
     }
     chartVolumeEl.appendChild(frag);
@@ -3747,14 +3873,11 @@ p { margin: 0; }
   var predTrackingVal = document.getElementById('predTrackingVal');
   var predSincePurchaseVal = document.getElementById('predSincePurchaseVal');
   var predSincePurchaseArrow = document.getElementById('predSincePurchaseArrow');
-  var predSincePurchaseRef = document.getElementById('predSincePurchaseRef');
   var predTrackingArrow = document.getElementById('predTrackingArrow');
-  var predTrackingRef = document.getElementById('predTrackingRef');
   var predTrendEntryLine = document.getElementById('predTrendEntryLine');
   var predTrendZeroLine = document.getElementById('predTrendZeroLine');
   var predTrendSpLabel = document.getElementById('predTrendSpLabel');
   var predTrendEndDot = document.getElementById('predTrendEndDot');
-  var predTrendNowLine = document.getElementById('predTrendNowLine');
   var predTrendV1Line = document.getElementById('predTrendV1Line');
   var predTrendV2Line = document.getElementById('predTrendV2Line');
   var predTrendV1Dot = document.getElementById('predTrendV1Dot');
@@ -3768,7 +3891,6 @@ p { margin: 0; }
   var predTrendZeroLineLg = document.getElementById('predTrendZeroLineLg');
   var predTrendSpLabelLg = document.getElementById('predTrendSpLabelLg');
   var predTrendEndDotLg = document.getElementById('predTrendEndDotLg');
-  var predTrendNowLineLg = document.getElementById('predTrendNowLineLg');
   var predTrendV1LineLg = document.getElementById('predTrendV1LineLg');
   var predTrendV2LineLg = document.getElementById('predTrendV2LineLg');
   var predTrendV1DotLg = document.getElementById('predTrendV1DotLg');
@@ -3782,11 +3904,6 @@ p { margin: 0; }
   var predGoalPace = document.getElementById('predGoalPace');
   var predGoalSoFar = document.getElementById('predGoalSoFar');
   var predGoalNeeded = document.getElementById('predGoalNeeded');
-  var predGoalStatus = document.getElementById('predGoalStatus');
-  var predTimelineConnector = document.getElementById('predTimelineConnector');
-  var predTimelineLabel = document.getElementById('predTimelineLabel');
-  var predTrendSvg = document.getElementById('predTrendSvg');
-  var predGoalBar = document.querySelector('.pred-goal__bar');
   var predGoalInfoBtn = document.getElementById('predGoalInfoBtn');
   var predGoalInfo = document.getElementById('predGoalInfo');
   var predVerPopover = document.getElementById('predVerPopover');
@@ -3974,21 +4091,18 @@ p { margin: 0; }
     var v1Path = smoothPathD(v1Pts);
     var v2Path = smoothPathD(v2Pts);
     var isUp = alphaPpVal >= 0;
-    var nowX = (timeFrac * PRED_CHART_W).toFixed(1);
 
-    [[predTrendEntryLine, predTrendZeroLine, predTrendSpLabel, predTrendEndDot, predTrendNowLine, predTrendV1Line, predTrendV2Line, predTrendV1Dot, predTrendV2Dot, predTrendV1Label, predTrendV2Label, predTrendV3Label],
-     [predTrendEntryLineLg, predTrendZeroLineLg, predTrendSpLabelLg, predTrendEndDotLg, predTrendNowLineLg, predTrendV1LineLg, predTrendV2LineLg, predTrendV1DotLg, predTrendV2DotLg, predTrendV1LabelLg, predTrendV2LabelLg, predTrendV3LabelLg]
+    [[predTrendEntryLine, predTrendZeroLine, predTrendSpLabel, predTrendEndDot, predTrendV1Line, predTrendV2Line, predTrendV1Dot, predTrendV2Dot, predTrendV1Label, predTrendV2Label, predTrendV3Label],
+     [predTrendEntryLineLg, predTrendZeroLineLg, predTrendSpLabelLg, predTrendEndDotLg, predTrendV1LineLg, predTrendV2LineLg, predTrendV1DotLg, predTrendV2DotLg, predTrendV1LabelLg, predTrendV2LabelLg, predTrendV3LabelLg]
     ].forEach(function (refs) {
-      var line = refs[0], zeroLine = refs[1], spLabel = refs[2], endDot = refs[3], nowLine = refs[4],
-          v1Line = refs[5], v2Line = refs[6], v1Dot = refs[7], v2Dot = refs[8],
-          v1Label = refs[9], v2Label = refs[10], v3Label = refs[11];
+      var line = refs[0], zeroLine = refs[1], spLabel = refs[2], endDot = refs[3],
+          v1Line = refs[4], v2Line = refs[5], v1Dot = refs[6], v2Dot = refs[7],
+          v1Label = refs[8], v2Label = refs[9], v3Label = refs[10];
       line.setAttribute('d', entryPath);
       line.classList.toggle('is-up', isUp);
       line.classList.toggle('is-down', !isUp);
       v1Line.setAttribute('d', v1Path);
       v2Line.setAttribute('d', v2Path);
-      nowLine.setAttribute('x1', nowX);
-      nowLine.setAttribute('x2', nowX);
 
       /* Zero line = "matching the S&P exactly" — the one reference every pp
          figure on this card is measured against, and the point the "since
@@ -4027,14 +4141,12 @@ p { margin: 0; }
     predSincePurchaseArrow.textContent = alphaUp ? '▲' : '▼';
     predSincePurchaseArrow.classList.toggle('is-up', alphaUp);
     predSincePurchaseArrow.classList.toggle('is-down', !alphaUp);
-    predSincePurchaseRef.textContent = 'vs trailing avg ' + (alphaAvg >= 0 ? '+' : '') + alphaAvg.toFixed(1) + ' pp';
 
     var predAvg = trailingAvg(predSeries, PRED_TRAILING_WINDOW);
     var predUp = predPpVal >= predAvg;
     predTrackingArrow.textContent = predUp ? '▲' : '▼';
     predTrackingArrow.classList.toggle('is-up', predUp);
     predTrackingArrow.classList.toggle('is-down', !predUp);
-    predTrackingRef.textContent = 'vs trailing avg ' + (predAvg >= 0 ? '+' : '') + predAvg.toFixed(1) + ' pp';
   }
 
   /* "Against Target" — actualPct is the position's own realized return
@@ -4053,49 +4165,11 @@ p { margin: 0; }
     predGoalPace.style.left = (timeFrac * 100).toFixed(1) + '%';
 
     predGoalSoFar.textContent = (actualPct >= 0 ? '+' : '') + actualPct.toFixed(1) + '% so far';
-    predGoalNeeded.textContent = ahead
-      ? (Math.abs(gap).toFixed(1) + '% ahead of pace')
-      : (Math.abs(gap).toFixed(1) + '% needed by now');
-    predGoalNeeded.classList.toggle('is-ahead', ahead);
-    predGoalNeeded.classList.toggle('is-behind', !ahead);
-
-    predGoalStatus.textContent = reached
+    predGoalNeeded.textContent = reached
       ? 'Target reached — not yet realized'
-      : (ahead ? 'Running ahead of pace' : 'Running behind pace');
-    predGoalStatus.classList.toggle('is-ahead', ahead || reached);
-    predGoalStatus.classList.toggle('is-behind', !ahead && !reached);
-  }
-
-  /* "2y 3mo remaining" — the gap between now and the goal's resolve date,
-     shown at the top of the timeline connector the same way the main stock
-     chart floats a time label above its hairline. */
-  function predTimeRemainingLabel() {
-    var from = PRED_GOAL_NOW, to = PRED_GOAL_END;
-    var months = (to.getFullYear() - from.getFullYear()) * 12 + (to.getMonth() - from.getMonth());
-    if (to.getDate() < from.getDate()) months -= 1;
-    if (months < 0) months = 0;
-    var years = Math.floor(months / 12);
-    var rem = months % 12;
-    var parts = [];
-    if (years) parts.push(years + 'y');
-    parts.push(rem + 'mo');
-    return parts.join(' ') + ' remaining';
-  }
-
-  /* One line spanning from the top of the trend chart down through the goal
-     bar, positioned from the chart's own timeFrac rather than by measuring
-     the (now-hidden) individual now-line/pace-marker elements, so it can
-     never visually drift out of alignment with either of them. */
-  function renderPredTimelineConnector() {
-    var cardRect = document.querySelector('.prediction-card').getBoundingClientRect();
-    var svgRect = predTrendSvg.getBoundingClientRect();
-    var barRect = predGoalBar.getBoundingClientRect();
-    var x = svgRect.left + predTimeFrac() * svgRect.width;
-    predTimelineConnector.style.left = (x - cardRect.left).toFixed(1) + 'px';
-    predTimelineConnector.style.top = (svgRect.top - cardRect.top).toFixed(1) + 'px';
-    predTimelineConnector.style.height = Math.max(0, barRect.bottom - svgRect.top).toFixed(1) + 'px';
-    predTimelineLabel.textContent = predTimeRemainingLabel();
-    predTimelineConnector.hidden = false;
+      : (ahead ? (Math.abs(gap).toFixed(1) + '% ahead of pace') : (Math.abs(gap).toFixed(1) + '% needed by now'));
+    predGoalNeeded.classList.toggle('is-ahead', ahead || reached);
+    predGoalNeeded.classList.toggle('is-behind', !ahead && !reached);
   }
 
   /* Tappable v1/v2/v3 dots — mirrors Dave's own demo of clicking into a prior
@@ -4166,6 +4240,8 @@ p { margin: 0; }
   var posAlphaUSD = document.getElementById('posAlphaUSD');
   var posAlphaCAD = document.getElementById('posAlphaCAD');
   var posAlphaPpCad = document.getElementById('posAlphaPpCad');
+  var posAlphaArrow = document.getElementById('posAlphaArrow');
+  var posAlphaArrowCad = document.getElementById('posAlphaArrowCad');
   var posMarketValueAhLine = document.getElementById('posMarketValueAhLine');
   var posMarketValueAh = document.getElementById('posMarketValueAh');
   var posMarketValueAhPct = document.getElementById('posMarketValueAhPct');
@@ -4333,6 +4409,11 @@ p { margin: 0; }
     var alphaDollar = unrealizedPL - spPL;
     posAlphaUSD.textContent = fmtSigned(alphaDollar);
     posAlphaCAD.textContent = fmtSigned(alphaDollar * CAD_RATE);
+    posAlphaArrow.textContent = posAlphaArrowCad.textContent = alphaPp >= 0 ? '▲' : '▼';
+    posAlphaArrow.classList.toggle('is-up', alphaPp >= 0);
+    posAlphaArrow.classList.toggle('is-down', alphaPp < 0);
+    posAlphaArrowCad.classList.toggle('is-up', alphaPp >= 0);
+    posAlphaArrowCad.classList.toggle('is-down', alphaPp < 0);
     posWeight.textContent = weight.toFixed(1) + '%';
 
     /* Prediction card shows two independently-sourced figures side by side:
@@ -4342,13 +4423,10 @@ p { margin: 0; }
        elapsed window. A thesis can be behind its prediction while the
        position is ahead overall, or vice versa — that's the point. */
     predSincePurchaseVal.textContent = (alphaPp >= 0 ? '+' : '') + alphaPp.toFixed(1) + ' pp';
-    predSincePurchaseVal.classList.toggle('is-behind', alphaPp < 0);
     var predPp = market.predStockRetPct - market.predSPRetPct;
     predTrackingVal.textContent = (predPp >= 0 ? '+' : '') + predPp.toFixed(1) + ' pp';
-    predTrackingVal.classList.toggle('is-behind', predPp < 0);
     renderPredTrend(alphaPp, predPp);
     renderPredGoal(unrealizedPLPct);
-    renderPredTimelineConnector();
 
     /* Badges design: an amber "after hours" line under each affected field,
        computed from the after-hours price, while the primary numbers above
