@@ -297,6 +297,7 @@ p { margin: 0; }
   justify-content: space-between;
   width: 100%;
 }
+.section-header--row[hidden] { display: none; }
 .section-header--row .date {
   font-size: 14px;
   color: #929292;
@@ -414,6 +415,51 @@ p { margin: 0; }
   font-weight: 300;
   color: #929292;
 }
+.version-chip[hidden] { display: none; }
+
+/* ---------- Empty-memo card (New User preview state) — per Figma
+   node 3419:7303 "Link - Start your underwriting record" ---------- */
+.memo-empty-card {
+  position: relative;
+  margin-top: 40px;
+  background: #0a0a0a;
+  border: 1px solid #232627;
+  padding: 20px;
+  overflow: hidden;
+}
+.memo-empty-card[hidden] { display: none; }
+.memo-empty-card__icon {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  width: 108px;
+  height: 66px;
+  opacity: 0.5;
+  pointer-events: none;
+}
+.memo-empty-card__icon img { width: 100%; height: 100%; display: block; }
+.memo-empty-card__title {
+  font-size: 15px;
+  color: #ffffff;
+  letter-spacing: -0.3px;
+}
+.memo-empty-card__subtitle {
+  font-size: 13px;
+  color: #929292;
+  letter-spacing: -0.13px;
+  margin-top: 8px;
+}
+.memo-empty-card__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 16px;
+  font-size: 13px;
+  color: #ffffff;
+  letter-spacing: -0.13px;
+}
+.memo-empty-card__cta .chev { font-size: 15px; font-weight: 300; color: #929292; }
 
 /* ---------- Rich cards (Thesis / Kill Criteria) ---------- */
 .rich-card { margin-top: 40px; }
@@ -656,6 +702,7 @@ p { margin: 0; }
   margin-top: 40px;
   gap: 70px;
 }
+.class-role-row[hidden] { display: none; }
 .class-role-row .col {
   display: flex;
   flex-direction: column;
@@ -998,6 +1045,7 @@ p { margin: 0; }
   text-decoration: none;
   padding-bottom: 40px;
 }
+.link-row[hidden] { display: none; }
 .research-prompt-link {
   margin: 20px 20px 0;
   padding-bottom: 0;
@@ -1267,6 +1315,12 @@ p { margin: 0; }
 .chart-canvas-wrap.is-scrubbing #chartSpxPath,
 .chart-canvas-wrap.is-scrubbing #chartTargetPath {
   opacity: 1;
+}
+/* No position to compare against in the "New User (Empty)" preview state —
+   keep these hidden even while scrubbing. */
+.chart-canvas-wrap.no-position #chartSpxPath,
+.chart-canvas-wrap.no-position #chartTargetPath {
+  opacity: 0 !important;
 }
 .chart-volume {
   position: relative;
@@ -1821,6 +1875,7 @@ p { margin: 0; }
   display: flex;
   flex-direction: column;
 }
+.history-list[hidden] { display: none; }
 .history-item {
   display: flex;
   align-items: flex-start;
@@ -2073,6 +2128,7 @@ p { margin: 0; }
   <button type="button" class="burger-menu__item" data-page-state="market-close">Market Close</button>
   <button type="button" class="burger-menu__item" data-page-state="after-hours">Market After Hours</button>
   <button type="button" class="burger-menu__item" data-page-state="pre-market">Market Pre-Market</button>
+  <button type="button" class="burger-menu__item" data-page-state="new-user">New User (Empty)</button>
 </div>
 
 <div class="device">
@@ -2144,7 +2200,7 @@ p { margin: 0; }
   </div>
 
   <!-- Activity feed -->
-  <div class="activity-feed">
+  <div class="activity-feed" id="activityFeed">
     <div class="activity-row">
       <div class="dot dot--white"></div>
       <p>New 52-Week High <span class="muted">· 93.81</span></p>
@@ -2187,12 +2243,12 @@ p { margin: 0; }
 
   <!-- Memo section -->
   <div class="memo-section">
-    <div class="section-header--row">
+    <div class="section-header--row" id="memoHeaderRow">
       <div class="section-header">Memo <span class="chev">›</span></div>
       <div class="date">06.22.26</div>
     </div>
 
-    <div class="class-role-row">
+    <div class="class-role-row" id="classRoleRow">
       <div class="col col--classification">
         <div class="label-11">Classification</div>
         <div class="value-14">Compounder</div>
@@ -2204,6 +2260,14 @@ p { margin: 0; }
           <div class="wt-label">WT</div>
         </div>
       </div>
+    </div>
+
+    <!-- Shown instead of the Thesis/Kill/Prediction cards when there's no memo at all yet (New User preview state) -->
+    <div class="memo-empty-card" id="memoEmptyCard" hidden>
+      <div class="memo-empty-card__icon"><img src="data:image/png;base64,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" alt="" width="108" height="66"></div>
+      <div class="memo-empty-card__title">No investment memo</div>
+      <div class="memo-empty-card__subtitle">Capture your thinking.</div>
+      <span class="memo-empty-card__cta">Write <span class="chev">›</span></span>
     </div>
 
     <!-- Thesis card -->
@@ -2277,6 +2341,14 @@ p { margin: 0; }
       </div>
     </div>
 
+    <div class="rich-card" data-state-target="prediction">
+      <div class="rich-card__empty">
+        <div class="warning-card">
+          <div class="dot dot--amber2"></div>
+          <span>No prediction recorded</span>
+        </div>
+      </div>
+      <div class="rich-card__full" hidden>
     <div class="prediction-card">
       <div class="rich-card__head">
         <span class="label-11">Prediction</span>
@@ -2347,6 +2419,8 @@ p { margin: 0; }
         </div>
       </div>
     </div>
+      </div>
+    </div>
 
     <a class="link-row" href="#">Research Note <span class="chev">›</span></a>
   </div>
@@ -2371,12 +2445,12 @@ p { margin: 0; }
     </div>
   </div>
 
-  <div class="divider"></div>
+  <div class="divider" id="positionDivider"></div>
 
   <!-- Position section -->
   <div class="stat-section" id="positionSection">
     <div class="section-header">Position <span class="chev">›</span></div>
-    <div class="position-meta">Entered 10.14.25 · Held 8 months</div>
+    <div class="position-meta" id="positionMeta">Entered 10.14.25 · Held 8 months</div>
 
     <div class="rich-card__empty" id="positionEmpty" hidden>
       <div class="warning-card">
@@ -2477,7 +2551,7 @@ p { margin: 0; }
       <div class="chart-popup" id="chartPopup" hidden>
         <div class="chart-popup__timestamp">
           <span class="chart-popup__ts-left"><span class="date">June 22, 2026</span><span class="time" id="popTime">10:30 AM</span></span>
-          <span class="chart-popup__target-badge">Target 20%/yr</span>
+          <span class="chart-popup__target-badge" id="chartPopupTargetBadge">Target 20%/yr</span>
         </div>
         <div class="chart-popup__row">
           <div class="chart-popup__stat">
@@ -2507,7 +2581,7 @@ p { margin: 0; }
             <div class="chart-popup__val" id="popVolume">47.34K</div>
           </div>
         </div>
-        <div class="chart-popup__row">
+        <div class="chart-popup__row" id="chartPopupPosRow">
           <div class="chart-popup__stat">
             <div class="label-11">Position</div>
             <div class="chart-popup__val" id="popPosPct">+18.0%</div>
@@ -2724,12 +2798,16 @@ p { margin: 0; }
     <a class="link-row section-cta" href="#">View More <span class="chev">›</span></a>
   </div>
 
-  <div class="divider"></div>
+  <div class="divider" id="historyDivider"></div>
 
   <!-- History section -->
-  <div class="history-section">
+  <div class="history-section" id="historySection">
     <div class="section-header">History</div>
-    <div class="history-list">
+    <div class="memo-empty-card" id="historyEmptyCard" hidden>
+      <div class="memo-empty-card__title">No buy or sell history</div>
+      <div class="memo-empty-card__subtitle">Your trade activity will show up here.</div>
+    </div>
+    <div class="history-list" id="historyList">
       <div class="history-item">
         <div class="col">
           <div class="history-date">06.27.26</div>
@@ -2797,7 +2875,7 @@ p { margin: 0; }
         </div>
       </div>
     </div>
-    <a class="link-row section-cta" href="#">View More <span class="chev">›</span></a>
+    <a class="link-row section-cta" href="#" id="historyViewMore">View More <span class="chev">›</span></a>
   </div>
 
   <div class="capital-decision">Capital Decision</div>
@@ -3394,6 +3472,7 @@ p { margin: 0; }
   var RESTING_X = CHART_W; /* default (non-hover) crosshair always sits at "today" */
   var currentStockPct = [0], currentSpxPct = [0], currentTargetPct = [0];
   var currentEntryInView = false, currentEntryFrac = 0;
+  var chartHasPosition = true; /* the "New User (Empty)" preview state flips this off */
 
   function yForX(x) {
     if (x <= points[0].x) return points[0].y;
@@ -3562,9 +3641,9 @@ p { margin: 0; }
     currentEntryInView = entryInView;
     currentEntryFrac = entryFrac;
 
-    /* Dashed "Entered" marker — only shown when the entry date actually
-       falls inside the currently selected range. */
-    if (entryInView) {
+    /* Dashed "Entered" marker — only shown when there's an actual position
+       and the entry date falls inside the currently selected range. */
+    if (chartHasPosition && entryInView) {
       var entryX = entryFrac * CHART_W;
       chartEntryLine.style.left = entryX.toFixed(1) + 'px';
       chartEntryLabel.style.left = Math.max(0, Math.min(entryX - 40, CHART_W - 90)).toFixed(1) + 'px';
@@ -4879,6 +4958,25 @@ p { margin: 0; }
   var menuItems = burgerMenu.querySelectorAll('.burger-menu__item');
   var positionEmptyEl = document.getElementById('positionEmpty');
   var positionFullEl = document.getElementById('positionFull');
+  var positionMetaEl = document.getElementById('positionMeta');
+  var activityFeedEl = document.getElementById('activityFeed');
+  var chartPopupPosRow = document.getElementById('chartPopupPosRow');
+  var chartPopupTargetBadge = document.getElementById('chartPopupTargetBadge');
+  var memoEmptyCard = document.getElementById('memoEmptyCard');
+  var memoCards = document.querySelectorAll('.memo-section > .rich-card');
+  var memoHeaderRow = document.getElementById('memoHeaderRow');
+  var classRoleRow = document.getElementById('classRoleRow');
+  var historyEmptyCard = document.getElementById('historyEmptyCard');
+  var historyList = document.getElementById('historyList');
+  var historyViewMore = document.getElementById('historyViewMore');
+  var historySectionEl = document.getElementById('historySection');
+  var historyDividerEl = document.getElementById('historyDivider');
+  var positionSectionEl = document.getElementById('positionSection');
+  var positionDividerEl = document.getElementById('positionDivider');
+  var DEFAULT_ACTIVITY_HTML = activityFeedEl.innerHTML;
+  var NEW_USER_ACTIVITY_HTML =
+    '<div class="activity-row"><div class="dot dot--white"></div><p>New 52-Week High <span class="muted">· 93.81</span></p></div>' +
+    '<div class="activity-row"><div class="dot dot--amber"></div><p>No thesis recorded</p></div>';
 
   function setRichCard(target, showFull) {
     var card = document.querySelector('.rich-card[data-state-target="' + target + '"]');
@@ -4887,21 +4985,72 @@ p { margin: 0; }
   }
 
   function applyPageState(state) {
-    setRichCard('thesis', true);
-    setRichCard('kill', true);
+    var isNewUser = state === 'new-user';
 
-    thesisText.textContent = 'Compute Demand Keeps Outpacing Supply.';
-    thesisDot.hidden = true;
-    thesisVersionChip.hidden = false;
-    thesisBanner.classList.add('has-version');
-    savedThesis = thesisText.textContent;
+    setRichCard('thesis', !isNewUser);
+    setRichCard('kill', !isNewUser);
+    setRichCard('prediction', !isNewUser);
+    /* With no memo at all, show one unified "No investment memo" card
+       instead of three separate empty placeholders. */
+    memoEmptyCard.hidden = !isNewUser;
+    memoCards.forEach(function (card) { card.hidden = isNewUser; });
+    /* No memo at all means there's nothing for the "Memo" header/date or the
+       Classification/Role row to describe, so hide them too. */
+    memoHeaderRow.hidden = isNewUser;
+    classRoleRow.hidden = isNewUser;
+
+    historyEmptyCard.hidden = !isNewUser;
+    historyList.hidden = isNewUser;
+    historyViewMore.hidden = isNewUser;
+
+    /* First-time user has no position at all, so drop the whole "Position"
+       section (and its leading divider) rather than showing an empty state. */
+    positionSectionEl.hidden = isNewUser;
+    positionDividerEl.hidden = isNewUser;
+
+    /* Same treatment for "History" — no trade activity to show at all yet,
+       so remove the whole section (and its leading divider) instead of an
+       empty-state card. */
+    historySectionEl.hidden = isNewUser;
+    historyDividerEl.hidden = isNewUser;
+
+    if (isNewUser) {
+      thesisText.textContent = 'No One line thesis Recorded';
+      thesisDot.hidden = false;
+      thesisVersionChip.hidden = true;
+      thesisBanner.classList.remove('has-version');
+      savedThesis = null;
+    } else {
+      thesisText.textContent = 'Compute Demand Keeps Outpacing Supply.';
+      thesisDot.hidden = true;
+      thesisVersionChip.hidden = false;
+      thesisBanner.classList.add('has-version');
+      savedThesis = thesisText.textContent;
+    }
     checkStuck();
 
-    positionEmptyEl.hidden = true;
-    positionFullEl.hidden = false;
+    positionEmptyEl.hidden = isNewUser ? false : true;
+    positionFullEl.hidden = isNewUser ? true : false;
+    positionMetaEl.hidden = isNewUser;
 
-    pageMode = state;
-    var t = STATE_CLOCK[state] || STATE_CLOCK.full;
+    activityFeedEl.innerHTML = isNewUser ? NEW_USER_ACTIVITY_HTML : DEFAULT_ACTIVITY_HTML;
+
+    /* First-time user has no entry date, so nothing to compare the stock's
+       price history against — hide the "Entered" marker, the S&P/Target
+       hover overlay, and the popup's Position row rather than pretending a
+       position exists. */
+    chartHasPosition = !isNewUser;
+    chartCanvasWrap.classList.toggle('no-position', isNewUser);
+    chartPopupPosRow.style.display = isNewUser ? 'none' : '';
+    chartPopupTargetBadge.style.display = isNewUser ? 'none' : '';
+    var activeRangeEl = chartTabs.querySelector('.active');
+    if (activeRangeEl) renderChartRange(activeRangeEl.getAttribute('data-range'));
+
+    /* The market session clock/quote simulation stays on a real session
+       value even in the new-user preview — there's still a live market for
+       this stock, the user just doesn't hold a position in it. */
+    pageMode = isNewUser ? 'full' : state;
+    var t = STATE_CLOCK[pageMode] || STATE_CLOCK.full;
     clockDate = new Date(2026, 0, 1, t[0], t[1], t[2]);
     renderClockText();
     renderMarket();
