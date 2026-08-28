@@ -860,12 +860,13 @@ p { margin: 0; }
    matches its direction: green if it ends above the line, red if below. */
 .pred-trend-line.is-up { stroke: #30d158; }
 .pred-trend-line.is-down { stroke: #ff3533; }
-/* Prior (superseded) prediction versions — same shape generator as the live
-   line, just muted gray so they read as "behind" it, not competing with it. */
+/* Secondary ("since current prediction") line — solid, like the primary
+   line, but a fixed neutral gray rather than colored by direction, so it
+   always reads as the secondary track next to V1. */
 .pred-trend-line--ver {
-  stroke: #6b6b6b;
+  stroke: #9a9a9a;
   stroke-width: 1.3;
-  opacity: 0.6;
+  opacity: 0.85;
 }
 .pred-trend-end-dot {
   position: absolute;
@@ -880,8 +881,8 @@ p { margin: 0; }
 .pred-trend-end-dot--ver {
   width: 5px;
   height: 5px;
-  background: #6b6b6b;
-  box-shadow: 0 0 0 3px rgba(107,107,107,0.25);
+  background: #9a9a9a;
+  box-shadow: 0 0 0 3px rgba(154,154,154,0.25);
 }
 /* v1/v2/v3 dots are tappable — each reveals that version's own probability
    and target in a small popover, like Dave's own demo of clicking into V1.
@@ -2534,7 +2535,7 @@ p { margin: 0; }
         <div class="chart-tooltip__change" id="chartChange">+1.54 (+1.2%)</div>
         <div class="chart-tooltip__label chart-tooltip__close-row" id="chartCloseLabel" hidden>Close</div>
         <div class="chart-tooltip__session-row" id="chartSessionRow" hidden>
-          <span class="chart-tooltip__label" id="chartSessionLabel">After Hours</span>
+          <svg class="ah-moon ah-moon--badge" id="chartSessionIcon" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 1020.354 15.354z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           <span id="chartSessionChange">-1.50 (-1.18%)</span>
         </div>
       </span>
@@ -3275,7 +3276,6 @@ p { margin: 0; }
   var chartPrice = document.getElementById('chartPrice');
   var chartChange = document.getElementById('chartChange');
   var chartSessionRow = document.getElementById('chartSessionRow');
-  var chartSessionLabel = document.getElementById('chartSessionLabel');
   var chartSessionChange = document.getElementById('chartSessionChange');
   var chartCloseLabel = document.getElementById('chartCloseLabel');
   var chartPopup = document.getElementById('chartPopup');
@@ -4153,12 +4153,12 @@ p { margin: 0; }
     var alphaSeries = monotoneNoisyLine(alphaPpVal, PRED_ALPHA_POINTS, 0.008, 0);
 
     /* Secondary line — "since current prediction": per the team's review,
-       versions don't each get their own competing track from the same
-       origin. Instead there's one secondary line that branches off the
-       primary line at the first revision after V1 and carries the latest
-       thinking forward to today (chaining through any versions in between —
-       tap the end dot, or open History, to see them). If the prediction has
-       never been revised (no history yet), there's nothing to branch, so the
+       versions don't each get their own competing track starting from V1's
+       own origin. Instead there's one secondary line starting fresh on the
+       S&P line at the first revision after V1, carrying the latest thinking
+       forward to today (chaining through any versions in between — tap the
+       end dot, or open History, to see them). If the prediction has never
+       been revised (no history yet), there's nothing to branch, so the
        secondary line/dot are hidden entirely.
 
        DETAIL is declared further down the file — this function is first
@@ -4177,18 +4177,11 @@ p { margin: 0; }
       hasSecondary = branchFrac < timeFrac;
     }
 
-    /* Where the primary line actually sits at the branch date — the
-       secondary line picks up from exactly that point instead of jumping
-       back to the S&P baseline like a competing track would. alphaSeries's
-       own index scale runs 0->1 over the ELAPSED period (not the full
-       3-year domain — the whole series gets squeezed into the truncated
-       "now" slice by timeFrac afterward), so branchFrac needs dividing back
-       out of timeFrac before it can index into it. */
-    var branchElapsedFrac = timeFrac > 0 ? branchFrac / timeFrac : 0;
-    var branchIdx = Math.max(0, Math.min(PRED_ALPHA_POINTS - 1, branchElapsedFrac * (PRED_ALPHA_POINTS - 1)));
-    var bi0 = Math.floor(branchIdx), bi1 = Math.min(PRED_ALPHA_POINTS - 1, bi0 + 1), bFrac = branchIdx - bi0;
-    var branchY = alphaSeries[bi0] + (alphaSeries[bi1] - alphaSeries[bi0]) * bFrac;
-    var secondarySeries = hasSecondary ? noisyLineFromTo(branchY, predPpVal, PRED_SECONDARY_POINTS, 0.12, 17) : [];
+    /* The secondary line starts on the S&P line itself (0) at the branch
+       date — same convention as the primary line's own start — and tracks
+       to today's "since current prediction" value, rather than picking up
+       wherever the primary line happens to be at that point in time. */
+    var secondarySeries = hasSecondary ? noisyLineFromTo(0, predPpVal, PRED_SECONDARY_POINTS, 0.12, 17) : [];
 
     var minV = Math.min(0, Math.min.apply(null, alphaSeries), hasSecondary ? Math.min.apply(null, secondarySeries) : 0);
     var maxV = Math.max(0, Math.max.apply(null, alphaSeries), hasSecondary ? Math.max.apply(null, secondarySeries) : 0);
@@ -4465,7 +4458,6 @@ p { margin: 0; }
   function renderMarket() {
     var showExt = isExtendedSession();
     var sessionPrice = isAfterHours() ? market.ahPrice : (isPreMarket() ? market.pmPrice : market.price);
-    var sessionLabel = isAfterHours() ? 'After Hours' : 'Pre-Market';
     /* Header ticker tracks the active session's price and gets the
        moon/sunrise icon. The big price-block number stays anchored to the
        close, with the session price + delta shown in its own secondary row. */
@@ -4599,13 +4591,14 @@ p { margin: 0; }
 
     /* Chart tooltip copy: "Full" stays exactly as-is (no label). Market
        Close adds a "Close" label to the existing change line. After Hours
-       and Pre-Market add a primary session line above it too. */
+       and Pre-Market add a primary session line above it too — the
+       moon/sunrise icon (not text) carries which session it is, same as
+       everywhere else this icon appears; setSessionIcons() keeps it in sync. */
     chartCloseLabel.hidden = pageMode === 'full';
     chartSessionRow.hidden = !showExt;
     if (showExt) {
       var chartSessionChg = sessionPrice - market.prevClose;
       var chartSessionPct = (chartSessionChg / market.prevClose) * 100;
-      chartSessionLabel.textContent = sessionLabel;
       chartSessionChange.textContent = (chartSessionChg >= 0 ? '+' : '') + chartSessionChg.toFixed(2) + ' (' + (chartSessionPct >= 0 ? '+' : '') + chartSessionPct.toFixed(2) + '%)';
     }
 
