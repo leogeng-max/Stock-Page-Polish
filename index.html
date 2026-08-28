@@ -362,7 +362,7 @@ p { margin: 0; }
   font-size: 14px;
   color: #929292;
   letter-spacing: -0.28px;
-  margin-right: 1px;
+  margin-top: 10px;
 }
 .price-block__close-label[hidden] { display: none; }
 
@@ -966,30 +966,12 @@ p { margin: 0; }
   color: #929292;
   letter-spacing: -0.22px;
 }
-.pred-goal__info-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 13px;
-  height: 13px;
-  border-radius: 50%;
-  border: 1px solid #6b6b6b;
-  color: #929292;
-  font-size: 9px;
-  font-style: italic;
-  font-family: Georgia, 'Times New Roman', serif;
-  line-height: 1;
-  cursor: pointer;
-  flex-shrink: 0;
-}
-.pred-goal__info-btn.is-open { border-color: #c7c7c7; color: #e3e2e2; }
 .pred-goal__info {
   font-size: 10px;
   color: #929292;
   letter-spacing: -0.1px;
   margin-top: -4px;
 }
-.pred-goal__info[hidden] { display: none; }
 .pred-goal__bar {
   position: relative;
   height: 4px;
@@ -1261,10 +1243,12 @@ p { margin: 0; }
   display: block;
 }
 .chart-tooltip__change {
+  display: block;
   font-size: 14px;
   color: #929292;
   letter-spacing: -0.22px;
   line-height: 15px;
+  margin-top: 10px;
 }
 .chart-tooltip__session-row {
   margin-top: 10px;
@@ -1279,10 +1263,6 @@ p { margin: 0; }
 .chart-tooltip__session-row[hidden] { display: none; }
 .chart-tooltip__close-row {
   margin-top: 10px;
-  display: flex;
-  align-items: baseline;
-  justify-content: flex-end;
-  gap: 6px;
 }
 .chart-tooltip__label {
   font-size: 14px;
@@ -1429,6 +1409,19 @@ p { margin: 0; }
 }
 .l1-ratio-fill--bid { background: rgba(48,209,88,0.55); transition: width 0.25s ease; }
 .l1-ratio-fill--ask { background: rgba(255,53,51,0.55); transition: width 0.25s ease; }
+.l1-ratio-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.l1-ratio-row .l1-ratio-track { flex: 1; }
+.l1-ratio-pct {
+  font-size: 11px;
+  letter-spacing: -0.1px;
+  flex-shrink: 0;
+}
+.l1-ratio-pct--bid { color: #30d158; }
+.l1-ratio-pct--ask { color: #ff3533; }
 .l1-bidask-row {
   margin-top: 10px;
   display: flex;
@@ -1441,9 +1434,13 @@ p { margin: 0; }
   align-items: baseline;
   justify-content: space-between;
   gap: 8px;
+  transition: background-color 0.4s ease;
 }
-.l1-bidask-cell--bid { background: rgba(48,209,88,0.12); }
-.l1-bidask-cell--ask { background: rgba(255,53,51,0.12); }
+.l1-bidask-cell--bid { background: rgba(48,209,88,0.045); }
+.l1-bidask-cell--ask { background: rgba(255,53,51,0.045); }
+/* Independent per-cell flash on a live quote update — see renderQuote(). */
+.l1-bidask-cell--bid.is-flash { background: rgba(48,209,88,0.22); transition: background-color 0.08s ease; }
+.l1-bidask-cell--ask.is-flash { background: rgba(255,53,51,0.22); transition: background-color 0.08s ease; }
 .l1-bidask-label {
   font-size: 13px;
   font-weight: 500;
@@ -2230,10 +2227,10 @@ p { margin: 0; }
       <div class="price-block__price" id="pbPrice">87.60</div>
     </div>
     <div class="price-block__change" id="pbChangeRow">
-      <span class="price-block__close-label" id="pbCloseLabel" hidden>Close</span>
       <span class="abs" id="pbChangeAbs">+0.94</span>
       <span class="pct" id="pbChangePct">+1.45%</span>
     </div>
+    <div class="price-block__close-label" id="pbCloseLabel" hidden>Close</div>
     <div class="price-block__ah-change" id="pbAhChangeRow" hidden>
       <svg class="ah-moon ah-moon--badge" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 1020.354 15.354z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       <span class="price-block__ah-price" id="pbAhPriceInline">87.43</span>
@@ -2352,7 +2349,7 @@ p { margin: 0; }
     <div class="prediction-card">
       <div class="rich-card__head">
         <span class="label-11">Prediction</span>
-        <span class="version-chip">v3 <span class="chev">›</span></span>
+        <span class="version-chip">History <span class="chev">›</span></span>
       </div>
       <div class="pred-value">60% probability of 20%/yr over 3 years</div>
       <div class="pred-track-row">
@@ -2376,17 +2373,14 @@ p { margin: 0; }
         <div class="pred-trend-chart__row">
           <svg class="pred-trend-chart__svg" id="predTrendSvg" viewBox="0 0 300 56" preserveAspectRatio="none">
             <line class="pred-trend-zero-line" id="predTrendZeroLine" x1="0" x2="300" y1="0" y2="0"></line>
-            <path class="pred-trend-line pred-trend-line--ver" id="predTrendV1Line" d=""></path>
-            <path class="pred-trend-line pred-trend-line--ver" id="predTrendV2Line" d=""></path>
+            <path class="pred-trend-line pred-trend-line--ver" id="predTrendSecondaryLine" d=""></path>
             <path class="pred-trend-line" id="predTrendEntryLine" d=""></path>
           </svg>
           <div class="pred-trend-sp-label" id="predTrendSpLabel">S&amp;P</div>
-          <div class="pred-trend-end-dot pred-trend-end-dot--ver" id="predTrendV1Dot"></div>
-          <span class="pred-trend-ver-label" id="predTrendV1Label">v1</span>
-          <div class="pred-trend-end-dot pred-trend-end-dot--ver" id="predTrendV2Dot"></div>
-          <span class="pred-trend-ver-label" id="predTrendV2Label">v2</span>
           <div class="pred-trend-end-dot" id="predTrendEndDot"></div>
-          <span class="pred-trend-ver-label" id="predTrendV3Label">v3</span>
+          <span class="pred-trend-ver-label" id="predTrendPrimaryLabel">v1</span>
+          <div class="pred-trend-end-dot pred-trend-end-dot--ver" id="predTrendSecondaryDot"></div>
+          <span class="pred-trend-ver-label" id="predTrendSecondaryLabel">v3</span>
           <div class="pred-ver-popover" id="predVerPopover" hidden>
             <span class="pred-ver-popover__ver" id="predVerPopoverVer">v1</span>
             <span class="pred-ver-popover__date" id="predVerPopoverDate">Oct 3, 2025</span>
@@ -2401,10 +2395,9 @@ p { margin: 0; }
           <span class="label-11">Against Target</span>
           <span class="pred-goal__target-wrap">
             <span class="pred-goal__target" id="predGoalTarget">72.8% goal</span>
-            <div class="pred-goal__info-btn" id="predGoalInfoBtn" role="button" tabindex="0" aria-label="What does this number mean?" aria-expanded="false">i</div>
           </span>
         </div>
-        <div class="pred-goal__info" id="predGoalInfo" hidden></div>
+        <div class="pred-goal__info" id="predGoalInfo"></div>
         <div class="pred-goal__bar">
           <div class="pred-goal__fill" id="predGoalFill" style="width: 0%"></div>
           <div class="pred-goal__pace" id="predGoalPace" style="left: 0%"></div>
@@ -2422,7 +2415,7 @@ p { margin: 0; }
       </div>
     </div>
 
-    <a class="link-row" href="#">Research Note <span class="chev">›</span></a>
+    <a class="link-row" href="#">Research Notes <span class="chev">›</span></a>
   </div>
 
   <!-- Notes card -->
@@ -2463,8 +2456,8 @@ p { margin: 0; }
       <div class="stat-grid-2">
         <div class="stat">
           <div class="label-11">Market Value</div>
-          <div class="stat-value-15"><span id="posMarketValueUSD">18,943.49</span> <span class="sub" id="posMarketValuePct">+1.0%</span></div>
-          <div class="stat-sub-line"><span id="posMarketValueCAD">25,949.99</span> CAD <span id="posMarketValuePctCAD">+1.0%</span></div>
+          <div class="stat-value-15"><span id="posMarketValueUSD">18,943.49</span> <span class="sub" id="posMarketValuePct">+1.0%</span> <span class="stat-arrow" id="posMarketValueArrow">▲</span></div>
+          <div class="stat-sub-line"><span id="posMarketValueCAD">25,949.99</span> CAD <span id="posMarketValuePctCAD">+1.0%</span> <span class="stat-arrow" id="posMarketValueArrowCad">▲</span></div>
           <div class="stat-ah-line" id="posMarketValueAhLine" hidden><svg class="ah-moon ah-moon--badge" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 1020.354 15.354z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="posMarketValueAh">18,970.24</span> <span id="posMarketValueAhPct">+1.2%</span></div>
         </div>
         <div class="stat">
@@ -2490,14 +2483,14 @@ p { margin: 0; }
       <div class="stat-grid-2">
         <div class="stat">
           <div class="label-11">Unrealized P/L</div>
-          <div class="stat-value-15"><span id="posUnrealizedUSD">+5,645.49</span> <span class="sub" id="posUnrealizedPct">+42.5%</span></div>
-          <div class="stat-sub-line"><span id="posUnrealizedCAD">+7,733.55</span> CAD <span id="posUnrealizedPctCAD">+42.5%</span></div>
+          <div class="stat-value-15"><span id="posUnrealizedUSD">+5,645.49</span> <span class="sub" id="posUnrealizedPct">+42.5%</span> <span class="stat-arrow" id="posUnrealizedArrow">▲</span></div>
+          <div class="stat-sub-line"><span id="posUnrealizedCAD">+7,733.55</span> CAD <span id="posUnrealizedPctCAD">+42.5%</span> <span class="stat-arrow" id="posUnrealizedArrowCad">▲</span></div>
           <div class="stat-ah-line" id="posUnrealizedAhLine" hidden><svg class="ah-moon ah-moon--badge" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 1020.354 15.354z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="posUnrealizedAh">+5,671.16</span> <span id="posUnrealizedAhPct">+42.6%</span></div>
         </div>
         <div class="stat">
           <div class="label-11">S&amp;P 500 (same window)</div>
-          <div class="stat-value-15"><span id="posSPReturnUSD">+4,733.51</span> <span class="sub" id="posSPReturnPct">+35.6%</span></div>
-          <div class="stat-sub-line"><span id="posSPReturnCAD">+6,484.36</span> CAD <span id="posSPReturnPctCAD">+35.6%</span></div>
+          <div class="stat-value-15"><span id="posSPReturnUSD">+4,733.51</span> <span class="sub" id="posSPReturnPct">+35.6%</span> <span class="stat-arrow" id="posSPReturnArrow">▲</span></div>
+          <div class="stat-sub-line"><span id="posSPReturnCAD">+6,484.36</span> CAD <span id="posSPReturnPctCAD">+35.6%</span> <span class="stat-arrow" id="posSPReturnArrowCad">▲</span></div>
           <div class="stat-ah-line" id="posSPReturnAhLine" hidden><svg class="ah-moon ah-moon--badge" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 1020.354 15.354z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="posSPReturnAh">+4,733.51</span> <span id="posSPReturnAhPct">+35.6%</span></div>
         </div>
       </div>
@@ -2538,13 +2531,11 @@ p { margin: 0; }
     <div class="chart-tooltip" id="chartTooltip">
       <span class="chart-tooltip__right">
         <span class="chart-tooltip__price" id="chartPrice">87.60</span>
+        <div class="chart-tooltip__change" id="chartChange">+1.54 (+1.2%)</div>
+        <div class="chart-tooltip__label chart-tooltip__close-row" id="chartCloseLabel" hidden>Close</div>
         <div class="chart-tooltip__session-row" id="chartSessionRow" hidden>
           <span class="chart-tooltip__label" id="chartSessionLabel">After Hours</span>
           <span id="chartSessionChange">-1.50 (-1.18%)</span>
-        </div>
-        <div class="chart-tooltip__close-row">
-          <span class="chart-tooltip__label" id="chartCloseLabel" hidden>Close</span>
-          <span class="chart-tooltip__change" id="chartChange">+1.54 (+1.2%)</span>
         </div>
       </span>
 
@@ -2593,7 +2584,7 @@ p { margin: 0; }
           </div>
           <div class="chart-popup__stat">
             <div class="label-11">vs Target</div>
-            <div class="chart-popup__val" id="popVsTarget">Ahead</div>
+            <div class="chart-popup__val" id="popVsTarget">+3.0 pp</div>
           </div>
         </div>
       </div>
@@ -2634,18 +2625,22 @@ p { margin: 0; }
   <div class="l1-section">
     <div class="l1-title">Order Book - Level 1</div>
 
-    <div class="l1-ratio-track">
-      <div class="l1-ratio-fill l1-ratio-fill--bid" id="l1BidRatioFill" style="width:50%"></div>
-      <div class="l1-ratio-fill l1-ratio-fill--ask" id="l1AskRatioFill" style="width:50%"></div>
+    <div class="l1-ratio-row">
+      <span class="l1-ratio-pct l1-ratio-pct--bid" id="l1BidRatioPct">50.00%</span>
+      <div class="l1-ratio-track">
+        <div class="l1-ratio-fill l1-ratio-fill--bid" id="l1BidRatioFill" style="width:50%"></div>
+        <div class="l1-ratio-fill l1-ratio-fill--ask" id="l1AskRatioFill" style="width:50%"></div>
+      </div>
+      <span class="l1-ratio-pct l1-ratio-pct--ask" id="l1AskRatioPct">50.00%</span>
     </div>
 
     <div class="l1-bidask-row">
-      <div class="l1-bidask-cell l1-bidask-cell--bid">
+      <div class="l1-bidask-cell l1-bidask-cell--bid" id="l1BidCell">
         <span class="l1-bidask-label l1-bidask-label--bid">Bid</span>
         <span class="l1-bidask-size" id="l1BidSize">512</span>
         <span class="l1-bidask-price l1-bidask-price--bid" id="l1Bid">87.52</span>
       </div>
-      <div class="l1-bidask-cell l1-bidask-cell--ask">
+      <div class="l1-bidask-cell l1-bidask-cell--ask" id="l1AskCell">
         <span class="l1-bidask-price l1-bidask-price--ask" id="l1Ask">87.58</span>
         <span class="l1-bidask-size" id="l1AskSize">140</span>
         <span class="l1-bidask-label l1-bidask-label--ask">Ask</span>
@@ -3063,17 +3058,14 @@ p { margin: 0; }
       <div class="pred-trend-chart__row">
         <svg class="pred-trend-chart__svg" id="predTrendSvgLg" viewBox="0 0 300 56" preserveAspectRatio="none" style="height:110px">
           <line class="pred-trend-zero-line" id="predTrendZeroLineLg" x1="0" x2="300" y1="0" y2="0"></line>
-          <path class="pred-trend-line pred-trend-line--ver" id="predTrendV1LineLg" d=""></path>
-          <path class="pred-trend-line pred-trend-line--ver" id="predTrendV2LineLg" d=""></path>
+          <path class="pred-trend-line pred-trend-line--ver" id="predTrendSecondaryLineLg" d=""></path>
           <path class="pred-trend-line" id="predTrendEntryLineLg" d=""></path>
         </svg>
         <div class="pred-trend-sp-label" id="predTrendSpLabelLg">S&amp;P</div>
-        <div class="pred-trend-end-dot pred-trend-end-dot--ver" id="predTrendV1DotLg"></div>
-        <span class="pred-trend-ver-label" id="predTrendV1LabelLg">v1</span>
-        <div class="pred-trend-end-dot pred-trend-end-dot--ver" id="predTrendV2DotLg"></div>
-        <span class="pred-trend-ver-label" id="predTrendV2LabelLg">v2</span>
         <div class="pred-trend-end-dot" id="predTrendEndDotLg"></div>
-        <span class="pred-trend-ver-label" id="predTrendV3LabelLg">v3</span>
+        <span class="pred-trend-ver-label" id="predTrendPrimaryLabelLg">v1</span>
+        <div class="pred-trend-end-dot pred-trend-end-dot--ver" id="predTrendSecondaryDotLg"></div>
+        <span class="pred-trend-ver-label" id="predTrendSecondaryLabelLg">v3</span>
       </div>
       <div class="pred-trend-chart__labels" id="predTrendLabelsLg"></div>
     </div>
@@ -3704,7 +3696,7 @@ p { margin: 0; }
     popPosPct.textContent = (stockPctHere >= 0 ? '+' : '') + stockPctHere.toFixed(1) + '%';
     popSpxPct.textContent = '(S&P 500 ' + (spxPctHere >= 0 ? '+' : '') + spxPctHere.toFixed(1) + '%)';
     popVsSpx.textContent = (vsSpx >= 0 ? '+' : '') + vsSpx.toFixed(1) + ' pp';
-    popVsTarget.textContent = vsTarget >= 0 ? 'Ahead' : 'Behind';
+    popVsTarget.textContent = (vsTarget >= 0 ? '+' : '') + vsTarget.toFixed(1) + ' pp';
     popVsTarget.classList.toggle('is-ahead', vsTarget >= 0);
     popVsTarget.classList.toggle('is-behind', vsTarget < 0);
   }
@@ -3778,6 +3770,10 @@ p { margin: 0; }
   var l1AskSize = document.getElementById('l1AskSize');
   var l1BidRatioFill = document.getElementById('l1BidRatioFill');
   var l1AskRatioFill = document.getElementById('l1AskRatioFill');
+  var l1BidRatioPct = document.getElementById('l1BidRatioPct');
+  var l1AskRatioPct = document.getElementById('l1AskRatioPct');
+  var l1BidCell = document.getElementById('l1BidCell');
+  var l1AskCell = document.getElementById('l1AskCell');
   var l1TickList = document.getElementById('l1TickList');
   var l1VolumeList = document.getElementById('l1VolumeList');
   var l1RowPickerBtn = document.getElementById('l1RowPickerBtn');
@@ -3806,7 +3802,20 @@ p { margin: 0; }
     var askPct = 100 - l1BidPct;
     l1BidRatioFill.style.width = l1BidPct.toFixed(1) + '%';
     l1AskRatioFill.style.width = askPct.toFixed(1) + '%';
+    l1BidRatioPct.textContent = l1BidPct.toFixed(2) + '%';
+    l1AskRatioPct.textContent = askPct.toFixed(2) + '%';
+
+    /* Bid and ask update independently in a real order book, so each cell
+       flashes on its own random chance rather than always together. */
+    flashL1Cell(l1BidCell);
+    flashL1Cell(l1AskCell);
     addTickRow();
+  }
+
+  function flashL1Cell(cellEl) {
+    if (Math.random() > 0.5) return;
+    cellEl.classList.add('is-flash');
+    setTimeout(function () { cellEl.classList.remove('is-flash'); }, 300);
   }
 
   function addTickRow() {
@@ -3957,33 +3966,26 @@ p { margin: 0; }
   var predTrendZeroLine = document.getElementById('predTrendZeroLine');
   var predTrendSpLabel = document.getElementById('predTrendSpLabel');
   var predTrendEndDot = document.getElementById('predTrendEndDot');
-  var predTrendV1Line = document.getElementById('predTrendV1Line');
-  var predTrendV2Line = document.getElementById('predTrendV2Line');
-  var predTrendV1Dot = document.getElementById('predTrendV1Dot');
-  var predTrendV2Dot = document.getElementById('predTrendV2Dot');
-  var predTrendV1Label = document.getElementById('predTrendV1Label');
-  var predTrendV2Label = document.getElementById('predTrendV2Label');
-  var predTrendV3Label = document.getElementById('predTrendV3Label');
+  var predTrendSecondaryLine = document.getElementById('predTrendSecondaryLine');
+  var predTrendSecondaryDot = document.getElementById('predTrendSecondaryDot');
+  var predTrendPrimaryLabel = document.getElementById('predTrendPrimaryLabel');
+  var predTrendSecondaryLabel = document.getElementById('predTrendSecondaryLabel');
   var predTrendLabels = document.getElementById('predTrendLabels');
   /* larger duplicate chart shown inside the Prediction detail overlay */
   var predTrendEntryLineLg = document.getElementById('predTrendEntryLineLg');
   var predTrendZeroLineLg = document.getElementById('predTrendZeroLineLg');
   var predTrendSpLabelLg = document.getElementById('predTrendSpLabelLg');
   var predTrendEndDotLg = document.getElementById('predTrendEndDotLg');
-  var predTrendV1LineLg = document.getElementById('predTrendV1LineLg');
-  var predTrendV2LineLg = document.getElementById('predTrendV2LineLg');
-  var predTrendV1DotLg = document.getElementById('predTrendV1DotLg');
-  var predTrendV2DotLg = document.getElementById('predTrendV2DotLg');
-  var predTrendV1LabelLg = document.getElementById('predTrendV1LabelLg');
-  var predTrendV2LabelLg = document.getElementById('predTrendV2LabelLg');
-  var predTrendV3LabelLg = document.getElementById('predTrendV3LabelLg');
+  var predTrendSecondaryLineLg = document.getElementById('predTrendSecondaryLineLg');
+  var predTrendSecondaryDotLg = document.getElementById('predTrendSecondaryDotLg');
+  var predTrendPrimaryLabelLg = document.getElementById('predTrendPrimaryLabelLg');
+  var predTrendSecondaryLabelLg = document.getElementById('predTrendSecondaryLabelLg');
   var predTrendLabelsLg = document.getElementById('predTrendLabelsLg');
   var predGoalTarget = document.getElementById('predGoalTarget');
   var predGoalFill = document.getElementById('predGoalFill');
   var predGoalPace = document.getElementById('predGoalPace');
   var predGoalSoFar = document.getElementById('predGoalSoFar');
   var predGoalNeeded = document.getElementById('predGoalNeeded');
-  var predGoalInfoBtn = document.getElementById('predGoalInfoBtn');
   var predGoalInfo = document.getElementById('predGoalInfo');
   var predVerPopover = document.getElementById('predVerPopover');
   var predVerPopoverVer = document.getElementById('predVerPopoverVer');
@@ -3996,22 +3998,11 @@ p { margin: 0; }
   var PRED_GOAL_NOW = new Date(2026, 5, 22);
   var PRED_GOAL_PCT = (Math.pow(1.20, 3) - 1) * 100; /* 20%/yr compounded over 3 years */
   predGoalInfo.textContent = '20%/yr compounded over 3 years = ' + PRED_GOAL_PCT.toFixed(1) + '% total return.';
-  function togglePredGoalInfo() {
-    var opening = predGoalInfo.hidden;
-    predGoalInfo.hidden = !opening;
-    predGoalInfoBtn.classList.toggle('is-open', opening);
-    predGoalInfoBtn.setAttribute('aria-expanded', opening ? 'true' : 'false');
-  }
-  predGoalInfoBtn.addEventListener('click', function (e) { e.stopPropagation(); togglePredGoalInfo(); });
-  predGoalInfoBtn.addEventListener('keydown', function (e) {
-    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); togglePredGoalInfo(); }
-  });
-  /* The "since current prediction" figure is text-only (no longer plotted) —
-     PRED_CURRENT_ANCHORS/PRED_CURRENT_POINTS still drive its trailing-average
-     arrow via the same noisyLine() generator used before. */
-  var PRED_CURRENT_ANCHORS = [3.1, 5.4, 7.4];
   var PRED_ALPHA_POINTS = 60;
-  var PRED_CURRENT_POINTS = 24;
+  /* The secondary ("since current prediction") line only has real ground to
+     stand on from the first revision after V1 onward, not the full 3-year
+     span the primary line covers, so it needs far fewer points. */
+  var PRED_SECONDARY_POINTS = 24;
   /* Trailing-average window for the trend arrows — per the meeting: not a
      "vs yesterday" compare, but "vs your recent average" (the Whoop model
      Aidan described), now that the dense series actually has enough points
@@ -4093,6 +4084,25 @@ p { margin: 0; }
     return out;
   }
 
+  /* The secondary line branches off wherever the primary line actually is at
+     the moment the current prediction was made, then noisily interpolates
+     to today's live value — unlike monotoneNoisyLine, it doesn't start from
+     0 since it's picking up mid-flight from the primary line, not the S&P
+     baseline. */
+  function noisyLineFromTo(startVal, endVal, numPoints, noiseAmp, seedOffset) {
+    var out = [];
+    var span = Math.abs(endVal - startVal) || 1;
+    for (var i = 0; i < numPoints; i++) {
+      if (i === 0) { out.push(startVal); continue; }
+      if (i === numPoints - 1) { out.push(endVal); continue; }
+      var t = i / (numPoints - 1);
+      var base = startVal + (endVal - startVal) * t;
+      var wiggle = (pseudoRandom(i + seedOffset) - 0.5) * 2 * noiseAmp * span;
+      out.push(base + wiggle);
+    }
+    return out;
+  }
+
   function chartY(v, minV, range) {
     var usableH = PRED_CHART_H - PRED_CHART_PAD * 2;
     return PRED_CHART_PAD + usableH - ((v - minV) / range) * usableH;
@@ -4135,53 +4145,83 @@ p { margin: 0; }
   }
 
   function renderPredTrend(alphaPpVal, predPpVal) {
-    PRED_CURRENT_ANCHORS[PRED_CURRENT_ANCHORS.length - 1] = predPpVal;
-
-    /* Starts at 0 (the S&P baseline) and ends at the live value, staying on
-       that one side the whole way — see monotoneNoisyLine(). */
+    /* Primary line — "since entry" (vs S&P), always anchored on V1: starts at
+       0 (the S&P baseline, on the original prediction date) and runs
+       continuously through to today, staying on one side the whole way —
+       see monotoneNoisyLine(). This never changes shape when a new version
+       is logged; it's the one constant reference line. */
     var alphaSeries = monotoneNoisyLine(alphaPpVal, PRED_ALPHA_POINTS, 0.008, 0);
-    var predSeries = noisyLine(PRED_CURRENT_ANCHORS, PRED_CURRENT_POINTS, 0.7, 17);
-    predSeries[predSeries.length - 1] = predPpVal;
 
-    /* Prior (superseded) prediction versions — same shape generator as the
-       live v3 line, scaled down with their own noise seeds so they read as
-       related-but-distinct tracks that always stay behind it. */
-    var v1Series = monotoneNoisyLine(alphaPpVal * 0.42, PRED_ALPHA_POINTS, 0.01, 31);
-    var v2Series = monotoneNoisyLine(alphaPpVal * 0.7, PRED_ALPHA_POINTS, 0.01, 47);
+    /* Secondary line — "since current prediction": per the team's review,
+       versions don't each get their own competing track from the same
+       origin. Instead there's one secondary line that branches off the
+       primary line at the first revision after V1 and carries the latest
+       thinking forward to today (chaining through any versions in between —
+       tap the end dot, or open History, to see them). If the prediction has
+       never been revised (no history yet), there's nothing to branch, so the
+       secondary line/dot are hidden entirely.
 
-    var minV = Math.min(0, Math.min.apply(null, alphaSeries), Math.min.apply(null, v1Series), Math.min.apply(null, v2Series));
-    var maxV = Math.max(0, Math.max.apply(null, alphaSeries), Math.max.apply(null, v1Series), Math.max.apply(null, v2Series));
+       DETAIL is declared further down the file — this function is first
+       called during the page's initial render, before that point, so it
+       falls back to "no secondary line yet" on that one early call. The
+       very next render pass (triggered once the rest of the script has
+       finished loading) has DETAIL available and fills the real line in. */
+    var s = (typeof DETAIL !== 'undefined') ? DETAIL.pred.state : null;
+    var totalDays = Math.round((PRED_GOAL_END - PRED_GOAL_START) / 86400000);
+    var timeFrac = predTimeFrac();
+    var hasSecondary = !!s && s.history.length >= 1;
+    var branchFrac = 0;
+    if (hasSecondary) {
+      var branchDate = s.history.length >= 2 ? new Date(s.history[1].date) : new Date(s.date);
+      branchFrac = Math.max(0, Math.min(1, Math.round((branchDate - PRED_GOAL_START) / 86400000) / totalDays));
+      hasSecondary = branchFrac < timeFrac;
+    }
+
+    /* Where the primary line actually sits at the branch date — the
+       secondary line picks up from exactly that point instead of jumping
+       back to the S&P baseline like a competing track would. alphaSeries's
+       own index scale runs 0->1 over the ELAPSED period (not the full
+       3-year domain — the whole series gets squeezed into the truncated
+       "now" slice by timeFrac afterward), so branchFrac needs dividing back
+       out of timeFrac before it can index into it. */
+    var branchElapsedFrac = timeFrac > 0 ? branchFrac / timeFrac : 0;
+    var branchIdx = Math.max(0, Math.min(PRED_ALPHA_POINTS - 1, branchElapsedFrac * (PRED_ALPHA_POINTS - 1)));
+    var bi0 = Math.floor(branchIdx), bi1 = Math.min(PRED_ALPHA_POINTS - 1, bi0 + 1), bFrac = branchIdx - bi0;
+    var branchY = alphaSeries[bi0] + (alphaSeries[bi1] - alphaSeries[bi0]) * bFrac;
+    var secondarySeries = hasSecondary ? noisyLineFromTo(branchY, predPpVal, PRED_SECONDARY_POINTS, 0.12, 17) : [];
+
+    var minV = Math.min(0, Math.min.apply(null, alphaSeries), hasSecondary ? Math.min.apply(null, secondarySeries) : 0);
+    var maxV = Math.max(0, Math.max.apply(null, alphaSeries), hasSecondary ? Math.max.apply(null, secondarySeries) : 0);
     var range = (maxV - minV) || 1;
 
-    /* Every one of these lines only has real ground to stand on up through
-       "now" — the same point the goal bar's pace marker sits at — so they're
+    /* The primary line only has real ground to stand on up through "now" —
+       the same point the goal bar's pace marker sits at — so it's
        compressed into that leading slice of the chart instead of stretching
-       across the full 3-year span the way the old single line used to. */
-    var timeFrac = predTimeFrac();
-    function toTruncatedXY(series) {
-      var pts = seriesToXY(series, PRED_ALPHA_POINTS, 0, minV, range);
-      pts.forEach(function (p) { p[0] *= timeFrac; });
-      return pts;
-    }
-    var alphaPts = toTruncatedXY(alphaSeries);
-    var v1Pts = toTruncatedXY(v1Series);
-    var v2Pts = toTruncatedXY(v2Series);
+       across the full 3-year span. */
+    var alphaPts = seriesToXY(alphaSeries, PRED_ALPHA_POINTS, 0, minV, range);
+    alphaPts.forEach(function (p) { p[0] *= timeFrac; });
     var entryPath = smoothPathD(alphaPts);
-    var v1Path = smoothPathD(v1Pts);
-    var v2Path = smoothPathD(v2Pts);
     var isUp = alphaPpVal >= 0;
 
-    [[predTrendEntryLine, predTrendZeroLine, predTrendSpLabel, predTrendEndDot, predTrendV1Line, predTrendV2Line, predTrendV1Dot, predTrendV2Dot, predTrendV1Label, predTrendV2Label, predTrendV3Label],
-     [predTrendEntryLineLg, predTrendZeroLineLg, predTrendSpLabelLg, predTrendEndDotLg, predTrendV1LineLg, predTrendV2LineLg, predTrendV1DotLg, predTrendV2DotLg, predTrendV1LabelLg, predTrendV2LabelLg, predTrendV3LabelLg]
+    var secPts = [];
+    if (hasSecondary) {
+      secPts = secondarySeries.map(function (v, i) {
+        var t = i / (secondarySeries.length - 1);
+        var x = (branchFrac + t * (timeFrac - branchFrac)) * PRED_CHART_W;
+        return [x, chartY(v, minV, range)];
+      });
+    }
+    var secPath = hasSecondary ? smoothPathD(secPts) : '';
+
+    [[predTrendEntryLine, predTrendZeroLine, predTrendSpLabel, predTrendEndDot, predTrendSecondaryLine, predTrendSecondaryDot, predTrendPrimaryLabel, predTrendSecondaryLabel],
+     [predTrendEntryLineLg, predTrendZeroLineLg, predTrendSpLabelLg, predTrendEndDotLg, predTrendSecondaryLineLg, predTrendSecondaryDotLg, predTrendPrimaryLabelLg, predTrendSecondaryLabelLg]
     ].forEach(function (refs) {
       var line = refs[0], zeroLine = refs[1], spLabel = refs[2], endDot = refs[3],
-          v1Line = refs[4], v2Line = refs[5], v1Dot = refs[6], v2Dot = refs[7],
-          v1Label = refs[8], v2Label = refs[9], v3Label = refs[10];
+          secLine = refs[4], secDot = refs[5], primaryLabel = refs[6], secLabel = refs[7];
       line.setAttribute('d', entryPath);
       line.classList.toggle('is-up', isUp);
       line.classList.toggle('is-down', !isUp);
-      v1Line.setAttribute('d', v1Path);
-      v2Line.setAttribute('d', v2Path);
+      secLine.setAttribute('d', secPath);
 
       /* Zero line = "matching the S&P exactly" — the one reference every pp
          figure on this card is measured against, and the point the "since
@@ -4191,25 +4231,26 @@ p { margin: 0; }
       zeroLine.setAttribute('y2', zeroY.toFixed(1));
       spLabel.style.top = (zeroY / PRED_CHART_H * 100).toFixed(2) + '%';
 
+      /* V1 (primary) always ends "now" — the bold, colored dot. */
       var endPt = alphaPts[alphaPts.length - 1];
       endDot.style.left = (endPt[0] / PRED_CHART_W * 100).toFixed(2) + '%';
       endDot.style.top = (endPt[1] / PRED_CHART_H * 100).toFixed(2) + '%';
       endDot.classList.toggle('is-up', isUp);
       endDot.classList.toggle('is-down', !isUp);
-      v3Label.style.left = endDot.style.left;
-      v3Label.style.top = endDot.style.top;
+      primaryLabel.style.left = endDot.style.left;
+      primaryLabel.style.top = endDot.style.top;
+      primaryLabel.textContent = 'v1';
 
-      var v1End = v1Pts[v1Pts.length - 1];
-      v1Dot.style.left = (v1End[0] / PRED_CHART_W * 100).toFixed(2) + '%';
-      v1Dot.style.top = (v1End[1] / PRED_CHART_H * 100).toFixed(2) + '%';
-      v1Label.style.left = v1Dot.style.left;
-      v1Label.style.top = v1Dot.style.top;
-
-      var v2End = v2Pts[v2Pts.length - 1];
-      v2Dot.style.left = (v2End[0] / PRED_CHART_W * 100).toFixed(2) + '%';
-      v2Dot.style.top = (v2End[1] / PRED_CHART_H * 100).toFixed(2) + '%';
-      v2Label.style.left = v2Dot.style.left;
-      v2Label.style.top = v2Dot.style.top;
+      secDot.hidden = !hasSecondary;
+      secLabel.hidden = !hasSecondary;
+      if (hasSecondary) {
+        var secEnd = secPts[secPts.length - 1];
+        secDot.style.left = (secEnd[0] / PRED_CHART_W * 100).toFixed(2) + '%';
+        secDot.style.top = (secEnd[1] / PRED_CHART_H * 100).toFixed(2) + '%';
+        secLabel.style.left = secDot.style.left;
+        secLabel.style.top = secDot.style.top;
+        secLabel.textContent = 'v' + s.version;
+      }
     });
 
     /* Arrows: today's value vs the trailing average of the last
@@ -4221,8 +4262,7 @@ p { margin: 0; }
     predSincePurchaseArrow.classList.toggle('is-up', alphaUp);
     predSincePurchaseArrow.classList.toggle('is-down', !alphaUp);
 
-    var predAvg = trailingAvg(predSeries, PRED_TRAILING_WINDOW);
-    var predUp = predPpVal >= predAvg;
+    var predUp = hasSecondary ? predPpVal >= trailingAvg(secondarySeries, PRED_TRAILING_WINDOW) : alphaUp;
     predTrackingArrow.textContent = predUp ? '▲' : '▼';
     predTrackingArrow.classList.toggle('is-up', predUp);
     predTrackingArrow.classList.toggle('is-down', !predUp);
@@ -4251,15 +4291,18 @@ p { margin: 0; }
     predGoalNeeded.classList.toggle('is-behind', !ahead && !reached);
   }
 
-  /* Tappable v1/v2/v3 dots — mirrors Dave's own demo of clicking into a prior
-     version and seeing its own probability/target. v1 and v2 read from the
-     saved history entries; v3 (current) reads the live state directly.
-     DETAIL is defined further below in the file, but this only runs on a
-     click, well after the whole script (and DETAIL) has finished loading. */
+  /* Tappable primary/secondary dots — mirrors Dave's own demo of clicking
+     into a prior version and seeing its own probability/target. v1 always
+     reads the first saved history entry; "current" reads the live state
+     directly. Anything in between is only reachable via History (the
+     overlay's own version list), not a dot on this chart — see
+     renderPredTrend(). DETAIL is defined further below in the file, but this
+     only runs on a click, well after the whole script (and DETAIL) has
+     finished loading. */
   function predVerData(key) {
     var s = DETAIL.pred.state;
-    if (key === 'v3') return { ver: 'v' + s.version, date: s.date, prob: s.prob, hurdle: s.hurdle };
-    var h = s.history[key === 'v1' ? 0 : 1];
+    if (key === 'current') return { ver: 'v' + s.version, date: s.date, prob: s.prob, hurdle: s.hurdle };
+    var h = s.history[0];
     return { ver: 'v' + h.version, date: h.date, prob: h.prob, hurdle: h.hurdle };
   }
   var predVerPopoverOpenKey = null;
@@ -4279,7 +4322,7 @@ p { margin: 0; }
     predVerPopover.hidden = true;
     predVerPopoverOpenKey = null;
   }
-  [['v1', predTrendV1Dot], ['v2', predTrendV2Dot], ['v3', predTrendEndDot]].forEach(function (pair) {
+  [['v1', predTrendEndDot], ['current', predTrendSecondaryDot]].forEach(function (pair) {
     var key = pair[0], dot = pair[1];
     dot.classList.add('is-tappable');
     dot.setAttribute('role', 'button');
@@ -4303,6 +4346,8 @@ p { margin: 0; }
   var posMarketValuePct = document.getElementById('posMarketValuePct');
   var posMarketValueCAD = document.getElementById('posMarketValueCAD');
   var posMarketValuePctCAD = document.getElementById('posMarketValuePctCAD');
+  var posMarketValueArrow = document.getElementById('posMarketValueArrow');
+  var posMarketValueArrowCad = document.getElementById('posMarketValueArrowCad');
   var posBookCostUSD = document.getElementById('posBookCostUSD');
   var posBookCostCAD = document.getElementById('posBookCostCAD');
   var posAvgCostUSD = document.getElementById('posAvgCostUSD');
@@ -4311,10 +4356,14 @@ p { margin: 0; }
   var posUnrealizedPct = document.getElementById('posUnrealizedPct');
   var posUnrealizedCAD = document.getElementById('posUnrealizedCAD');
   var posUnrealizedPctCAD = document.getElementById('posUnrealizedPctCAD');
+  var posUnrealizedArrow = document.getElementById('posUnrealizedArrow');
+  var posUnrealizedArrowCad = document.getElementById('posUnrealizedArrowCad');
   var posSPReturnUSD = document.getElementById('posSPReturnUSD');
   var posSPReturnPct = document.getElementById('posSPReturnPct');
   var posSPReturnCAD = document.getElementById('posSPReturnCAD');
   var posSPReturnPctCAD = document.getElementById('posSPReturnPctCAD');
+  var posSPReturnArrow = document.getElementById('posSPReturnArrow');
+  var posSPReturnArrowCad = document.getElementById('posSPReturnArrowCad');
   var posAlpha = document.getElementById('posAlpha');
   var posAlphaUSD = document.getElementById('posAlphaUSD');
   var posAlphaCAD = document.getElementById('posAlphaCAD');
@@ -4469,10 +4518,20 @@ p { margin: 0; }
     posMarketValuePct.textContent = pctStr;
     posMarketValueCAD.textContent = fmtMoney(marketValue * CAD_RATE);
     posMarketValuePctCAD.textContent = pctStr;
+    posMarketValueArrow.textContent = posMarketValueArrowCad.textContent = pct >= 0 ? '▲' : '▼';
+    posMarketValueArrow.classList.toggle('is-up', pct >= 0);
+    posMarketValueArrow.classList.toggle('is-down', pct < 0);
+    posMarketValueArrowCad.classList.toggle('is-up', pct >= 0);
+    posMarketValueArrowCad.classList.toggle('is-down', pct < 0);
     posUnrealizedUSD.textContent = fmtSigned(unrealizedPL);
     posUnrealizedPct.textContent = (unrealizedPLPct >= 0 ? '+' : '') + unrealizedPLPct.toFixed(1) + '%';
     posUnrealizedCAD.textContent = fmtSigned(unrealizedPL * CAD_RATE);
     posUnrealizedPctCAD.textContent = (unrealizedPLPct >= 0 ? '+' : '') + unrealizedPLPct.toFixed(1) + '%';
+    posUnrealizedArrow.textContent = posUnrealizedArrowCad.textContent = unrealizedPLPct >= 0 ? '▲' : '▼';
+    posUnrealizedArrow.classList.toggle('is-up', unrealizedPLPct >= 0);
+    posUnrealizedArrow.classList.toggle('is-down', unrealizedPLPct < 0);
+    posUnrealizedArrowCad.classList.toggle('is-up', unrealizedPLPct >= 0);
+    posUnrealizedArrowCad.classList.toggle('is-down', unrealizedPLPct < 0);
     posBookCostUSD.textContent = fmtMoney(market.costBasis);
     posBookCostCAD.textContent = fmtMoney(market.costBasis * CAD_RATE);
     posAvgCostUSD.textContent = (market.costBasis / market.shares).toFixed(2);
@@ -4483,6 +4542,11 @@ p { margin: 0; }
     posSPReturnPct.textContent = spPctStr;
     posSPReturnCAD.textContent = fmtSigned(spPL * CAD_RATE);
     posSPReturnPctCAD.textContent = spPctStr;
+    posSPReturnArrow.textContent = posSPReturnArrowCad.textContent = market.spPLPct >= 0 ? '▲' : '▼';
+    posSPReturnArrow.classList.toggle('is-up', market.spPLPct >= 0);
+    posSPReturnArrow.classList.toggle('is-down', market.spPLPct < 0);
+    posSPReturnArrowCad.classList.toggle('is-up', market.spPLPct >= 0);
+    posSPReturnArrowCad.classList.toggle('is-down', market.spPLPct < 0);
     posAlpha.textContent = (alphaPp >= 0 ? '+' : '') + alphaPp.toFixed(1) + ' pp';
     posAlphaPpCad.textContent = posAlpha.textContent;
     var alphaDollar = unrealizedPL - spPL;
@@ -4947,9 +5011,10 @@ p { margin: 0; }
     var s = DETAIL.pred.state;
     document.querySelector('.pred-value').textContent =
       s.prob + '% probability of ' + s.hurdle + '%/yr over ' + HORIZON_LABEL[s.horizon];
-    document.querySelectorAll('.prediction-card .version-chip').forEach(function (el) {
-      el.innerHTML = 'v' + s.version + ' <span class="chev">›</span>';
-    });
+    /* Unlike Thesis/Kill, this chip stays a plain "History" label rather than
+       the live version number — the chart below is anchored on V1 and shows
+       the whole history, not just the current version, so badging it with
+       just the latest version number would be misleading. */
   }
 
   /* ---------- Burger menu + page-state preview switcher ---------- */
