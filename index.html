@@ -1056,7 +1056,7 @@ p { margin: 0; }
   margin-top: 10px;
 }
 .chart-tooltip__session-row {
-  margin-top: 10px;
+  margin-top: 18px;
   display: flex;
   align-items: baseline;
   justify-content: flex-end;
@@ -1067,7 +1067,7 @@ p { margin: 0; }
 }
 .chart-tooltip__session-row[hidden] { display: none; }
 .chart-tooltip__close-row {
-  margin-top: 10px;
+  margin-top: 2px;
 }
 .chart-tooltip__label {
   font-size: 14px;
@@ -1459,7 +1459,7 @@ p { margin: 0; }
 }
 .keystats-grid { padding-bottom: 15px; }
 
-/* ---------- Financials / Investor Relations / Ownership ---------- */
+/* ---------- Financials ---------- */
 .finrel-section { margin: 0 20px; }
 .finrel-block {
   padding: 20px 0;
@@ -1965,81 +1965,6 @@ p { margin: 0; }
 .earnings-history-table tbody tr { cursor: pointer; transition: background 0.15s ease; }
 .earnings-history-table tbody tr.is-selected { background: rgba(255,255,255,0.06); }
 .earnings-history-table .stat-arrow { margin-left: 4px; }
-
-/* ---------- Earnings calendar overlay ---------- */
-.cal-week-nav {
-  margin-top: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-}
-.cal-week-nav button {
-  background: none; border: none; color: #929292; font-size: 15px; cursor: pointer; padding: 4px 10px;
-}
-.cal-week-label { font-size: 13px; color: #ffffff; min-width: 84px; text-align: center; }
-.cal-day-strip {
-  margin-top: 14px;
-  display: flex;
-  gap: 6px;
-}
-.cal-day-btn {
-  flex: 1;
-  background: #0a0a0a;
-  border: 1px solid #232627;
-  border-radius: 12px;
-  padding: 8px 4px 10px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  cursor: pointer;
-  color: #929292;
-}
-.cal-day-btn__dow { font-size: 9.5px; letter-spacing: 0.2px; }
-.cal-day-btn__num { font-size: 13px; color: #ffffff; font-weight: 500; }
-.cal-day-btn__logos { display: flex; gap: 2px; height: 12px; }
-.cal-day-btn__logos span {
-  width: 12px; height: 12px; border-radius: 50%; font-size: 7px; line-height: 12px; text-align: center;
-  color: #ffffff; font-weight: 700;
-}
-.cal-day-btn.active { background: #ffffff1a; border-color: #ffffff; }
-.cal-day-btn.active .cal-day-btn__num { color: #ffffff; }
-.cal-day-btn.is-today .cal-day-btn__num { color: #4a7dff; }
-.cal-day-heading { margin-top: 20px; font-size: 15px; color: #ffffff; letter-spacing: -0.2px; }
-.cal-company-list { margin-top: 12px; display: flex; flex-direction: column; }
-.cal-company-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 0;
-  border-bottom: 1px solid #1a1a1a;
-}
-.cal-company-row:last-child { border-bottom: none; }
-.cal-company-logo {
-  width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 11px; font-weight: 700; color: #ffffff;
-}
-.cal-company-name { font-size: 13.5px; color: #ffffff; letter-spacing: -0.2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.cal-company-ticker { font-size: 11.5px; color: #929292; margin-top: 2px; display: flex; align-items: center; gap: 6px; }
-.cal-company-ticker .chg.up { color: #30d158; }
-.cal-company-ticker .chg.down { color: #ff3533; }
-.cal-company-right { margin-left: auto; text-align: right; flex-shrink: 0; }
-.cal-company-eps { font-size: 13.5px; color: #ffffff; }
-.cal-company-badge {
-  margin-top: 4px;
-  font-size: 10px;
-  font-weight: 600;
-  padding: 1px 8px;
-  border-radius: 20px;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-  display: inline-block;
-}
-.cal-company-badge.beat { color: #30d158; background: rgba(48,209,88,0.14); }
-.cal-company-badge.miss { color: #ff3533; background: rgba(255,53,51,0.14); }
-.cal-empty-note { margin-top: 20px; font-size: 12.5px; color: #6b6b6b; text-align: center; }
 
 /* ---------- Links section ---------- */
 .links-section {
@@ -2938,7 +2863,7 @@ p { margin: 0; }
 
   <div class="divider"></div>
 
-  <!-- Financials / Investor Relations / Ownership -->
+  <!-- Financials -->
   <div class="finrel-section">
     <div class="finrel-block finrel-block--link" id="financialsTrigger" role="button" tabindex="0">
       <div class="section-header">Financials <span class="chev">›</span></div>
@@ -2949,17 +2874,6 @@ p { margin: 0; }
         <div class="cell"><div class="label-11">Free Cash Flow</div><div class="val">88.7M <span class="delta">-4.1%</span> <span class="stat-arrow is-down">▼</span></div></div>
         <div class="cell"><div class="label-11">Operating Margin</div><div class="val">25.3% <span class="delta">+2.1pp</span> <span class="stat-arrow is-up">▲</span></div></div>
       </div>
-    </div>
-
-    <div class="divider"></div>
-
-    <div class="finrel-block">
-      <div class="section-header">Ownership <span class="chev">›</span></div>
-      <div class="finrel-grid">
-        <div class="cell"><div class="label-11">Insider Ownership</div><div class="val">8.4%</div></div>
-        <div class="cell"><div class="label-11">Institutional Ownership</div><div class="val">71.2%</div></div>
-      </div>
-      <div class="finrel-footnote">3 insider transactions in the last 90 days</div>
     </div>
   </div>
 
@@ -3170,11 +3084,6 @@ p { margin: 0; }
         <img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiB2aWV3Qm94PSIwIDAgMTYgMTYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJTVkciPgo8cGF0aCBpZD0iVmVjdG9yIiBkPSJNMTAuNSAzTDUuNSA4TDEwLjUgMTMiIHN0cm9rZT0iI0M3QzdDNyIgc3Ryb2tlLXdpZHRoPSIxLjQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L2c+Cjwvc3ZnPgo=" alt="">
         </button>
         <span class="fin-overlay-ticker">KSTL <span class="sep">·</span> <span id="finHeaderPrice">87.60</span> USD <span class="chg" id="finHeaderChg">+1.45%</span></span>
-        <div class="fin-header-right">
-          <button type="button" class="fin-cal-btn" id="finCalBtn" aria-label="Earnings calendar">
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="1.5" y="3" width="15" height="13" rx="1.6" stroke="currentColor" stroke-width="1.3"/><path d="M1.5 6.8H16.5" stroke="currentColor" stroke-width="1.3"/><path d="M5 1.4V4M13 1.4V4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
-          </button>
-        </div>
     </div>
 
     <div class="fin-tabs" id="finTabs">
@@ -3241,9 +3150,6 @@ p { margin: 0; }
       </button>
       <span class="fin-overlay-ticker">KSTL <span class="sep">·</span> <span id="earningsHeaderPrice">87.60</span> USD <span class="chg" id="earningsHeaderChg">+1.45%</span></span>
       <div class="fin-header-right">
-        <button type="button" class="fin-cal-btn" id="earningsCalBtn" aria-label="Earnings calendar">
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="1.5" y="3" width="15" height="13" rx="1.6" stroke="currentColor" stroke-width="1.3"/><path d="M1.5 6.8H16.5" stroke="currentColor" stroke-width="1.3"/><path d="M5 1.4V4M13 1.4V4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
-        </button>
         <button type="button" class="fin-cal-btn fin-info-btn" id="earningsInfoBtn" aria-label="About earnings">ⓘ</button>
       </div>
     </div>
@@ -3285,27 +3191,6 @@ p { margin: 0; }
       <div class="earnings-about-sheet__head">About <span id="earningsAboutNoun">earnings</span></div>
       <div class="earnings-about-sheet__text" id="earningsAboutText">Earnings per share (EPS) shows how much profit a company earned for each share. Compare actual EPS with analyst estimates to see whether the company beat, met, or missed expectations.</div>
     </div>
-  </div>
-
-  <!-- Earnings calendar overlay -->
-  <div class="ir-overlay" id="calendarOverlay" hidden>
-    <div class="fin-overlay-header">
-      <button type="button" class="ir-back-btn" id="calBackBtn" aria-label="Back">
-        <img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiB2aWV3Qm94PSIwIDAgMTYgMTYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJTVkciPgo8cGF0aCBpZD0iVmVjdG9yIiBkPSJNMTAuNSAzTDUuNSA4TDEwLjUgMTMiIHN0cm9rZT0iI0M3QzdDNyIgc3Ryb2tlLXdpZHRoPSIxLjQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L2c+Cjwvc3ZnPgo=" alt="">
-      </button>
-      <span class="ir-overlay__title">Earnings</span>
-    </div>
-
-    <div class="cal-week-nav">
-      <button type="button" id="calWeekPrev" aria-label="Previous week">‹</button>
-      <span class="cal-week-label" id="calWeekLabel">This Week</span>
-      <button type="button" id="calWeekNext" aria-label="Next week">›</button>
-    </div>
-
-    <div class="cal-day-strip" id="calDayStrip"></div>
-
-    <div class="cal-day-heading" id="calDayHeading">August 26</div>
-    <div class="cal-company-list" id="calCompanyList"></div>
   </div>
 
 <!-- Thesis detail overlay -->
@@ -4703,19 +4588,15 @@ p { margin: 0; }
   function closeIrOverlay() { irOverlay.hidden = true; }
   irBackBtn.addEventListener('click', closeIrOverlay);
 
-  /* ---------- Financials / Earnings / Earnings Calendar detail overlays ----------
+  /* ---------- Financials / Earnings detail overlays ----------
      Per the 8/28 team meeting: tapping "Financials" opens a full statements page
      (Income Statement / Balance Sheet / Cash Flow / Ratios, tap a row to chart it —
      same pattern Wealthsimple/Fiscal use). Between the tabs and the chart there's an
      Earnings preview (Dave: "in between income statement and revenue, a box... you
      can tap into"), which opens a fuller Earnings page with an EPS actual-vs-estimate
-     scatter. Both that page and the Financials page carry a calendar icon (top right)
-     that opens a market-wide Earnings Calendar — day strip up top, tap a day to see
-     who's reporting, matching the Wealthsimple/MooMoo reference screenshots. */
+     scatter. */
 
   function finFormatDate(d) { return MONTHS_SHORT[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear(); }
-  function addDays(d, n) { var r = new Date(d); r.setDate(r.getDate() + n); return r; }
-  function isoKey(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
 
   /* ---- Statement data: every row is generated from its real latest value (the
      same figures already shown in the Financials preview box) plus a YoY growth
@@ -5240,134 +5121,15 @@ p { margin: 0; }
     });
   });
 
-  /* ---- Earnings Calendar: market-wide, keyed by ISO date. Real, recognizable
-     tickers for visual verisimilitude (matching the Wealthsimple/MooMoo reference
-     screenshots) — the EPS/beat-miss figures themselves are illustrative, not
-     sourced from anywhere real. KSTL's own next report is seeded in too, so
-     scrolling far enough forward surfaces it alongside everyone else's. ---- */
-  var CAL_COLORS = ['#3a6b3f', '#8a3f3f', '#31527d', '#7a6a2a', '#5a3f7d', '#7d4a2a', '#2a6b63', '#7d3f63'];
-  function calColor(i) { return CAL_COLORS[i % CAL_COLORS.length]; }
-  var EARNINGS_CALENDAR = {};
-  (function seedCalendar() {
-    var entries = [
-      [-2, 'RY', 'Royal Bank of Canada', 4.10, 4.23],
-      [-2, 'TD', 'Toronto-Dominion Bank', 2.65, 2.73],
-      [-1, 'MRVL', 'Marvell Technology Inc.', 0.98, 0.94],
-      [-1, 'ADSK', 'Autodesk Inc.', 3.18, 3.30],
-      [0, 'WDAY', 'Workday Inc.', 2.55, 2.75],
-      [0, 'DG', 'Dollar General Corp.', 2.42, 2.48],
-      [1, 'CRM', 'Salesforce Inc.', 5.75, 5.90],
-      [1, 'SNPS', 'Synopsys Inc.', 4.02, 3.91],
-      [2, 'CRWD', 'CrowdStrike Holdings Inc.', 0.29, 0.31],
-      [2, 'VEEV', 'Veeva Systems Inc.', 2.20, 2.35],
-      [5, 'NVDA', 'NVIDIA Corp.', 2.10, 2.22],
-      [5, 'AFRM', 'Affirm Holdings Inc.', 0.30, 0.28],
-      [8, 'AAPL', 'Apple Inc.', 1.95, 2.02],
-      [12, 'A', 'Agilent Technologies Inc.', 1.58, 1.62],
-      [EARNINGS_DAYS_UNTIL, 'KSTL', 'Kestrel Systems', EARNINGS_NEXT.est, null]
-    ];
-    entries.forEach(function (e, i) {
-      var key = isoKey(addDays(CHART_NOW, e[0]));
-      if (!EARNINGS_CALENDAR[key]) EARNINGS_CALENDAR[key] = [];
-      EARNINGS_CALENDAR[key].push({ ticker: e[1], name: e[2], est: e[3], actual: e[4], color: calColor(i) });
-    });
-  })();
-
-  var calDayStripEl = document.getElementById('calDayStrip');
-  var calWeekLabelEl = document.getElementById('calWeekLabel');
-  var calDayHeadingEl = document.getElementById('calDayHeading');
-  var calCompanyListEl = document.getElementById('calCompanyList');
-  var calWeekPrevBtn = document.getElementById('calWeekPrev');
-  var calWeekNextBtn = document.getElementById('calWeekNext');
-  var CAL_DOW = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
-  var calWeekOffset = 0;
-  var calSelectedDate = null;
-
-  function calStartOfWeek(d) {
-    var r = new Date(d);
-    r.setDate(r.getDate() - r.getDay());
-    r.setHours(0, 0, 0, 0);
-    return r;
-  }
-
-  function calRenderDay() {
-    var key = isoKey(calSelectedDate);
-    calDayHeadingEl.textContent = MONTHS_SHORT[calSelectedDate.getMonth()] + ' ' + calSelectedDate.getDate();
-    var entries = EARNINGS_CALENDAR[key] || [];
-    if (!entries.length) {
-      calCompanyListEl.innerHTML = '<div class="cal-empty-note">No earnings scheduled.</div>';
-      return;
-    }
-    calCompanyListEl.innerHTML = entries.map(function (e) {
-      var beat = e.actual === null ? null : e.actual >= e.est;
-      var epsStr = e.actual === null ? '$' + e.est.toFixed(2) + ' est.' : '$' + e.actual.toFixed(2) + ' EPS';
-      var badge = beat === null ? '' : '<div class="cal-company-badge ' + (beat ? 'beat' : 'miss') + '">' + (beat ? 'Beat' : 'Miss') + '</div>';
-      return '<div class="cal-company-row">' +
-        '<div class="cal-company-logo" style="background:' + e.color + '">' + e.ticker.charAt(0) + '</div>' +
-        '<div><div class="cal-company-name">' + e.name + '</div><div class="cal-company-ticker">' + e.ticker + '</div></div>' +
-        '<div class="cal-company-right"><div class="cal-company-eps">' + epsStr + '</div>' + badge + '</div>' +
-        '</div>';
-    }).join('');
-  }
-
-  function calRenderWeek() {
-    var base = calStartOfWeek(CHART_NOW);
-    var weekStart = addDays(base, calWeekOffset * 7);
-    calWeekLabelEl.textContent = calWeekOffset === 0 ? 'This Week' :
-      (calWeekOffset === 1 ? 'Next Week' : (calWeekOffset === -1 ? 'Last Week' :
-      (calWeekOffset > 0 ? calWeekOffset + ' Weeks Out' : Math.abs(calWeekOffset) + ' Weeks Ago')));
-
-    var days = [];
-    for (var i = 0; i < 7; i++) days.push(addDays(weekStart, i));
-
-    if (!calSelectedDate || calSelectedDate < weekStart || calSelectedDate > addDays(weekStart, 6)) {
-      var todayInWeek = days.some(function (d) { return isoKey(d) === isoKey(CHART_NOW); });
-      calSelectedDate = todayInWeek ? new Date(CHART_NOW) : days[0];
-    }
-
-    calDayStripEl.innerHTML = days.map(function (d) {
-      var key = isoKey(d);
-      var entries = EARNINGS_CALENDAR[key] || [];
-      var isToday = key === isoKey(CHART_NOW);
-      var isActive = key === isoKey(calSelectedDate);
-      var logos = entries.slice(0, 3).map(function (e) {
-        return '<span style="background:' + e.color + '">' + e.ticker.charAt(0) + '</span>';
-      }).join('');
-      return '<button type="button" class="cal-day-btn' + (isActive ? ' active' : '') + (isToday ? ' is-today' : '') + '" data-date="' + key + '">' +
-        '<span class="cal-day-btn__dow">' + CAL_DOW[d.getDay()] + '</span>' +
-        '<span class="cal-day-btn__num">' + d.getDate() + '</span>' +
-        '<span class="cal-day-btn__logos">' + logos + '</span>' +
-        '</button>';
-    }).join('');
-
-    calDayStripEl.querySelectorAll('.cal-day-btn').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        calSelectedDate = new Date(btn.getAttribute('data-date') + 'T00:00:00');
-        calDayStripEl.querySelectorAll('.cal-day-btn').forEach(function (b) { b.classList.toggle('active', b === btn); });
-        calRenderDay();
-      });
-    });
-
-    calRenderDay();
-  }
-  calWeekPrevBtn.addEventListener('click', function () { calWeekOffset--; calSelectedDate = null; calRenderWeek(); });
-  calWeekNextBtn.addEventListener('click', function () { calWeekOffset++; calSelectedDate = null; calRenderWeek(); });
-
-  /* ---- Open/close wiring for all three overlays, with the calendar returning
-     to whichever page opened it. ---- */
+  /* ---- Open/close wiring for the Financials and Earnings overlays. ---- */
   var financialsOverlayEl = document.getElementById('financialsOverlay');
   var financialsTriggerEl = document.getElementById('financialsTrigger');
   var finBackBtnEl = document.getElementById('finBackBtn');
-  var finCalBtnEl = document.getElementById('finCalBtn');
   var earningsOverlayEl = document.getElementById('earningsOverlay');
   var earningsBackBtnEl = document.getElementById('earningsBackBtn');
-  var earningsCalBtnEl = document.getElementById('earningsCalBtn');
   var earningsInfoBtnEl = document.getElementById('earningsInfoBtn');
   var earningsAboutSheetEl = document.getElementById('earningsAboutSheet');
   var earningsAboutBackdropEl = document.getElementById('earningsAboutBackdrop');
-  var calendarOverlayEl = document.getElementById('calendarOverlay');
-  var calBackBtnEl = document.getElementById('calBackBtn');
-  var calendarReturnTo = financialsOverlayEl;
 
   function openFinancialsOverlay() { financialsOverlayEl.hidden = false; finRenderAll(); }
   function closeFinancialsOverlay() { financialsOverlayEl.hidden = true; }
@@ -5385,12 +5147,6 @@ p { margin: 0; }
   function closeEarningsAboutSheet() { earningsAboutBackdropEl.hidden = true; earningsAboutSheetEl.hidden = true; }
   earningsInfoBtnEl.addEventListener('click', function (e) { e.stopPropagation(); openEarningsAboutSheet(); });
   earningsAboutBackdropEl.addEventListener('click', closeEarningsAboutSheet);
-
-  function openCalendarOverlay(returnTo) { calendarReturnTo = returnTo; calendarOverlayEl.hidden = false; calRenderWeek(); }
-  function closeCalendarOverlay() { calendarOverlayEl.hidden = true; }
-  finCalBtnEl.addEventListener('click', function (e) { e.stopPropagation(); openCalendarOverlay(financialsOverlayEl); });
-  earningsCalBtnEl.addEventListener('click', function (e) { e.stopPropagation(); openCalendarOverlay(earningsOverlayEl); });
-  calBackBtnEl.addEventListener('click', closeCalendarOverlay);
 
   finSyncRanges();
   finRenderAll();
