@@ -1814,11 +1814,24 @@ p { margin: 0; }
 .fin-table tbody tr.row-on .num { color: #ffffff; }
 
 /* ---------- Earnings detail overlay ---------- */
-.earnings-next {
+.earnings-view-tabs {
+  display: flex;
+  gap: 18px;
   margin-top: 20px;
-  background: #0a0a0a;
-  border: 1px solid #232627;
-  padding: 14px 16px;
+}
+.earnings-view-tabs button {
+  background: none;
+  border: none;
+  padding: 0 0 8px;
+  font-size: 17px;
+  font-weight: 600;
+  color: #6b6b6b;
+  cursor: pointer;
+  position: relative;
+}
+.earnings-view-tabs button.active { color: #ffffff; }
+.earnings-next {
+  margin-top: 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1855,10 +1868,21 @@ p { margin: 0; }
 .earnings-scatter__trend { font-size: 8px; line-height: 1; color: #6b6b6b; }
 .earnings-scatter__trend.up { color: #30d158; }
 .earnings-scatter__trend.down { color: #ff3533; }
-.earnings-dot--est { fill: #0a0a0a; stroke: #6b6b6b; stroke-width: 1.4; stroke-dasharray: 2 2; }
-#earningsScatterSvg .earnings-dot--actual { fill: #4a7dff; opacity: 0.45; cursor: pointer; transition: opacity .15s ease; }
+.earnings-dot--est { fill: #0a0a0a; stroke: #6b6b6b; stroke-width: 1.4; stroke-dasharray: 2 2; transform-box: fill-box; transform-origin: center; }
+#earningsScatterSvg .earnings-dot--actual { fill: #4a7dff; opacity: 0.45; cursor: pointer; transition: opacity .15s ease; transform-box: fill-box; transform-origin: center; }
 #earningsScatterSvg .earnings-dot--actual.is-selected { opacity: 1; }
 .fin-earnings-mini .earnings-dot--actual { fill: #4a7dff; }
+/* Revenue view gets its own accent color, so it always reads as visually
+   distinct from the Earnings (EPS) view even mid-tap. */
+#earningsOverlay.earnings-view--revenue .earnings-legend .dot--est { border-color: #a78bfa; }
+#earningsOverlay.earnings-view--revenue #earningsScatterSvg .earnings-dot--est { stroke: #a78bfa; }
+#earningsOverlay.earnings-view--revenue #earningsScatterSvg .earnings-dot--actual { fill: #a78bfa; }
+/* Entrance animation for the dots/axis labels/quarter columns whenever the
+   chart (re)renders — a view switch or a fresh open. */
+@keyframes earningsDotIn { from { opacity: 0; transform: scale(0.3); } to { opacity: 1; transform: scale(1); } }
+@keyframes earningsFadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+.earnings-anim-dot { animation: earningsDotIn .4s cubic-bezier(.34,1.56,.64,1) backwards; }
+.earnings-anim-fade { animation: earningsFadeIn .35s ease backwards; }
 .earnings-detail {
   margin-top: 20px;
   padding-top: 18px;
@@ -1893,6 +1917,57 @@ p { margin: 0; }
 .earnings-detail__stat .v { margin-top: 4px; font-size: 14.5px; color: #ffffff; letter-spacing: -0.2px; }
 .earnings-detail__reported { margin-top: 16px; font-size: 12px; color: #929292; }
 .earnings-detail__reported span { color: #ffffff; }
+.earnings-about {
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid #232627;
+}
+.earnings-about__head {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  color: #ffffff;
+  letter-spacing: -0.2px;
+}
+.earnings-about__i { font-size: 13px; color: #929292; }
+.earnings-about__text {
+  margin-top: 10px;
+  font-size: 12.5px;
+  color: #929292;
+  line-height: 1.55;
+}
+.earnings-history-wrap {
+  margin-top: 22px;
+  padding-top: 4px;
+  border-top: 1px solid #232627;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.earnings-history-wrap::-webkit-scrollbar { display: none; }
+.earnings-history-table { border-collapse: collapse; width: 100%; min-width: 320px; }
+.earnings-history-table th {
+  font-size: 10.5px;
+  font-weight: 500;
+  color: #767676;
+  text-align: right;
+  padding: 14px 8px 10px;
+  white-space: nowrap;
+}
+.earnings-history-table th.lbl { text-align: left; }
+.earnings-history-table td {
+  padding: 11px 8px;
+  text-align: right;
+  border-top: 1px solid #1a1a1a;
+  font-size: 12.5px;
+  color: #ffffff;
+  white-space: nowrap;
+}
+.earnings-history-table td.lbl { text-align: left; }
+.earnings-history-table td.muted { color: #929292; }
+.earnings-history-table td.up { color: #30d158; }
+.earnings-history-table td.down { color: #ff3533; }
+.earnings-history-table tr:first-child td { border-top: none; font-weight: 600; }
 
 /* ---------- Earnings calendar overlay ---------- */
 .cal-week-nav {
@@ -3179,6 +3254,11 @@ p { margin: 0; }
       </div>
     </div>
 
+    <div class="earnings-view-tabs" id="earningsViewTabs">
+      <button type="button" class="active" data-view="earnings">Earnings</button>
+      <button type="button" data-view="revenue">Revenue</button>
+    </div>
+
     <div class="earnings-next">
       <span class="earnings-next__period" id="earningsNextPeriod">Q2 FY26</span>
       <span class="earnings-next__date" id="earningsNextDate">Aug 6, 2026</span>
@@ -3203,6 +3283,20 @@ p { margin: 0; }
         <div class="earnings-detail__stat"><div class="k">Surprise</div><div class="v" id="earningsDetailSurprise">+6.0%</div></div>
       </div>
       <div class="earnings-detail__reported"><span id="earningsDetailReportedLabel">Reported</span> <span id="earningsDetailDate">Jun 18, 2026</span></div>
+    </div>
+
+    <div class="earnings-about" id="earningsAbout">
+      <div class="earnings-about__head"><span class="earnings-about__i">ⓘ</span> About <span id="earningsAboutNoun">earnings</span></div>
+      <div class="earnings-about__text" id="earningsAboutText">Earnings per share (EPS) shows how much profit a company earned for each share. Compare actual EPS with analyst estimates to see whether the company beat, met, or missed expectations.</div>
+    </div>
+
+    <div class="earnings-history-wrap">
+      <table class="earnings-history-table">
+        <thead>
+          <tr><th class="lbl">Reported</th><th class="lbl">Quarter</th><th>Estimate</th><th>Actual</th></tr>
+        </thead>
+        <tbody id="earningsHistoryBody"></tbody>
+      </table>
     </div>
   </div>
 
@@ -4933,6 +5027,36 @@ p { margin: 0; }
   var EARNINGS_NEXT_STR = 'Reports ' + finFormatDate(EARNINGS_NEXT.date);
   finEarningsNextEl.textContent = EARNINGS_NEXT_STR;
 
+  /* ---- Revenue view (the "Revenue" tab on the full Earnings page) reuses
+     the SAME quarterly revenue figures already generated for the Income
+     Statement tab, so the two never disagree — it just adds an analyst
+     estimate alongside each actual, same as the EPS view does. ---- */
+  var REVENUE_HISTORY = (function () {
+    var actuals = FIN_METRICS['Revenue'].q.slice(-EARNINGS_HISTORY.length);
+    return EARNINGS_HISTORY.map(function (e, i) {
+      var actual = actuals[i];
+      var est = actual * (0.93 + pseudoRandom(i + 201) * 0.1);
+      return { q: e.q, est: est, actual: actual, date: e.date };
+    });
+  })();
+  var REVENUE_NEXT = (function () {
+    var lastActual = FIN_METRICS['Revenue'].q[FIN_METRICS['Revenue'].q.length - 1];
+    return { q: EARNINGS_NEXT.q, est: lastActual * 1.04, actual: null, date: EARNINGS_NEXT.date };
+  })();
+
+  var EARNINGS_VIEWS = {
+    earnings: {
+      history: EARNINGS_HISTORY, next: EARNINGS_NEXT, unit: 'plain', noun: 'earnings',
+      about: 'Earnings per share (EPS) shows how much profit a company earned for each share. Compare actual EPS with analyst estimates to see whether the company beat, met, or missed expectations.'
+    },
+    revenue: {
+      history: REVENUE_HISTORY, next: REVENUE_NEXT, unit: 'currency', noun: 'revenue',
+      about: 'Revenue is the total sales a company generated during the quarter. Compare actual revenue with analyst estimates to see whether the company beat, met, or missed expectations.'
+    }
+  };
+  var earningsView = 'earnings';
+  function earningsValFmt(v, view) { return (EARNINGS_VIEWS[view].unit === 'currency' ? '$' + finFmt(v, 'currency') : v.toFixed(2)); }
+
   function finRenderEarningsMini() {
     var pts = EARNINGS_HISTORY.concat([EARNINGS_NEXT]);
     var W = 300, H = 54, pad2 = 8;
@@ -4970,11 +5094,16 @@ p { margin: 0; }
   var earningsDetailSurpriseEl = document.getElementById('earningsDetailSurprise');
   var earningsDetailDateEl = document.getElementById('earningsDetailDate');
   var earningsDetailReportedLabelEl = document.getElementById('earningsDetailReportedLabel');
+  var earningsAboutNounEl = document.getElementById('earningsAboutNoun');
+  var earningsAboutTextEl = document.getElementById('earningsAboutText');
+  var earningsHistoryBodyEl = document.getElementById('earningsHistoryBody');
+  var earningsViewTabsEl = document.getElementById('earningsViewTabs');
   var earningsPts = [];
 
   function finSelectEarningsQuarter(i) {
     var p = earningsPts[i];
     if (!p) return;
+    var view = earningsView;
 
     earningsScatterSvg.querySelectorAll('[data-i]').forEach(function (el) {
       el.classList.toggle('is-selected', +el.getAttribute('data-i') === i);
@@ -4984,11 +5113,11 @@ p { margin: 0; }
     });
 
     earningsDetailQuarterEl.textContent = p.q;
-    earningsDetailEstEl.textContent = p.est.toFixed(2);
+    earningsDetailEstEl.textContent = earningsValFmt(p.est, view);
     if (p.actual !== null) {
-      earningsDetailActualEl.textContent = p.actual.toFixed(2);
+      earningsDetailActualEl.textContent = earningsValFmt(p.actual, view);
       var surprise = (p.actual / p.est - 1) * 100;
-      earningsDetailSurpriseEl.textContent = (surprise >= 0 ? '+' : '') + surprise.toFixed(1) + '%';
+      earningsDetailSurpriseEl.textContent = (surprise >= 0 ? '+' : '') + surprise.toFixed(2) + '%';
       var beat = p.actual >= p.est;
       earningsDetailBadgeEl.hidden = false;
       earningsDetailBadgeEl.textContent = beat ? 'Beat' : 'Miss';
@@ -5002,31 +5131,61 @@ p { margin: 0; }
       earningsDetailReportedLabelEl.textContent = 'Reporting';
       earningsDetailDateEl.textContent = finFormatDate(p.date);
     }
+    /* Re-trigger the entrance animation on the detail numbers every time the
+       selected quarter changes, not just on first render. */
+    [earningsDetailQuarterEl, earningsDetailBadgeEl, earningsDetailEstEl, earningsDetailActualEl, earningsDetailSurpriseEl].forEach(function (el, idx) {
+      el.classList.remove('earnings-anim-fade');
+      void el.offsetWidth;
+      el.style.animationDelay = (idx * 30) + 'ms';
+      el.classList.add('earnings-anim-fade');
+    });
+  }
+
+  function finRenderEarningsHistory() {
+    var view = earningsView;
+    var rows = earningsPts.slice().reverse();
+    earningsHistoryBodyEl.innerHTML = rows.map(function (p) {
+      var actualCell = p.actual === null ? '<td class="muted">—</td>' :
+        '<td class="' + (p.actual >= p.est ? 'up' : 'down') + '">' + earningsValFmt(p.actual, view) + '</td>';
+      return '<tr><td class="lbl">' + finFormatDate(p.date) + '</td><td class="lbl">' + p.q + '</td>' +
+        '<td>' + earningsValFmt(p.est, view) + '</td>' + actualCell + '</tr>';
+    }).join('');
   }
 
   function finRenderEarningsFull() {
-    var pts = EARNINGS_HISTORY.concat([EARNINGS_NEXT]);
+    var cfg = EARNINGS_VIEWS[earningsView];
+    earningsOverlayEl.classList.toggle('earnings-view--revenue', earningsView === 'revenue');
+    var pts = cfg.history.concat([cfg.next]);
     earningsPts = pts;
     var W = 300, H = 200, padX = 22, padY = 22;
     var allVals = [];
     pts.forEach(function (p) { allVals.push(p.est); if (p.actual !== null) allVals.push(p.actual); });
-    var min = Math.max(0, Math.floor(Math.min.apply(null, allVals) * 2) / 2 - 0.5);
-    var max = Math.ceil(Math.max.apply(null, allVals) * 2) / 2 + 0.5;
+    var rawMin = Math.min.apply(null, allVals), rawMax = Math.max.apply(null, allVals);
+    /* "Nice" gridline step (1/2/5 x 10^n) sized to land ~4 gridlines across
+       the range, regardless of whether it's EPS dollars or revenue millions. */
+    var roughStep = (rawMax - rawMin) / 4 || 1;
+    var mag = Math.pow(10, Math.floor(Math.log(roughStep) / Math.LN10));
+    var norm = roughStep / mag;
+    var step = (norm <= 1 ? 1 : norm <= 2 ? 2 : norm <= 5 ? 5 : 10) * mag;
+    var min = Math.max(0, Math.floor(rawMin / step) * step - step);
+    var max = Math.ceil(rawMax / step) * step + step;
     var range = (max - min) || 1;
     function y(v) { return padY + (H - padY - 20) * (1 - (v - min) / range); }
     function x(i) { return padX + (i / (pts.length - 1)) * (W - padX * 2); }
 
     var svg = '';
-    for (var g = Math.ceil(min * 2) / 2; g <= max + 0.001; g += 0.5) {
+    var gi = 0;
+    for (var g = Math.ceil(min / step) * step; g <= max + step * 0.001; g += step) {
       var gy = y(g);
       svg += '<line x1="' + padX + '" x2="' + (W - padX) + '" y1="' + gy.toFixed(1) + '" y2="' + gy.toFixed(1) + '" stroke="#232627" stroke-width="1" stroke-dasharray="2 3"></line>';
-      svg += '<text x="' + (W - padX + 3) + '" y="' + (gy + 3).toFixed(1) + '" font-size="7.5" fill="#6b6b6b">' + g.toFixed(2) + '</text>';
+      svg += '<text class="earnings-anim-fade" style="animation-delay:' + (gi++ * 25) + 'ms" x="' + (W - padX + 3) + '" y="' + (gy + 3).toFixed(1) + '" font-size="7.5" fill="#6b6b6b">' + (cfg.unit === 'currency' ? finFmt(g, 'currency') : g.toFixed(2)) + '</text>';
     }
     pts.forEach(function (p, i) {
       var px = x(i);
-      svg += '<circle class="earnings-dot--est" data-i="' + i + '" cx="' + px.toFixed(1) + '" cy="' + y(p.est).toFixed(1) + '" r="6.5"></circle>';
+      var delay = (i * 45) + 'ms';
+      svg += '<circle class="earnings-dot--est earnings-anim-dot" style="animation-delay:' + delay + '" data-i="' + i + '" cx="' + px.toFixed(1) + '" cy="' + y(p.est).toFixed(1) + '" r="6.5"></circle>';
       if (p.actual !== null) {
-        svg += '<circle class="earnings-dot--actual" data-i="' + i + '" cx="' + px.toFixed(1) + '" cy="' + y(p.actual).toFixed(1) + '" r="7.5"></circle>';
+        svg += '<circle class="earnings-dot--actual earnings-anim-dot" style="animation-delay:' + delay + '" data-i="' + i + '" cx="' + px.toFixed(1) + '" cy="' + y(p.actual).toFixed(1) + '" r="7.5"></circle>';
       }
     });
     earningsScatterSvg.innerHTML = svg;
@@ -5036,9 +5195,11 @@ p { margin: 0; }
     earningsScatterLabels.innerHTML = pts.map(function (p, i) {
       var trend = p.actual === null ? '<span class="earnings-scatter__trend">—</span>' :
         (p.actual >= p.est ? '<span class="earnings-scatter__trend up">▲</span>' : '<span class="earnings-scatter__trend down">▼</span>');
-      return '<div class="earnings-scatter__col" data-i="' + i + '"><span class="earnings-scatter__q">' + p.q + '</span>' + trend + '</div>';
+      return '<div class="earnings-scatter__col earnings-anim-fade" style="animation-delay:' + (i * 45) + 'ms" data-i="' + i + '"><span class="earnings-scatter__q">' + p.q + '</span>' + trend + '</div>';
     }).join('');
-    earnEstValEl.textContent = EARNINGS_NEXT.est.toFixed(2);
+    earnEstValEl.textContent = earningsValFmt(cfg.next.est, earningsView);
+    earningsAboutNounEl.textContent = cfg.noun;
+    earningsAboutTextEl.textContent = cfg.about;
 
     earningsScatterSvg.querySelectorAll('[data-i]').forEach(function (el) {
       el.addEventListener('click', function () { finSelectEarningsQuarter(+el.getAttribute('data-i')); });
@@ -5047,8 +5208,17 @@ p { margin: 0; }
       el.addEventListener('click', function () { finSelectEarningsQuarter(+el.getAttribute('data-i')); });
     });
 
-    finSelectEarningsQuarter(EARNINGS_HISTORY.length - 1);
+    finSelectEarningsQuarter(cfg.history.length - 1);
+    finRenderEarningsHistory();
   }
+
+  earningsViewTabsEl.querySelectorAll('button').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      earningsViewTabsEl.querySelectorAll('button').forEach(function (b) { b.classList.toggle('active', b === btn); });
+      earningsView = btn.getAttribute('data-view');
+      finRenderEarningsFull();
+    });
+  });
 
   /* ---- Earnings Calendar: market-wide, keyed by ISO date. Real, recognizable
      tickers for visual verisimilitude (matching the Wealthsimple/MooMoo reference
