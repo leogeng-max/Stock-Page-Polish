@@ -656,10 +656,10 @@ p { margin: 0; }
   cursor: pointer;
 }
 .notes-idle {
-  height: 58px;
+  min-height: 90px;
   display: flex;
-  align-items: center;
-  padding: 0 18px;
+  align-items: flex-start;
+  padding: 17px 18px;
 }
 .notes-idle[hidden] { display: none; }
 .notes-idle span {
@@ -821,201 +821,6 @@ p { margin: 0; }
   color: #6b6b6b;
   letter-spacing: -0.15px;
 }
-.pred-trend-chart {
-  margin-top: 24px;
-}
-.pred-trend-chart__row {
-  position: relative;
-}
-.pred-trend-chart__svg {
-  width: 100%;
-  height: 68px;
-  display: block;
-  overflow: visible;
-}
-.pred-trend-zero-line {
-  stroke: #c9a24b;
-  stroke-width: 1;
-  vector-effect: non-scaling-stroke;
-}
-.pred-trend-sp-label {
-  position: absolute;
-  left: 0;
-  transform: translate(0, -100%);
-  margin-top: -4px;
-  font-size: 10.5px;
-  color: #c9a24b;
-  letter-spacing: -0.1px;
-  pointer-events: none;
-}
-.pred-trend-line {
-  fill: none;
-  stroke-width: 1.5;
-  stroke-linejoin: round;
-  stroke-linecap: round;
-  vector-effect: non-scaling-stroke;
-}
-/* The line originates exactly on the S&P baseline and diverges to one side
-   only — never crosses back — so a single color for the whole stroke always
-   matches its direction: green if it ends above the line, red if below. */
-.pred-trend-line.is-up { stroke: #30d158; }
-.pred-trend-line.is-down { stroke: #ff3533; }
-/* Secondary ("since current prediction") line — solid, like the primary
-   line, but a fixed neutral gray rather than colored by direction, so it
-   always reads as the secondary track next to V1. */
-.pred-trend-line--ver {
-  stroke: #9a9a9a;
-  stroke-width: 1.3;
-  opacity: 0.85;
-}
-.pred-trend-end-dot {
-  position: absolute;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-}
-.pred-trend-end-dot.is-up { background: #30d158; box-shadow: 0 0 0 3px rgba(48,209,88,0.25); }
-.pred-trend-end-dot.is-down { background: #ff3533; box-shadow: 0 0 0 3px rgba(255,53,51,0.25); }
-.pred-trend-end-dot--ver {
-  width: 5px;
-  height: 5px;
-  background: #9a9a9a;
-  box-shadow: 0 0 0 3px rgba(154,154,154,0.25);
-}
-/* v1/v2/v3 dots are tappable — each reveals that version's own probability
-   and target in a small popover, like Dave's own demo of clicking into V1.
-   The visible dot stays its normal size; ::after just widens the actual hit
-   area so it's still comfortably tappable on a phone. */
-.pred-trend-end-dot.is-tappable {
-  pointer-events: auto;
-  cursor: pointer;
-}
-.pred-trend-end-dot.is-tappable::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 26px;
-  height: 26px;
-  transform: translate(-50%, -50%);
-}
-.pred-ver-popover {
-  position: absolute;
-  transform: translate(-50%, calc(-100% - 9px));
-  background: #0a0a0a;
-  border: 1px solid rgba(255,255,255,0.15);
-  border-radius: 4px;
-  padding: 6px 9px;
-  white-space: nowrap;
-  pointer-events: none;
-  z-index: 3;
-}
-.pred-ver-popover[hidden] { display: none; }
-.pred-ver-popover__ver {
-  font-size: 10px;
-  font-weight: 500;
-  color: #ffffff;
-  margin-right: 5px;
-}
-.pred-ver-popover__date {
-  font-size: 10px;
-  color: #6b6b6b;
-}
-.pred-ver-popover__desc {
-  font-size: 10px;
-  color: #c7c7c7;
-  margin-top: 2px;
-}
-.pred-trend-ver-label {
-  position: absolute;
-  font-size: 10.5px;
-  color: #929292;
-  letter-spacing: -0.1px;
-  transform: translate(7px, -50%);
-  pointer-events: none;
-  white-space: nowrap;
-}
-.pred-trend-chart__labels {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 10px;
-  font-size: 10px;
-  color: #6b6b6b;
-  letter-spacing: -0.15px;
-}
-.pred-goal {
-  margin-top: 18px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-.pred-goal__row {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-}
-.pred-goal__row .label-11 { text-transform: capitalize; }
-.pred-goal__target-wrap {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-}
-.pred-goal__target {
-  font-size: 11px;
-  color: #929292;
-  letter-spacing: -0.22px;
-}
-.pred-goal__info {
-  font-size: 10px;
-  color: #929292;
-  letter-spacing: -0.1px;
-  margin-top: -4px;
-}
-.pred-goal__bar {
-  position: relative;
-  height: 4px;
-  border-radius: 0;
-  background: rgba(255,255,255,0.12);
-}
-.pred-goal__fill {
-  height: 100%;
-  border-radius: 0;
-  background: #6b6b6b;
-  position: relative;
-  z-index: 1;
-}
-.pred-goal__fill.is-behind { background: #ff3533; }
-.pred-goal__pace {
-  position: absolute;
-  top: -3px;
-  bottom: -3px;
-  width: 2px;
-  background: #ffffff;
-  box-shadow: 0 0 4px rgba(255,255,255,0.7);
-  transform: translateX(-1px);
-  z-index: 2;
-}
-.pred-goal__row--sub {
-  font-size: 11px;
-  letter-spacing: -0.2px;
-}
-.pred-goal__row--sub span:first-child { color: #929292; }
-.pred-goal__row--sub .is-ahead { color: #e3e2e2; }
-.pred-goal__row--sub .is-behind { color: #ff3533; }
-.pred-goal__resolves {
-  display: flex;
-  gap: 6px;
-  margin-top: 4px;
-}
-.pred-goal__resolves .label-11 { text-transform: capitalize; }
-.pred-goal__resolves span:last-child {
-  font-size: 11px;
-  color: #929292;
-  letter-spacing: -0.2px;
-}
-
 .link-row {
   margin-top: 40px;
   display: flex;
@@ -1166,8 +971,7 @@ p { margin: 0; }
   letter-spacing: -0.2px;
   line-height: 1.3;
 }
-.chart-popup__timestamp .date { color: #929292; }
-.chart-popup__timestamp .time { color: #ffffff; margin-left: 5px; }
+.chart-popup__timestamp .time { color: #ffffff; }
 .chart-popup__target-badge {
   color: #8fb0c9;
   white-space: nowrap;
@@ -1662,6 +1466,12 @@ p { margin: 0; }
 }
 .finrel-block:first-child { padding-top: 24px; }
 .finrel-block--link { cursor: pointer; }
+.finrel-period {
+  margin-top: 6px;
+  font-size: 11px;
+  color: #929292;
+  letter-spacing: -0.22px;
+}
 .finrel-grid {
   margin-top: 20px;
   display: grid;
@@ -1676,10 +1486,9 @@ p { margin: 0; }
 }
 .finrel-grid .delta {
   font-size: 12px;
+  color: #929292;
   letter-spacing: -0.24px;
 }
-.finrel-grid .delta.up { color: #30d158; }
-.finrel-grid .delta.down { color: #ff3533; }
 .finrel-footnote {
   margin-top: 16px;
   font-size: 11px;
@@ -1773,6 +1582,392 @@ p { margin: 0; }
   white-space: nowrap;
 }
 .ir-filing-link .chev { font-size: 14px; color: #929292; font-weight: 300; }
+
+/* ---------- Financials detail overlay ---------- */
+.fin-overlay-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.fin-header-right { margin-left: auto; display: flex; align-items: center; }
+.fin-cal-btn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  color: #c7c7c7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  padding: 0;
+}
+.fin-tabs {
+  display: flex;
+  gap: 18px;
+  margin-top: 22px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  white-space: nowrap;
+}
+.fin-tabs::-webkit-scrollbar { display: none; }
+.fin-tab {
+  background: none;
+  border: none;
+  padding: 0 0 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #767676;
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+}
+.fin-tab.active { color: #ffffff; }
+.fin-tab.active::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 2px;
+  background: #ffffff;
+  border-radius: 2px;
+}
+.fin-currency-note {
+  margin-top: 14px;
+  text-align: right;
+  font-size: 11px;
+  color: #767676;
+}
+.fin-earnings-box {
+  margin-top: 18px;
+  background: #0a0a0a;
+  border: 1px solid #232627;
+  padding: 16px;
+  cursor: pointer;
+}
+.fin-earnings-box__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.fin-earnings-box__title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+  letter-spacing: -0.3px;
+  flex-shrink: 0;
+}
+.fin-earnings-box__next {
+  flex: 1;
+  font-size: 11px;
+  color: #929292;
+  letter-spacing: -0.1px;
+  text-align: right;
+}
+.fin-earnings-box__head .chev { font-size: 14px; color: #6b6b6b; font-weight: 300; flex-shrink: 0; }
+.fin-earnings-mini-legend {
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: #929292;
+}
+.fin-earnings-mini-legend .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.fin-earnings-mini-legend .dot--est { border: 1.3px dashed #6b6b6b; }
+.fin-earnings-mini { width: 100%; height: 54px; display: block; margin-top: 8px; overflow: visible; }
+.fin-earnings-mini__labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-size: 9px;
+  color: #6b6b6b;
+}
+.fin-chart-head { margin-top: 22px; }
+.fin-chart-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.fin-chart-cap { font-size: 13px; font-weight: 500; color: #d6d6d6; }
+.fin-seg {
+  display: flex;
+  border: 1px solid #3a3a3a;
+  border-radius: 8px;
+  padding: 2px;
+  gap: 2px;
+  flex-shrink: 0;
+}
+.fin-seg button {
+  background: none;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #767676;
+  cursor: pointer;
+}
+.fin-seg button.active { background: #ffffff; color: #000000; }
+.fin-chart-val {
+  margin-top: 10px;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.fin-chart-val .v { font-size: 26px; font-weight: 600; color: #ffffff; letter-spacing: -0.4px; }
+.fin-chart-val .d { font-size: 13px; font-weight: 500; }
+.fin-chart-val .d.up { color: #30d158; }
+.fin-chart-val .d.down { color: #ff3533; }
+.fin-chart-scroll {
+  margin-top: 18px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  cursor: grab;
+}
+.fin-chart-scroll::-webkit-scrollbar { display: none; }
+.fin-chart-scroll.dragging { cursor: grabbing; user-select: none; }
+.fin-chart-inner { display: inline-block; min-width: 100%; }
+.fin-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  height: 130px;
+}
+.fin-bars.fits { justify-content: center; }
+.fin-bar-col { flex: 0 0 34px; width: 34px; display: flex; flex-direction: column; justify-content: flex-end; height: 100%; gap: 6px; }
+.fin-bars.fits .fin-bar-col { flex: 1 1 0; width: auto; max-width: 54px; }
+.fin-bar-val { font-size: 9px; color: #8a8a8a; text-align: center; white-space: nowrap; }
+.fin-bar { background: #262626; border-radius: 2px 2px 0 0; width: 100%; }
+.fin-bar-col.on .fin-bar { background: #ffffff; }
+.fin-bar-col.on .fin-bar-val { color: #ffffff; font-weight: 600; }
+.fin-bar-x { display: flex; gap: 6px; margin-top: 8px; }
+.fin-bar-x.fits { justify-content: center; }
+.fin-bar-x span { flex: 0 0 34px; width: 34px; text-align: center; font-size: 9px; color: #767676; white-space: nowrap; }
+.fin-bars.fits ~ .fin-bar-x span, .fin-bar-x.fits span { flex: 1 1 0; width: auto; max-width: 54px; }
+.fin-ranges {
+  display: flex;
+  gap: 18px;
+  margin-top: 16px;
+}
+.fin-ranges button {
+  background: none;
+  border: none;
+  padding: 0 0 4px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #767676;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+}
+.fin-ranges button.active { color: #ffffff; border-bottom-color: #ffffff; }
+.fin-ranges button.hidden { display: none; }
+.fin-table-wrap {
+  margin-top: 26px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  cursor: grab;
+}
+.fin-table-wrap::-webkit-scrollbar { display: none; }
+.fin-table-wrap.dragging { cursor: grabbing; user-select: none; }
+.fin-table { border-collapse: collapse; width: 100%; min-width: 460px; }
+.fin-table thead th {
+  font-size: 10.5px;
+  font-weight: 500;
+  color: #767676;
+  text-align: right;
+  padding: 10px 12px;
+  white-space: nowrap;
+  background: #000000;
+  border-bottom: 1px solid #232627;
+  position: sticky;
+  top: 0;
+}
+.fin-table thead th.lbl { text-align: left; position: sticky; left: 0; z-index: 3; }
+.fin-table td {
+  padding: 11px 12px;
+  text-align: right;
+  border-bottom: 1px solid #1a1a1a;
+  vertical-align: top;
+}
+.fin-table td.lbl {
+  text-align: left;
+  font-size: 12.5px;
+  color: #b4b4b4;
+  width: 120px;
+  min-width: 120px;
+  position: sticky;
+  left: 0;
+  background: #000000;
+  z-index: 2;
+}
+.fin-table .num { display: block; font-size: 13.5px; font-weight: 500; color: #f2f2f2; white-space: nowrap; }
+.fin-table .pct { display: block; font-size: 10.5px; font-weight: 500; margin-top: 2px; white-space: nowrap; }
+.fin-table .pct.up { color: #30d158; }
+.fin-table .pct.down { color: #ff3533; }
+.fin-table tr.total td { border-top: 1px solid #3a3a3a; }
+.fin-table tr.total td.lbl, .fin-table tr.total .num { color: #ffffff; }
+.fin-table tbody tr[data-label] { cursor: pointer; }
+.fin-table tbody tr.row-on { background: #101010; }
+.fin-table tbody tr.row-on td.lbl { background: #101010; color: #ffffff; }
+.fin-table tbody tr.row-on .num { color: #ffffff; }
+
+/* ---------- Earnings detail overlay ---------- */
+.earnings-next {
+  margin-top: 20px;
+  background: #0a0a0a;
+  border: 1px solid #232627;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.earnings-next__period { font-size: 14px; color: #ffffff; letter-spacing: -0.2px; }
+.earnings-next__date { font-size: 12.5px; color: #929292; }
+.earnings-legend {
+  display: flex;
+  gap: 18px;
+  margin-top: 18px;
+  font-size: 11px;
+  color: #929292;
+}
+.earnings-legend span { display: flex; align-items: center; gap: 6px; }
+.earnings-legend b { color: #ffffff; font-weight: 500; }
+.earnings-legend .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.earnings-legend .dot--est { border: 1.4px dashed #6b6b6b; }
+.earnings-scatter { width: 100%; height: 200px; display: block; margin-top: 16px; overflow: visible; }
+.earnings-scatter__labels {
+  display: flex;
+  margin-top: 8px;
+}
+.earnings-scatter__col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+.earnings-scatter__q { font-size: 10px; color: #6b6b6b; }
+.earnings-scatter__col.is-selected .earnings-scatter__q { color: #ffffff; font-weight: 600; }
+.earnings-scatter__trend { font-size: 8px; line-height: 1; color: #6b6b6b; }
+.earnings-scatter__trend.up { color: #30d158; }
+.earnings-scatter__trend.down { color: #ff3533; }
+.earnings-dot--est { fill: #0a0a0a; stroke: #6b6b6b; stroke-width: 1.4; stroke-dasharray: 2 2; }
+#earningsScatterSvg .earnings-dot--actual { fill: #4a7dff; opacity: 0.45; cursor: pointer; transition: opacity .15s ease; }
+#earningsScatterSvg .earnings-dot--actual.is-selected { opacity: 1; }
+.fin-earnings-mini .earnings-dot--actual { fill: #4a7dff; }
+.earnings-detail {
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid #232627;
+}
+.earnings-detail__company { font-size: 13px; color: #ffffff; letter-spacing: -0.2px; }
+.earnings-detail__company .muted { color: #929292; margin-left: 5px; }
+.earnings-detail__quarter-row {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.earnings-detail__quarter { font-size: 18px; font-weight: 600; color: #ffffff; letter-spacing: -0.3px; }
+.earnings-detail__badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 9px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+.earnings-detail__badge[hidden] { display: none; }
+.earnings-detail__badge.beat { color: #30d158; background: rgba(48,209,88,0.14); }
+.earnings-detail__badge.miss { color: #ff3533; background: rgba(255,53,51,0.14); }
+.earnings-detail__stats {
+  margin-top: 16px;
+  display: flex;
+  justify-content: space-between;
+}
+.earnings-detail__stat .k { font-size: 12px; color: #929292; }
+.earnings-detail__stat .v { margin-top: 4px; font-size: 14.5px; color: #ffffff; letter-spacing: -0.2px; }
+.earnings-detail__reported { margin-top: 16px; font-size: 12px; color: #929292; }
+.earnings-detail__reported span { color: #ffffff; }
+
+/* ---------- Earnings calendar overlay ---------- */
+.cal-week-nav {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+.cal-week-nav button {
+  background: none; border: none; color: #929292; font-size: 15px; cursor: pointer; padding: 4px 10px;
+}
+.cal-week-label { font-size: 13px; color: #ffffff; min-width: 84px; text-align: center; }
+.cal-day-strip {
+  margin-top: 14px;
+  display: flex;
+  gap: 6px;
+}
+.cal-day-btn {
+  flex: 1;
+  background: #0a0a0a;
+  border: 1px solid #232627;
+  border-radius: 12px;
+  padding: 8px 4px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  color: #929292;
+}
+.cal-day-btn__dow { font-size: 9.5px; letter-spacing: 0.2px; }
+.cal-day-btn__num { font-size: 13px; color: #ffffff; font-weight: 500; }
+.cal-day-btn__logos { display: flex; gap: 2px; height: 12px; }
+.cal-day-btn__logos span {
+  width: 12px; height: 12px; border-radius: 50%; font-size: 7px; line-height: 12px; text-align: center;
+  color: #ffffff; font-weight: 700;
+}
+.cal-day-btn.active { background: #ffffff1a; border-color: #ffffff; }
+.cal-day-btn.active .cal-day-btn__num { color: #ffffff; }
+.cal-day-btn.is-today .cal-day-btn__num { color: #4a7dff; }
+.cal-day-heading { margin-top: 20px; font-size: 15px; color: #ffffff; letter-spacing: -0.2px; }
+.cal-company-list { margin-top: 12px; display: flex; flex-direction: column; }
+.cal-company-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid #1a1a1a;
+}
+.cal-company-row:last-child { border-bottom: none; }
+.cal-company-logo {
+  width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; color: #ffffff;
+}
+.cal-company-name { font-size: 13.5px; color: #ffffff; letter-spacing: -0.2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cal-company-ticker { font-size: 11.5px; color: #929292; margin-top: 2px; display: flex; align-items: center; gap: 6px; }
+.cal-company-ticker .chg.up { color: #30d158; }
+.cal-company-ticker .chg.down { color: #ff3533; }
+.cal-company-right { margin-left: auto; text-align: right; flex-shrink: 0; }
+.cal-company-eps { font-size: 13.5px; color: #ffffff; }
+.cal-company-badge {
+  margin-top: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 8px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  display: inline-block;
+}
+.cal-company-badge.beat { color: #30d158; background: rgba(48,209,88,0.14); }
+.cal-company-badge.miss { color: #ff3533; background: rgba(255,53,51,0.14); }
+.cal-empty-note { margin-top: 20px; font-size: 12.5px; color: #6b6b6b; text-align: center; }
 
 /* ---------- Links section ---------- */
 .links-section {
@@ -2369,49 +2564,6 @@ p { margin: 0; }
           </div>
         </div>
       </div>
-
-      <div class="pred-trend-chart">
-        <div class="pred-trend-chart__row">
-          <svg class="pred-trend-chart__svg" id="predTrendSvg" viewBox="0 0 300 56" preserveAspectRatio="none">
-            <line class="pred-trend-zero-line" id="predTrendZeroLine" x1="0" x2="300" y1="0" y2="0"></line>
-            <path class="pred-trend-line pred-trend-line--ver" id="predTrendSecondaryLine" d=""></path>
-            <path class="pred-trend-line" id="predTrendEntryLine" d=""></path>
-          </svg>
-          <div class="pred-trend-sp-label" id="predTrendSpLabel">S&amp;P</div>
-          <div class="pred-trend-end-dot" id="predTrendEndDot"></div>
-          <span class="pred-trend-ver-label" id="predTrendPrimaryLabel">v1</span>
-          <div class="pred-trend-end-dot pred-trend-end-dot--ver" id="predTrendSecondaryDot"></div>
-          <span class="pred-trend-ver-label" id="predTrendSecondaryLabel">v3</span>
-          <div class="pred-ver-popover" id="predVerPopover" hidden>
-            <span class="pred-ver-popover__ver" id="predVerPopoverVer">v1</span>
-            <span class="pred-ver-popover__date" id="predVerPopoverDate">Oct 3, 2025</span>
-            <div class="pred-ver-popover__desc" id="predVerPopoverDesc">55% probability of 18%/yr</div>
-          </div>
-        </div>
-        <div class="pred-trend-chart__labels" id="predTrendLabels"></div>
-      </div>
-
-      <div class="pred-goal">
-        <div class="pred-goal__row">
-          <span class="label-11">Against Target</span>
-          <span class="pred-goal__target-wrap">
-            <span class="pred-goal__target" id="predGoalTarget">72.8% goal</span>
-          </span>
-        </div>
-        <div class="pred-goal__info" id="predGoalInfo"></div>
-        <div class="pred-goal__bar">
-          <div class="pred-goal__fill" id="predGoalFill" style="width: 0%"></div>
-          <div class="pred-goal__pace" id="predGoalPace" style="left: 0%"></div>
-        </div>
-        <div class="pred-goal__row pred-goal__row--sub">
-          <span id="predGoalSoFar">+0.0% so far</span>
-          <span id="predGoalNeeded">0.0% ahead of pace</span>
-        </div>
-        <div class="pred-goal__resolves">
-          <span class="label-11">Resolves</span>
-          <span>Oct 2028</span>
-        </div>
-      </div>
     </div>
       </div>
     </div>
@@ -2438,8 +2590,6 @@ p { margin: 0; }
       </div>
     </div>
   </div>
-
-  <div class="divider" id="positionDivider"></div>
 
   <!-- Position section -->
   <div class="stat-section" id="positionSection">
@@ -2542,7 +2692,7 @@ p { margin: 0; }
 
       <div class="chart-popup" id="chartPopup" hidden>
         <div class="chart-popup__timestamp">
-          <span class="chart-popup__ts-left"><span class="date">June 22, 2026</span><span class="time" id="popTime">10:30 AM</span></span>
+          <span class="chart-popup__ts-left"><span class="time" id="popTime">10:30 AM</span></span>
           <span class="chart-popup__target-badge" id="chartPopupTargetBadge">Target 20%/yr</span>
         </div>
         <div class="chart-popup__row">
@@ -2714,13 +2864,14 @@ p { margin: 0; }
 
   <!-- Financials / Investor Relations / Ownership -->
   <div class="finrel-section">
-    <div class="finrel-block">
+    <div class="finrel-block finrel-block--link" id="financialsTrigger" role="button" tabindex="0">
       <div class="section-header">Financials <span class="chev">›</span></div>
+      <div class="finrel-period">Q1 FY26 vs Q1 FY25</div>
       <div class="finrel-grid">
-        <div class="cell"><div class="label-11">Revenue (Q1 FY26)</div><div class="val">612.4M <span class="delta up">+18.2%</span></div></div>
-        <div class="cell"><div class="label-11">Net Income</div><div class="val">102.1M <span class="delta up">+24.6%</span></div></div>
-        <div class="cell"><div class="label-11">Free Cash Flow</div><div class="val">88.7M <span class="delta down">-4.1%</span></div></div>
-        <div class="cell"><div class="label-11">Gross Margin</div><div class="val">67.8% <span class="delta up">+1.7pp</span></div></div>
+        <div class="cell"><div class="label-11">Revenue</div><div class="val">612.4M <span class="delta">+18.2%</span> <span class="stat-arrow is-up">▲</span></div></div>
+        <div class="cell"><div class="label-11">Net Income</div><div class="val">102.1M <span class="delta">+24.6%</span> <span class="stat-arrow is-up">▲</span></div></div>
+        <div class="cell"><div class="label-11">Free Cash Flow</div><div class="val">88.7M <span class="delta">-4.1%</span> <span class="stat-arrow is-down">▼</span></div></div>
+        <div class="cell"><div class="label-11">Operating Margin</div><div class="val">25.3% <span class="delta">+2.1pp</span> <span class="stat-arrow is-up">▲</span></div></div>
       </div>
       <div class="finrel-footnote">Quarterly · tap for full statements, ratios, and prior periods.<br>Powered by Fiscal.ai</div>
     </div>
@@ -2754,15 +2905,15 @@ p { margin: 0; }
     </div>
     <div class="link-item">
       <span class="link-item__name">Claude</span>
-      <span class="link-item__right"><span class="link-item__url">Claude.ai</span><span class="chev">›</span></span>
+      <span class="link-item__right"><span class="chev">›</span></span>
     </div>
     <div class="link-item">
       <span class="link-item__name">ChatGPT</span>
-      <span class="link-item__right"><span class="link-item__url">ChatGPT.com</span><span class="chev">›</span></span>
+      <span class="link-item__right"><span class="chev">›</span></span>
     </div>
     <div class="link-item">
       <span class="link-item__name">Gemini</span>
-      <span class="link-item__right"><span class="link-item__url">Gemini.google.com</span><span class="chev">›</span></span>
+      <span class="link-item__right"><span class="chev">›</span></span>
     </div>
   </div>
 
@@ -2944,6 +3095,138 @@ p { margin: 0; }
     </div>
   </div>
 
+  <!-- Financials detail overlay -->
+  <div class="ir-overlay" id="financialsOverlay" hidden>
+    <div class="fin-overlay-header">
+      <button type="button" class="ir-back-btn" id="finBackBtn" aria-label="Back">
+        <img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiB2aWV3Qm94PSIwIDAgMTYgMTYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJTVkciPgo8cGF0aCBpZD0iVmVjdG9yIiBkPSJNMTAuNSAzTDUuNSA4TDEwLjUgMTMiIHN0cm9rZT0iI0M3QzdDNyIgc3Ryb2tlLXdpZHRoPSIxLjQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L2c+Cjwvc3ZnPgo=" alt="">
+        </button>
+        <span class="ir-overlay__title">Financials</span>
+        <div class="fin-header-right">
+          <button type="button" class="fin-cal-btn" id="finCalBtn" aria-label="Earnings calendar">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="1.5" y="3" width="15" height="13" rx="1.6" stroke="currentColor" stroke-width="1.3"/><path d="M1.5 6.8H16.5" stroke="currentColor" stroke-width="1.3"/><path d="M5 1.4V4M13 1.4V4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+    </div>
+
+    <div class="fin-tabs" id="finTabs">
+      <button type="button" class="fin-tab active" data-tab="income">Income Statement</button>
+      <button type="button" class="fin-tab" data-tab="balance">Balance Sheet</button>
+      <button type="button" class="fin-tab" data-tab="cashflow">Cash Flow</button>
+      <button type="button" class="fin-tab" data-tab="ratios">Ratios</button>
+    </div>
+
+    <div class="fin-currency-note">Currency in USD.</div>
+
+    <div class="fin-earnings-box" id="finEarningsBox" role="button" tabindex="0">
+      <div class="fin-earnings-box__head">
+        <span class="fin-earnings-box__title">Earnings</span>
+        <span class="fin-earnings-box__next" id="finEarningsNext">Reports in 82 days · Nov 18, 2026</span>
+        <span class="chev">›</span>
+      </div>
+      <div class="fin-earnings-mini-legend"><span class="dot dot--est"></span> Estimated EPS</div>
+      <svg class="fin-earnings-mini" id="finEarningsMiniSvg" viewBox="0 0 300 54" preserveAspectRatio="none"></svg>
+      <div class="fin-earnings-mini__labels" id="finEarningsMiniLabels"></div>
+    </div>
+
+    <div class="fin-chart-head" id="finChartBlock">
+      <div class="fin-chart-top">
+        <span class="fin-chart-cap" id="finCap">Revenue · Q3'23 – Q2'26</span>
+        <div class="fin-seg" id="finSeg">
+          <button type="button" class="active" data-p="q">Quarterly</button>
+          <button type="button" data-p="a">Annual</button>
+        </div>
+      </div>
+      <div class="fin-chart-val">
+        <span class="v" id="finVal">612.4M</span>
+        <span class="d up" id="finDelta">+18.2%</span>
+      </div>
+
+      <div class="fin-chart-scroll" id="finChartScroll">
+        <div class="fin-chart-inner">
+          <div class="fin-bars" id="finBars"></div>
+          <div class="fin-bar-x" id="finBarX"></div>
+        </div>
+      </div>
+
+      <div class="fin-ranges" id="finRanges">
+        <button type="button" data-r="1Y">1Y</button>
+        <button type="button" class="active" data-r="3Y">3Y</button>
+        <button type="button" data-r="5Y">5Y</button>
+        <button type="button" data-r="MAX">MAX</button>
+      </div>
+    </div>
+
+    <div class="fin-table-wrap" id="finTableWrap">
+      <table class="fin-table">
+        <thead id="finThead"></thead>
+        <tbody id="finTbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Earnings detail overlay -->
+  <div class="ir-overlay" id="earningsOverlay" hidden>
+    <div class="fin-overlay-header">
+      <button type="button" class="ir-back-btn" id="earningsBackBtn" aria-label="Back">
+        <img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiB2aWV3Qm94PSIwIDAgMTYgMTYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJTVkciPgo8cGF0aCBpZD0iVmVjdG9yIiBkPSJNMTAuNSAzTDUuNSA4TDEwLjUgMTMiIHN0cm9rZT0iI0M3QzdDNyIgc3Ryb2tlLXdpZHRoPSIxLjQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L2c+Cjwvc3ZnPgo=" alt="">
+      </button>
+      <span class="ir-overlay__title">Earnings</span>
+      <div class="fin-header-right">
+        <button type="button" class="fin-cal-btn" id="earningsCalBtn" aria-label="Earnings calendar">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="1.5" y="3" width="15" height="13" rx="1.6" stroke="currentColor" stroke-width="1.3"/><path d="M1.5 6.8H16.5" stroke="currentColor" stroke-width="1.3"/><path d="M5 1.4V4M13 1.4V4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="earnings-next">
+      <span class="earnings-next__period" id="earningsNextPeriod">Q2 FY26</span>
+      <span class="earnings-next__date" id="earningsNextDate">Aug 6, 2026</span>
+    </div>
+
+    <div class="earnings-legend">
+      <span><span class="dot dot--est"></span> Estimate <b id="earnEstVal">2.33</b></span>
+    </div>
+
+    <svg class="earnings-scatter" id="earningsScatterSvg" viewBox="0 0 300 200" preserveAspectRatio="none"></svg>
+    <div class="earnings-scatter__labels" id="earningsScatterLabels"></div>
+
+    <div class="earnings-detail" id="earningsDetail">
+      <div class="earnings-detail__company">KSTL <span class="muted">Kestrel Systems</span></div>
+      <div class="earnings-detail__quarter-row">
+        <span class="earnings-detail__quarter" id="earningsDetailQuarter">Q1 FY26</span>
+        <span class="earnings-detail__badge beat" id="earningsDetailBadge">Beat</span>
+      </div>
+      <div class="earnings-detail__stats">
+        <div class="earnings-detail__stat"><div class="k">Estimate</div><div class="v" id="earningsDetailEst">0.84</div></div>
+        <div class="earnings-detail__stat"><div class="k">Actual</div><div class="v" id="earningsDetailActual">0.89</div></div>
+        <div class="earnings-detail__stat"><div class="k">Surprise</div><div class="v" id="earningsDetailSurprise">+6.0%</div></div>
+      </div>
+      <div class="earnings-detail__reported"><span id="earningsDetailReportedLabel">Reported</span> <span id="earningsDetailDate">Jun 18, 2026</span></div>
+    </div>
+  </div>
+
+  <!-- Earnings calendar overlay -->
+  <div class="ir-overlay" id="calendarOverlay" hidden>
+    <div class="fin-overlay-header">
+      <button type="button" class="ir-back-btn" id="calBackBtn" aria-label="Back">
+        <img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiB2aWV3Qm94PSIwIDAgMTYgMTYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJTVkciPgo8cGF0aCBpZD0iVmVjdG9yIiBkPSJNMTAuNSAzTDUuNSA4TDEwLjUgMTMiIHN0cm9rZT0iI0M3QzdDNyIgc3Ryb2tlLXdpZHRoPSIxLjQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L2c+Cjwvc3ZnPgo=" alt="">
+      </button>
+      <span class="ir-overlay__title">Earnings</span>
+    </div>
+
+    <div class="cal-week-nav">
+      <button type="button" id="calWeekPrev" aria-label="Previous week">‹</button>
+      <span class="cal-week-label" id="calWeekLabel">This Week</span>
+      <button type="button" id="calWeekNext" aria-label="Next week">›</button>
+    </div>
+
+    <div class="cal-day-strip" id="calDayStrip"></div>
+
+    <div class="cal-day-heading" id="calDayHeading">August 26</div>
+    <div class="cal-company-list" id="calCompanyList"></div>
+  </div>
+
 <!-- Thesis detail overlay -->
 <div class="detail-overlay" id="thesisOverlay" hidden>
   <div class="statusbar" style="margin:-24px -20px 20px">
@@ -3055,22 +3338,6 @@ p { margin: 0; }
     <div class="detail-overlay__label"><span>Current</span></div>
     <div class="detail-overlay__body" id="predOverlayBody"></div>
 
-    <div class="pred-trend-chart" style="margin-top:22px">
-      <div class="pred-trend-chart__row">
-        <svg class="pred-trend-chart__svg" id="predTrendSvgLg" viewBox="0 0 300 56" preserveAspectRatio="none" style="height:110px">
-          <line class="pred-trend-zero-line" id="predTrendZeroLineLg" x1="0" x2="300" y1="0" y2="0"></line>
-          <path class="pred-trend-line pred-trend-line--ver" id="predTrendSecondaryLineLg" d=""></path>
-          <path class="pred-trend-line" id="predTrendEntryLineLg" d=""></path>
-        </svg>
-        <div class="pred-trend-sp-label" id="predTrendSpLabelLg">S&amp;P</div>
-        <div class="pred-trend-end-dot" id="predTrendEndDotLg"></div>
-        <span class="pred-trend-ver-label" id="predTrendPrimaryLabelLg">v1</span>
-        <div class="pred-trend-end-dot pred-trend-end-dot--ver" id="predTrendSecondaryDotLg"></div>
-        <span class="pred-trend-ver-label" id="predTrendSecondaryLabelLg">v3</span>
-      </div>
-      <div class="pred-trend-chart__labels" id="predTrendLabelsLg"></div>
-    </div>
-
     <button type="button" class="dt-cta pri dt-cta-open" data-update-open="pred">
       <svg class="dt-arr" viewBox="0 0 9 8"><path d="M0.5 4 H7.5 M5 1 L8 4 L5 7"/></svg>Update
     </button>
@@ -3114,7 +3381,7 @@ p { margin: 0; }
       <div class="cal-seg" id="calHorizonSeg">
         <button type="button" data-h="1y">1 year</button>
         <button type="button" data-h="3y">3 years</button>
-        <button type="button" data-h="5y">5+ years</button>
+        <button type="button" data-h="5y">5 years</button>
       </div>
     </div>
 
@@ -3358,11 +3625,10 @@ p { margin: 0; }
     return vals;
   }
 
-  /* Matches "Entered 10.14.25" on the Position section (and PRED_GOAL_START
-     on the Prediction card) — the one fixed date every "since entry" figure
-     on this chart (Position/S&P/vs Target in the popup, plus the dashed
-     entry marker) is measured from, instead of wherever the currently
-     selected range tab happens to start. */
+  /* Matches "Entered 10.14.25" on the Position section — the one fixed date
+     every "since entry" figure on this chart (Position/S&P/vs Target in the
+     popup, plus the dashed entry marker) is measured from, instead of
+     wherever the currently selected range tab happens to start. */
   var POSITION_ENTRY_DATE = new Date(2025, 9, 14);
   var ENTRY_DAYS_AGO = Math.round((CHART_NOW - POSITION_ENTRY_DATE) / 86400000);
   var ENTRY_IDX = MASTER_DAYS - ENTRY_DAYS_AGO;
@@ -3498,6 +3764,24 @@ p { margin: 0; }
     if (fmt === 'month' || fmt === 'monthyear') return MONTHS_SHORT[d.getMonth()] + ' ' + d.getFullYear();
     if (fmt === 'year') return String(d.getFullYear());
     return formatTime(frac);
+  }
+
+  /* The chart popup's own timestamp is more detailed than the compact
+     floating hairline label above: 1D/1W spell out time + date + month,
+     everything 1M and longer spells out date + month + year. */
+  function formatPopupTimestamp(frac, fmt, spanDays) {
+    if (fmt === 'time') {
+      return MONTHS_SHORT[CHART_NOW.getMonth()] + ' ' + CHART_NOW.getDate() + ', ' + formatTime(frac);
+    }
+    var spanMs = spanDays * 86400000;
+    var d = new Date(CHART_NOW.getTime() - spanMs + frac * spanMs);
+    if (fmt === 'weekday') {
+      var h = d.getHours(), m = d.getMinutes();
+      var ampm = h >= 12 ? 'PM' : 'AM';
+      var h12 = h % 12; if (h12 === 0) h12 = 12;
+      return MONTHS_SHORT[d.getMonth()] + ' ' + d.getDate() + ', ' + h12 + ':' + (m < 10 ? '0' : '') + m + ' ' + ampm;
+    }
+    return MONTHS_SHORT[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
   }
 
   function renderChartRange(rangeKey) {
@@ -3679,7 +3963,7 @@ p { margin: 0; }
     popAvgPrc.textContent = ((DAY_HIGH + DAY_LOW) / 2).toFixed(2);
     popTurnover.textContent = (10 + frac * 8).toFixed(2) + 'M';
     popVolume.textContent = (30 + frac * 25).toFixed(2) + 'K';
-    popTime.textContent = label;
+    popTime.textContent = formatPopupTimestamp(frac, CHART_RANGE_FMT, CHART_RANGE_SPAN_DAYS);
 
     /* Position vs S&P vs target, evaluated at this same scrub point — but
        never before the entry date. All three read exactly 0 there by
@@ -3962,158 +4246,9 @@ p { margin: 0; }
   var predSincePurchaseVal = document.getElementById('predSincePurchaseVal');
   var predSincePurchaseArrow = document.getElementById('predSincePurchaseArrow');
   var predTrackingArrow = document.getElementById('predTrackingArrow');
-  var predTrendEntryLine = document.getElementById('predTrendEntryLine');
-  var predTrendZeroLine = document.getElementById('predTrendZeroLine');
-  var predTrendSpLabel = document.getElementById('predTrendSpLabel');
-  var predTrendEndDot = document.getElementById('predTrendEndDot');
-  var predTrendSecondaryLine = document.getElementById('predTrendSecondaryLine');
-  var predTrendSecondaryDot = document.getElementById('predTrendSecondaryDot');
-  var predTrendPrimaryLabel = document.getElementById('predTrendPrimaryLabel');
-  var predTrendSecondaryLabel = document.getElementById('predTrendSecondaryLabel');
-  var predTrendLabels = document.getElementById('predTrendLabels');
-  /* larger duplicate chart shown inside the Prediction detail overlay */
-  var predTrendEntryLineLg = document.getElementById('predTrendEntryLineLg');
-  var predTrendZeroLineLg = document.getElementById('predTrendZeroLineLg');
-  var predTrendSpLabelLg = document.getElementById('predTrendSpLabelLg');
-  var predTrendEndDotLg = document.getElementById('predTrendEndDotLg');
-  var predTrendSecondaryLineLg = document.getElementById('predTrendSecondaryLineLg');
-  var predTrendSecondaryDotLg = document.getElementById('predTrendSecondaryDotLg');
-  var predTrendPrimaryLabelLg = document.getElementById('predTrendPrimaryLabelLg');
-  var predTrendSecondaryLabelLg = document.getElementById('predTrendSecondaryLabelLg');
-  var predTrendLabelsLg = document.getElementById('predTrendLabelsLg');
-  var predGoalTarget = document.getElementById('predGoalTarget');
-  var predGoalFill = document.getElementById('predGoalFill');
-  var predGoalPace = document.getElementById('predGoalPace');
-  var predGoalSoFar = document.getElementById('predGoalSoFar');
-  var predGoalNeeded = document.getElementById('predGoalNeeded');
-  var predGoalInfo = document.getElementById('predGoalInfo');
-  var predVerPopover = document.getElementById('predVerPopover');
-  var predVerPopoverVer = document.getElementById('predVerPopoverVer');
-  var predVerPopoverDate = document.getElementById('predVerPopoverDate');
-  var predVerPopoverDesc = document.getElementById('predVerPopoverDesc');
-  /* Fixed dates (matching the rest of this file's "frozen demo clock"
-     convention) driving both the pace marker and the compounded target. */
-  var PRED_GOAL_START = new Date(2025, 9, 14);
-  var PRED_GOAL_END = new Date(2028, 9, 14);
-  var PRED_GOAL_NOW = new Date(2026, 5, 22);
-  var PRED_GOAL_PCT = (Math.pow(1.20, 3) - 1) * 100; /* 20%/yr compounded over 3 years */
-  predGoalInfo.textContent = '20%/yr compounded over 3 years = ' + PRED_GOAL_PCT.toFixed(1) + '% total return.';
-  var PRED_ALPHA_POINTS = 60;
-  /* The secondary ("since current prediction") line only has real ground to
-     stand on from the first revision after V1 onward, not the full 3-year
-     span the primary line covers, so it needs far fewer points. */
-  var PRED_SECONDARY_POINTS = 24;
-  /* Trailing-average window for the trend arrows — per the meeting: not a
-     "vs yesterday" compare, but "vs your recent average" (the Whoop model
-     Aidan described), now that the dense series actually has enough points
-     to average over. */
-  var PRED_TRAILING_WINDOW = 7;
-  var PRED_CHART_W = 300, PRED_CHART_H = 56, PRED_CHART_PAD = 6;
-
-  /* Fraction of the 3-year goal window that has elapsed as of "now" — the one
-     number that the trend chart's "now" line, the truncated version lines,
-     and the goal bar's pace marker all key off of, so the two sections read
-     as a single shared timeline instead of two independent ones. */
-  function predTimeFrac() {
-    var totalDays = Math.round((PRED_GOAL_END - PRED_GOAL_START) / 86400000);
-    var elapsedDays = Math.round((PRED_GOAL_NOW - PRED_GOAL_START) / 86400000);
-    return Math.max(0, Math.min(1, elapsedDays / totalDays));
-  }
-
-  /* Yearly checkpoints across the full 3-year span (entry -> resolves), in
-     place of the old Oct/Dec/Feb/Apr/Jun labels, which only ever made sense
-     for a ~9-month window. */
-  function buildPredTimelineLabels() {
-    var years = Math.round((PRED_GOAL_END - PRED_GOAL_START) / (365.25 * 86400000));
-    var labels = [];
-    for (var i = 0; i <= years; i++) {
-      var d = new Date(PRED_GOAL_START.getFullYear() + i, PRED_GOAL_START.getMonth(), PRED_GOAL_START.getDate());
-      labels.push(MONTHS_SHORT[d.getMonth()] + " '" + String(d.getFullYear()).slice(-2));
-    }
-    return labels;
-  }
-  var predTimelineLabelsHTML = buildPredTimelineLabels().map(function (l) { return '<span>' + l + '</span>'; }).join('');
-  predTrendLabels.innerHTML = predTimelineLabelsHTML;
-  predTrendLabelsLg.innerHTML = predTimelineLabelsHTML;
-
   function pseudoRandom(seed) {
     var s = Math.sin(seed * 12.9898) * 43758.5453;
     return s - Math.floor(s);
-  }
-
-  function interpolateAnchors(anchors, numPoints) {
-    var segments = anchors.length - 1;
-    var out = [];
-    for (var i = 0; i < numPoints; i++) {
-      var segF = (i / (numPoints - 1)) * segments;
-      var segIdx = Math.min(Math.floor(segF), segments - 1);
-      var localT = segF - segIdx;
-      out.push(anchors[segIdx] + (anchors[segIdx + 1] - anchors[segIdx]) * localT);
-    }
-    return out;
-  }
-
-  /* Small deterministic (non-flickering) noise layered on the interpolated
-     trend so the line reads as a real, jagged stock-style chart — the last
-     point stays exactly on the live value so it always matches the number
-     above it. */
-  function noisyLine(anchors, numPoints, noiseAmp, seedOffset) {
-    var base = interpolateAnchors(anchors, numPoints);
-    return base.map(function (v, i) {
-      if (i === numPoints - 1) return v;
-      return v + (pseudoRandom(i + seedOffset) - 0.5) * noiseAmp;
-    });
-  }
-
-  /* The "since entry" line must originate exactly on the S&P baseline (0) and
-     diverge to ONE side only — it should never cross back over the baseline,
-     so the whole stroke can be a single color (green if it ends up, red if
-     down). Noise is applied multiplicatively against an eased 0->target
-     curve, which preserves sign at every point since (1 + wiggle) > 0. */
-  function monotoneNoisyLine(target, numPoints, noiseAmp, seedOffset) {
-    var out = [];
-    for (var i = 0; i < numPoints; i++) {
-      if (i === 0) { out.push(0); continue; }
-      if (i === numPoints - 1) { out.push(target); continue; }
-      var t = i / (numPoints - 1);
-      var eased = Math.pow(t, 0.82);
-      var base = target * eased;
-      var wiggle = (pseudoRandom(i + seedOffset) - 0.5) * 2 * noiseAmp;
-      out.push(base * (1 + wiggle));
-    }
-    return out;
-  }
-
-  /* The secondary line branches off wherever the primary line actually is at
-     the moment the current prediction was made, then noisily interpolates
-     to today's live value — unlike monotoneNoisyLine, it doesn't start from
-     0 since it's picking up mid-flight from the primary line, not the S&P
-     baseline. */
-  function noisyLineFromTo(startVal, endVal, numPoints, noiseAmp, seedOffset) {
-    var out = [];
-    var span = Math.abs(endVal - startVal) || 1;
-    for (var i = 0; i < numPoints; i++) {
-      if (i === 0) { out.push(startVal); continue; }
-      if (i === numPoints - 1) { out.push(endVal); continue; }
-      var t = i / (numPoints - 1);
-      var base = startVal + (endVal - startVal) * t;
-      var wiggle = (pseudoRandom(i + seedOffset) - 0.5) * 2 * noiseAmp * span;
-      out.push(base + wiggle);
-    }
-    return out;
-  }
-
-  function chartY(v, minV, range) {
-    var usableH = PRED_CHART_H - PRED_CHART_PAD * 2;
-    return PRED_CHART_PAD + usableH - ((v - minV) / range) * usableH;
-  }
-
-  function seriesToXY(values, totalSlots, startSlot, minV, range) {
-    return values.map(function (v, i) {
-      var slot = startSlot + i;
-      var x = (slot / (totalSlots - 1)) * PRED_CHART_W;
-      return [x, chartY(v, minV, range)];
-    });
   }
 
   /* Catmull-Rom-style cubic smoothing so the dense noisy series reads as an
@@ -4135,204 +4270,6 @@ p { margin: 0; }
     }
     return d;
   }
-
-  function trailingAvg(series, window) {
-    var end = series.length - 1; /* exclude today itself */
-    var start = Math.max(0, end - window);
-    var sum = 0, count = 0;
-    for (var i = start; i < end; i++) { sum += series[i]; count++; }
-    return count ? sum / count : series[end];
-  }
-
-  function renderPredTrend(alphaPpVal, predPpVal) {
-    /* Primary line — "since entry" (vs S&P), always anchored on V1: starts at
-       0 (the S&P baseline, on the original prediction date) and runs
-       continuously through to today, staying on one side the whole way —
-       see monotoneNoisyLine(). This never changes shape when a new version
-       is logged; it's the one constant reference line. */
-    var alphaSeries = monotoneNoisyLine(alphaPpVal, PRED_ALPHA_POINTS, 0.008, 0);
-
-    /* Secondary line — "since current prediction": per the team's review,
-       versions don't each get their own competing track starting from V1's
-       own origin. Instead there's one secondary line starting fresh on the
-       S&P line at the first revision after V1, carrying the latest thinking
-       forward to today (chaining through any versions in between — tap the
-       end dot, or open History, to see them). If the prediction has never
-       been revised (no history yet), there's nothing to branch, so the
-       secondary line/dot are hidden entirely.
-
-       DETAIL is declared further down the file — this function is first
-       called during the page's initial render, before that point, so it
-       falls back to "no secondary line yet" on that one early call. The
-       very next render pass (triggered once the rest of the script has
-       finished loading) has DETAIL available and fills the real line in. */
-    var s = (typeof DETAIL !== 'undefined') ? DETAIL.pred.state : null;
-    var totalDays = Math.round((PRED_GOAL_END - PRED_GOAL_START) / 86400000);
-    var timeFrac = predTimeFrac();
-    var hasSecondary = !!s && s.history.length >= 1;
-    var branchFrac = 0;
-    if (hasSecondary) {
-      var branchDate = s.history.length >= 2 ? new Date(s.history[1].date) : new Date(s.date);
-      branchFrac = Math.max(0, Math.min(1, Math.round((branchDate - PRED_GOAL_START) / 86400000) / totalDays));
-      hasSecondary = branchFrac < timeFrac;
-    }
-
-    /* The secondary line starts on the S&P line itself (0) at the branch
-       date — same convention as the primary line's own start — and tracks
-       to today's "since current prediction" value, rather than picking up
-       wherever the primary line happens to be at that point in time. */
-    var secondarySeries = hasSecondary ? noisyLineFromTo(0, predPpVal, PRED_SECONDARY_POINTS, 0.12, 17) : [];
-
-    var minV = Math.min(0, Math.min.apply(null, alphaSeries), hasSecondary ? Math.min.apply(null, secondarySeries) : 0);
-    var maxV = Math.max(0, Math.max.apply(null, alphaSeries), hasSecondary ? Math.max.apply(null, secondarySeries) : 0);
-    var range = (maxV - minV) || 1;
-
-    /* The primary line only has real ground to stand on up through "now" —
-       the same point the goal bar's pace marker sits at — so it's
-       compressed into that leading slice of the chart instead of stretching
-       across the full 3-year span. */
-    var alphaPts = seriesToXY(alphaSeries, PRED_ALPHA_POINTS, 0, minV, range);
-    alphaPts.forEach(function (p) { p[0] *= timeFrac; });
-    var entryPath = smoothPathD(alphaPts);
-    var isUp = alphaPpVal >= 0;
-
-    var secPts = [];
-    if (hasSecondary) {
-      secPts = secondarySeries.map(function (v, i) {
-        var t = i / (secondarySeries.length - 1);
-        var x = (branchFrac + t * (timeFrac - branchFrac)) * PRED_CHART_W;
-        return [x, chartY(v, minV, range)];
-      });
-    }
-    var secPath = hasSecondary ? smoothPathD(secPts) : '';
-
-    [[predTrendEntryLine, predTrendZeroLine, predTrendSpLabel, predTrendEndDot, predTrendSecondaryLine, predTrendSecondaryDot, predTrendPrimaryLabel, predTrendSecondaryLabel],
-     [predTrendEntryLineLg, predTrendZeroLineLg, predTrendSpLabelLg, predTrendEndDotLg, predTrendSecondaryLineLg, predTrendSecondaryDotLg, predTrendPrimaryLabelLg, predTrendSecondaryLabelLg]
-    ].forEach(function (refs) {
-      var line = refs[0], zeroLine = refs[1], spLabel = refs[2], endDot = refs[3],
-          secLine = refs[4], secDot = refs[5], primaryLabel = refs[6], secLabel = refs[7];
-      line.setAttribute('d', entryPath);
-      line.classList.toggle('is-up', isUp);
-      line.classList.toggle('is-down', !isUp);
-      secLine.setAttribute('d', secPath);
-
-      /* Zero line = "matching the S&P exactly" — the one reference every pp
-         figure on this card is measured against, and the point the "since
-         entry" line originates from before diverging one way or the other. */
-      var zeroY = Math.max(PRED_CHART_PAD, Math.min(PRED_CHART_H - PRED_CHART_PAD, chartY(0, minV, range)));
-      zeroLine.setAttribute('y1', zeroY.toFixed(1));
-      zeroLine.setAttribute('y2', zeroY.toFixed(1));
-      spLabel.style.top = (zeroY / PRED_CHART_H * 100).toFixed(2) + '%';
-
-      /* V1 (primary) always ends "now" — the bold, colored dot. */
-      var endPt = alphaPts[alphaPts.length - 1];
-      endDot.style.left = (endPt[0] / PRED_CHART_W * 100).toFixed(2) + '%';
-      endDot.style.top = (endPt[1] / PRED_CHART_H * 100).toFixed(2) + '%';
-      endDot.classList.toggle('is-up', isUp);
-      endDot.classList.toggle('is-down', !isUp);
-      primaryLabel.style.left = endDot.style.left;
-      primaryLabel.style.top = endDot.style.top;
-      primaryLabel.textContent = 'v1';
-
-      secDot.hidden = !hasSecondary;
-      secLabel.hidden = !hasSecondary;
-      if (hasSecondary) {
-        var secEnd = secPts[secPts.length - 1];
-        secDot.style.left = (secEnd[0] / PRED_CHART_W * 100).toFixed(2) + '%';
-        secDot.style.top = (secEnd[1] / PRED_CHART_H * 100).toFixed(2) + '%';
-        secLabel.style.left = secDot.style.left;
-        secLabel.style.top = secDot.style.top;
-        secLabel.textContent = 'v' + s.version;
-      }
-    });
-
-    /* Arrows: today's value vs the trailing average of the last
-       PRED_TRAILING_WINDOW points — direction matters independently of
-       whether the figure itself is currently positive or negative. */
-    var alphaAvg = trailingAvg(alphaSeries, PRED_TRAILING_WINDOW);
-    var alphaUp = alphaPpVal >= alphaAvg;
-    predSincePurchaseArrow.textContent = alphaUp ? '▲' : '▼';
-    predSincePurchaseArrow.classList.toggle('is-up', alphaUp);
-    predSincePurchaseArrow.classList.toggle('is-down', !alphaUp);
-
-    var predUp = hasSecondary ? predPpVal >= trailingAvg(secondarySeries, PRED_TRAILING_WINDOW) : alphaUp;
-    predTrackingArrow.textContent = predUp ? '▲' : '▼';
-    predTrackingArrow.classList.toggle('is-up', predUp);
-    predTrackingArrow.classList.toggle('is-down', !predUp);
-  }
-
-  /* "Against Target" — actualPct is the position's own realized return
-     (not vs S&P), compared to the compounded 20%/yr-over-3-years goal and
-     to where a straight-line pace to that goal would put you by now. */
-  function renderPredGoal(actualPct) {
-    var timeFrac = predTimeFrac();
-    var onPacePct = PRED_GOAL_PCT * timeFrac;
-    var gap = actualPct - onPacePct;
-    var ahead = gap >= 0;
-    var reached = actualPct >= PRED_GOAL_PCT;
-
-    predGoalTarget.textContent = PRED_GOAL_PCT.toFixed(1) + '% goal';
-    predGoalFill.style.width = Math.max(0, Math.min(100, (actualPct / PRED_GOAL_PCT) * 100)).toFixed(1) + '%';
-    predGoalFill.classList.toggle('is-behind', !ahead && !reached);
-    predGoalPace.style.left = (timeFrac * 100).toFixed(1) + '%';
-
-    predGoalSoFar.textContent = (actualPct >= 0 ? '+' : '') + actualPct.toFixed(1) + '% so far';
-    predGoalNeeded.textContent = reached
-      ? 'Target reached — not yet realized'
-      : (ahead ? (Math.abs(gap).toFixed(1) + '% ahead of pace') : (Math.abs(gap).toFixed(1) + '% needed by now'));
-    predGoalNeeded.classList.toggle('is-ahead', ahead || reached);
-    predGoalNeeded.classList.toggle('is-behind', !ahead && !reached);
-  }
-
-  /* Tappable primary/secondary dots — mirrors Dave's own demo of clicking
-     into a prior version and seeing its own probability/target. v1 always
-     reads the first saved history entry; "current" reads the live state
-     directly. Anything in between is only reachable via History (the
-     overlay's own version list), not a dot on this chart — see
-     renderPredTrend(). DETAIL is defined further below in the file, but this
-     only runs on a click, well after the whole script (and DETAIL) has
-     finished loading. */
-  function predVerData(key) {
-    var s = DETAIL.pred.state;
-    if (key === 'current') return { ver: 'v' + s.version, date: s.date, prob: s.prob, hurdle: s.hurdle };
-    var h = s.history[0];
-    return { ver: 'v' + h.version, date: h.date, prob: h.prob, hurdle: h.hurdle };
-  }
-  var predVerPopoverOpenKey = null;
-  function showPredVerPopover(key, dotEl) {
-    var d = predVerData(key);
-    predVerPopoverVer.textContent = d.ver;
-    predVerPopoverDate.textContent = d.date;
-    predVerPopoverDesc.textContent = d.prob + '% probability of ' + d.hurdle + '%/yr';
-    var rowRect = dotEl.closest('.pred-trend-chart__row').getBoundingClientRect();
-    var dotRect = dotEl.getBoundingClientRect();
-    predVerPopover.style.left = (dotRect.left + dotRect.width / 2 - rowRect.left).toFixed(1) + 'px';
-    predVerPopover.style.top = (dotRect.top - rowRect.top).toFixed(1) + 'px';
-    predVerPopover.hidden = false;
-    predVerPopoverOpenKey = key;
-  }
-  function hidePredVerPopover() {
-    predVerPopover.hidden = true;
-    predVerPopoverOpenKey = null;
-  }
-  [['v1', predTrendEndDot], ['current', predTrendSecondaryDot]].forEach(function (pair) {
-    var key = pair[0], dot = pair[1];
-    dot.classList.add('is-tappable');
-    dot.setAttribute('role', 'button');
-    dot.setAttribute('tabindex', '0');
-    dot.setAttribute('aria-label', key + ' prediction details');
-    function toggle() {
-      if (predVerPopoverOpenKey === key) hidePredVerPopover();
-      else showPredVerPopover(key, dot);
-    }
-    dot.addEventListener('click', function (e) { e.stopPropagation(); toggle(); });
-    dot.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); toggle(); }
-    });
-  });
-  document.addEventListener('click', function (e) {
-    if (!predVerPopover.hidden && !predVerPopover.contains(e.target) && !e.target.closest('.pred-trend-end-dot')) hidePredVerPopover();
-  });
 
   var marketClock = document.getElementById('marketClock');
   var posMarketValueUSD = document.getElementById('posMarketValueUSD');
@@ -4558,10 +4495,14 @@ p { margin: 0; }
        elapsed window. A thesis can be behind its prediction while the
        position is ahead overall, or vice versa — that's the point. */
     predSincePurchaseVal.textContent = (alphaPp >= 0 ? '+' : '') + alphaPp.toFixed(1) + ' pp';
+    predSincePurchaseArrow.textContent = alphaPp >= 0 ? '▲' : '▼';
+    predSincePurchaseArrow.classList.toggle('is-up', alphaPp >= 0);
+    predSincePurchaseArrow.classList.toggle('is-down', alphaPp < 0);
     var predPp = market.predStockRetPct - market.predSPRetPct;
     predTrackingVal.textContent = (predPp >= 0 ? '+' : '') + predPp.toFixed(1) + ' pp';
-    renderPredTrend(alphaPp, predPp);
-    renderPredGoal(unrealizedPLPct);
+    predTrackingArrow.textContent = predPp >= 0 ? '▲' : '▼';
+    predTrackingArrow.classList.toggle('is-up', predPp >= 0);
+    predTrackingArrow.classList.toggle('is-down', predPp < 0);
 
     /* Badges design: an amber "after hours" line under each affected field,
        computed from the after-hours price, while the primary numbers above
@@ -4673,6 +4614,589 @@ p { margin: 0; }
   irTrigger.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') openIrOverlay(); });
   irBackBtn.addEventListener('click', closeIrOverlay);
 
+  /* ---------- Financials / Earnings / Earnings Calendar detail overlays ----------
+     Per the 8/28 team meeting: tapping "Financials" opens a full statements page
+     (Income Statement / Balance Sheet / Cash Flow / Ratios, tap a row to chart it —
+     same pattern Wealthsimple/Fiscal use). Between the tabs and the chart there's an
+     Earnings preview (Dave: "in between income statement and revenue, a box... you
+     can tap into"), which opens a fuller Earnings page with an EPS actual-vs-estimate
+     scatter. Both that page and the Financials page carry a calendar icon (top right)
+     that opens a market-wide Earnings Calendar — day strip up top, tap a day to see
+     who's reporting, matching the Wealthsimple/MooMoo reference screenshots. */
+
+  function finFormatDate(d) { return MONTHS_SHORT[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear(); }
+  function addDays(d, n) { var r = new Date(d); r.setDate(r.getDate() + n); return r; }
+  function isoKey(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+
+  /* ---- Statement data: every row is generated from its real latest value (the
+     same figures already shown in the Financials preview box) plus a YoY growth
+     rate, walked backward with light noise — not hand-entered per quarter. ---- */
+  function finSeries(latest, yoyPct, count, seed) {
+    var qGrowth = Math.pow(1 + yoyPct / 100, 1 / 4) - 1;
+    var vals = [latest];
+    for (var i = 1; i < count; i++) {
+      var prev = vals[0] / (1 + qGrowth);
+      var wiggle = 1 + (pseudoRandom(i + seed) - 0.5) * 0.05;
+      vals.unshift(prev * wiggle);
+    }
+    return vals;
+  }
+  function finAnnualFromQuarterly(qSeries, yearsBack) {
+    var out = [];
+    for (var i = 0; i < yearsBack; i++) {
+      var end = qSeries.length - i * 4;
+      var start = end - 4;
+      if (start < 0) break;
+      var sum = 0;
+      for (var j = start; j < end; j++) sum += qSeries[j];
+      out.unshift(sum);
+    }
+    return out;
+  }
+
+  var FIN_Q_COUNT = 21;
+  var FIN_QL = (function () {
+    var labels = [], q = 1, y = 26;
+    for (var i = 0; i < FIN_Q_COUNT; i++) {
+      labels.unshift("Q" + q + "'" + y);
+      q--; if (q === 0) { q = 4; y--; }
+    }
+    return labels;
+  })();
+  var FIN_A_COUNT = 5;
+  var FIN_AL = (function () {
+    var labels = [];
+    for (var i = 0; i < FIN_A_COUNT; i++) labels.unshift('FY' + (25 - i));
+    return labels;
+  })();
+
+  var FIN_TABS = {
+    income: {
+      defaultMetric: 'Revenue',
+      rows: [
+        { label: 'Revenue', total: true, latest: 612.4, yoy: 18.2, seed: 1 },
+        { label: 'Cost of Revenue', latest: 167.4, yoy: 14.9, seed: 2 },
+        { label: 'Gross Profit', total: true, latest: 445.0, yoy: 19.6, seed: 3 },
+        { label: 'Research &amp; Development', latest: 172.0, yoy: 21.4, seed: 4 },
+        { label: 'SG&amp;A', latest: 118.0, yoy: 15.2, seed: 5 },
+        { label: 'Operating Income', total: true, latest: 155.0, yoy: 23.4, seed: 6 },
+        { label: 'Interest &amp; Other Income', latest: 6.0, yoy: 8.0, seed: 7 },
+        { label: 'Income Tax Expense', latest: 58.9, yoy: 27.6, seed: 8 },
+        { label: 'Net Income', total: true, latest: 102.1, yoy: 24.6, seed: 9 },
+        { label: 'Diluted EPS', latest: 0.89, yoy: 22.9, seed: 10, unit: 'plain' }
+      ]
+    },
+    balance: {
+      defaultMetric: 'Total Assets',
+      rows: [
+        { label: 'Cash &amp; Equivalents', latest: 890.0, yoy: 12.4, seed: 11 },
+        { label: 'Total Current Assets', latest: 1540.0, yoy: 15.0, seed: 12 },
+        { label: 'Total Assets', total: true, latest: 3120.0, yoy: 17.8, seed: 13 },
+        { label: 'Total Current Liabilities', latest: 610.0, yoy: 9.5, seed: 14 },
+        { label: 'Total Debt', latest: 420.0, yoy: 4.1, seed: 15 },
+        { label: 'Total Liabilities', total: true, latest: 1180.0, yoy: 8.0, seed: 16 },
+        { label: 'Total Equity', total: true, latest: 1940.0, yoy: 24.5, seed: 17 }
+      ]
+    },
+    cashflow: {
+      defaultMetric: 'Free Cash Flow',
+      rows: [
+        { label: 'Operating Cash Flow', total: true, latest: 148.0, yoy: 12.0, seed: 18 },
+        { label: 'Capital Expenditures', latest: -59.3, yoy: 38.0, seed: 19 },
+        { label: 'Free Cash Flow', total: true, latest: 88.7, yoy: -4.1, seed: 20 },
+        { label: 'Investing Cash Flow', latest: -64.0, yoy: 11.0, seed: 21 },
+        { label: 'Financing Cash Flow', latest: -22.0, yoy: 9.0, seed: 22 },
+        { label: 'Net Change in Cash', total: true, latest: 62.0, yoy: 33.0, seed: 23 }
+      ]
+    },
+    ratios: {
+      defaultMetric: 'Operating Margin',
+      rows: [
+        { label: 'Gross Margin', latest: 72.7, yoy: 0.8, seed: 24, unit: 'pct' },
+        { label: 'Operating Margin', latest: 25.3, yoy: 2.1, seed: 25, unit: 'pct' },
+        { label: 'Net Margin', latest: 16.7, yoy: 0.4, seed: 26, unit: 'pct' },
+        { label: 'Return on Equity', latest: 21.1, yoy: 1.4, seed: 27, unit: 'pct' },
+        { label: 'Return on Assets', latest: 13.4, yoy: 0.8, seed: 28, unit: 'pct' },
+        { label: 'Current Ratio', latest: 2.52, yoy: 3.0, seed: 29, unit: 'plain' },
+        { label: 'Debt / Equity', latest: 0.22, yoy: -8.0, seed: 30, unit: 'plain' },
+        { label: 'P/E', latest: 40.6, yoy: 0.1, seed: 31, unit: 'plain' }
+      ]
+    }
+  };
+
+  var FIN_METRICS = {};
+  Object.keys(FIN_TABS).forEach(function (tabKey) {
+    FIN_TABS[tabKey].rows.forEach(function (r) {
+      var plain = r.label.replace(/&amp;/g, '&');
+      var q = finSeries(r.latest, r.yoy || 0.1, FIN_Q_COUNT, r.seed);
+      var a = finAnnualFromQuarterly(q, FIN_A_COUNT);
+      FIN_METRICS[plain] = { q: q, a: a, unit: r.unit || 'currency' };
+    });
+  });
+
+  function finFmt(n, unit) {
+    if (unit === 'pct') return (n < 0 ? '-' : '') + Math.abs(n).toFixed(1) + '%';
+    if (unit === 'plain') return (n < 0 ? '-' : '') + (Math.abs(n) < 10 ? Math.abs(n).toFixed(2) : Math.abs(n).toFixed(1));
+    var a = Math.abs(n);
+    var s = a >= 1000 ? (a / 1000).toFixed(2) + 'B' : a.toFixed(1) + 'M';
+    return (n < 0 ? '-' : '') + s;
+  }
+  function finPctChange(cur, prev) { return prev ? (cur / prev - 1) * 100 : null; }
+  function finPctStr(p) { return (p >= 0 ? '+' : '-') + Math.abs(p).toFixed(2) + '%'; }
+
+  var finTabsEl = document.getElementById('finTabs');
+  var finEarningsBoxEl = document.getElementById('finEarningsBox');
+  var finEarningsNextEl = document.getElementById('finEarningsNext');
+  var finEarningsMiniSvg = document.getElementById('finEarningsMiniSvg');
+  var finEarningsMiniLabels = document.getElementById('finEarningsMiniLabels');
+  var finChartBlockEl = document.getElementById('finChartBlock');
+  var finCapEl = document.getElementById('finCap');
+  var finSegEl = document.getElementById('finSeg');
+  var finValEl = document.getElementById('finVal');
+  var finDeltaEl = document.getElementById('finDelta');
+  var finChartScrollEl = document.getElementById('finChartScroll');
+  var finBarsEl = document.getElementById('finBars');
+  var finBarXEl = document.getElementById('finBarX');
+  var finRangesEl = document.getElementById('finRanges');
+  var finTheadEl = document.getElementById('finThead');
+  var finTbodyEl = document.getElementById('finTbody');
+  var finTableWrapEl = document.getElementById('finTableWrap');
+
+  var finState = { tab: 'income', period: 'q', range: '3Y', metric: 'Revenue' };
+  var FIN_RANGE_COUNT = { '1Y': { q: 4, a: 1 }, '3Y': { q: 12, a: 3 }, '5Y': { q: 20, a: 5 }, 'MAX': { q: FIN_Q_COUNT, a: FIN_A_COUNT } };
+
+  function finSyncRanges() {
+    var qtr = finState.period === 'q';
+    var depth = qtr ? FIN_QL.length : FIN_AL.length;
+    var anyActive = false;
+    finRangesEl.querySelectorAll('button').forEach(function (b) {
+      var r = b.getAttribute('data-r');
+      var need = qtr ? FIN_RANGE_COUNT[r].q : FIN_RANGE_COUNT[r].a;
+      var ok = r === 'MAX' || need <= depth;
+      b.classList.toggle('hidden', !ok);
+      if (!ok && b.classList.contains('active')) b.classList.remove('active');
+      if (ok && b.classList.contains('active')) anyActive = true;
+    });
+    if (!anyActive) {
+      finRangesEl.querySelectorAll('button').forEach(function (b) { b.classList.remove('active'); });
+      finRangesEl.querySelector('[data-r="MAX"]').classList.add('active');
+      finState.range = 'MAX';
+    }
+  }
+
+  function finRenderChart() {
+    var m = FIN_METRICS[finState.metric];
+    if (!m) return;
+    var qtr = finState.period === 'q';
+    var series = qtr ? m.q : m.a;
+    var allLabels = qtr ? FIN_QL : FIN_AL;
+    var need = qtr ? FIN_RANGE_COUNT[finState.range].q : FIN_RANGE_COUNT[finState.range].a;
+    var n = Math.min(series.length, need);
+    var vals = series.slice(-n);
+    var labels = allLabels.slice(-n);
+
+    var max = vals.reduce(function (x, v) { return Math.max(x, Math.abs(v)); }, 0) || 1;
+    var avail = (finChartScrollEl.clientWidth || 340) - 20;
+    var fits = vals.length * 40 <= avail;
+    finBarsEl.classList.toggle('fits', fits);
+    finBarXEl.classList.toggle('fits', fits);
+    finBarsEl.innerHTML = '';
+    finBarXEl.innerHTML = '';
+    vals.forEach(function (v, i) {
+      var col = document.createElement('div');
+      col.className = 'fin-bar-col' + (i === vals.length - 1 ? ' on' : '');
+      col.innerHTML = '<span class="fin-bar-val">' + finFmt(v, m.unit) + '</span><div class="fin-bar" style="height:' +
+        Math.max(2, Math.round((Math.abs(v) / max) * 100)) + 'px"></div>';
+      finBarsEl.appendChild(col);
+      var x = document.createElement('span');
+      x.textContent = labels[i];
+      finBarXEl.appendChild(x);
+    });
+
+    finCapEl.textContent = finState.metric + ' · ' + labels[0] + ' – ' + labels[labels.length - 1];
+    var first = vals[0], last = vals[vals.length - 1];
+    finValEl.textContent = finFmt(last, m.unit);
+    if (vals.length < 2 || !first) {
+      finDeltaEl.textContent = '';
+      finDeltaEl.className = 'd';
+    } else {
+      var pct = finPctChange(last, first);
+      finDeltaEl.textContent = finPctStr(pct);
+      finDeltaEl.className = 'd ' + (pct >= 0 ? 'up' : 'down');
+    }
+    finChartScrollEl.scrollLeft = fits ? 0 : finChartScrollEl.scrollWidth;
+  }
+
+  function finPeriods() {
+    var qtr = finState.period === 'q';
+    var allLabels = qtr ? FIN_QL : FIN_AL;
+    var need = qtr ? FIN_RANGE_COUNT[finState.range].q : FIN_RANGE_COUNT[finState.range].a;
+    var n = Math.min(allLabels.length, need);
+    return { qtr: qtr, labels: allLabels.slice(-n), n: n, back: qtr ? 4 : 1 };
+  }
+
+  function finMarkRow() {
+    finTbodyEl.querySelectorAll('tr[data-label]').forEach(function (tr) {
+      tr.classList.toggle('row-on', tr.dataset.label === finState.metric);
+    });
+  }
+
+  function finRenderTable() {
+    var p = finPeriods();
+    var rows = FIN_TABS[finState.tab].rows;
+
+    var head = '<tr><th class="lbl">Breakdown</th>';
+    p.labels.forEach(function (l) { head += '<th>' + l + '</th>'; });
+    head += '</tr>';
+    finTheadEl.innerHTML = head;
+
+    var html = '';
+    rows.forEach(function (r) {
+      var plain = r.label.replace(/&amp;/g, '&');
+      var m = FIN_METRICS[plain];
+      var series = (p.qtr ? m.q : m.a).slice(-p.n);
+      var row = '<tr class="' + (r.total ? 'total' : '') + '" data-label="' + plain + '"><td class="lbl">' + r.label + '</td>';
+      series.forEach(function (v, i) {
+        var prev = series[i - p.back];
+        var pctHtml = '';
+        if (prev) {
+          var pc = finPctChange(v, prev);
+          pctHtml = '<span class="pct ' + (pc >= 0 ? 'up' : 'down') + '">' + finPctStr(pc) + '</span>';
+        }
+        row += '<td><span class="num">' + finFmt(v, m.unit) + '</span>' + pctHtml + '</td>';
+      });
+      row += '</tr>';
+      html += row;
+    });
+    finTbodyEl.innerHTML = html;
+    finMarkRow();
+    finTableWrapEl.scrollLeft = finTableWrapEl.scrollWidth;
+  }
+
+  function finSelectMetric(label) {
+    finState.metric = label;
+    finChartBlockEl.hidden = false;
+    finMarkRow();
+    finRenderChart();
+  }
+
+  function finRenderAll() {
+    finRenderChart();
+    finRenderTable();
+  }
+
+  finTbodyEl.addEventListener('click', function (e) {
+    var tr = e.target.closest('tr[data-label]');
+    if (!tr) return;
+    finSelectMetric(tr.dataset.label);
+  });
+
+  finTabsEl.querySelectorAll('.fin-tab').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      finTabsEl.querySelectorAll('.fin-tab').forEach(function (b) { b.classList.toggle('active', b === btn); });
+      finState.tab = btn.getAttribute('data-tab');
+      finState.metric = FIN_TABS[finState.tab].defaultMetric;
+      finEarningsBoxEl.hidden = finState.tab !== 'income';
+      finRenderAll();
+    });
+  });
+
+  finSegEl.querySelectorAll('button').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      finSegEl.querySelectorAll('button').forEach(function (b) { b.classList.toggle('active', b === btn); });
+      finState.period = btn.getAttribute('data-p');
+      finSyncRanges();
+      finRenderAll();
+    });
+  });
+
+  finRangesEl.querySelectorAll('button').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      if (btn.classList.contains('hidden')) return;
+      finRangesEl.querySelectorAll('button').forEach(function (b) { b.classList.toggle('active', b === btn); });
+      finState.range = btn.getAttribute('data-r');
+      finRenderAll();
+    });
+  });
+
+  /* ---- Earnings: EPS actual-vs-estimate, shared between the Financials
+     preview box (mini, non-interactive) and the full Earnings page. ---- */
+  var EARNINGS_HISTORY = [
+    { q: 'Q1 FY25', est: 0.58, actual: 0.62, date: new Date(2025, 5, 11) },
+    { q: 'Q2 FY25', est: 0.63, actual: 0.60, date: new Date(2025, 8, 10) },
+    { q: 'Q3 FY25', est: 0.68, actual: 0.74, date: new Date(2025, 11, 11) },
+    { q: 'Q4 FY25', est: 0.78, actual: 0.81, date: new Date(2026, 2, 12) },
+    { q: 'Q1 FY26', est: 0.84, actual: 0.89, date: new Date(2026, 5, 18) }
+  ];
+  var EARNINGS_NEXT = { q: 'Q2 FY26', est: 0.95, actual: null, date: new Date(2026, 7, 6) };
+  var EARNINGS_DAYS_UNTIL = Math.round((EARNINGS_NEXT.date - CHART_NOW) / 86400000);
+  var EARNINGS_NEXT_STR = 'Reports ' + finFormatDate(EARNINGS_NEXT.date);
+  finEarningsNextEl.textContent = EARNINGS_NEXT_STR;
+
+  function finRenderEarningsMini() {
+    var pts = EARNINGS_HISTORY.concat([EARNINGS_NEXT]);
+    var W = 300, H = 54, pad2 = 8;
+    var allVals = pts.map(function (p) { return p.actual !== null ? p.actual : p.est; }).concat(pts.map(function (p) { return p.est; }));
+    var min = Math.min.apply(null, allVals) * 0.85;
+    var max = Math.max.apply(null, allVals) * 1.1;
+    var range = (max - min) || 1;
+    function y(v) { return pad2 + (H - pad2 * 2) * (1 - (v - min) / range); }
+    var svg = '';
+    pts.forEach(function (p, i) {
+      var x = pad2 + (i / (pts.length - 1)) * (W - pad2 * 2);
+      svg += '<circle class="earnings-dot--est" cx="' + x.toFixed(1) + '" cy="' + y(p.est).toFixed(1) + '" r="4"></circle>';
+      if (p.actual !== null) svg += '<circle class="earnings-dot--actual" cx="' + x.toFixed(1) + '" cy="' + y(p.actual).toFixed(1) + '" r="4.5"></circle>';
+    });
+    finEarningsMiniSvg.innerHTML = svg;
+    finEarningsMiniLabels.innerHTML = pts.map(function (p) { return '<span>' + p.q + '</span>'; }).join('');
+  }
+  finRenderEarningsMini();
+
+  var earningsScatterSvg = document.getElementById('earningsScatterSvg');
+  var earningsScatterLabels = document.getElementById('earningsScatterLabels');
+  var earnEstValEl = document.getElementById('earnEstVal');
+  var earningsNextPeriodEl = document.getElementById('earningsNextPeriod');
+  var earningsNextDateEl = document.getElementById('earningsNextDate');
+  earningsNextPeriodEl.textContent = EARNINGS_NEXT.q;
+  earningsNextDateEl.textContent = finFormatDate(EARNINGS_NEXT.date);
+
+  /* ---- Selecting a quarter (tap its dot or its label) updates the detail
+     panel below the chart in place — no popup sheet, matching how
+     Wealthsimple's own earnings page behaves. ---- */
+  var earningsDetailQuarterEl = document.getElementById('earningsDetailQuarter');
+  var earningsDetailBadgeEl = document.getElementById('earningsDetailBadge');
+  var earningsDetailEstEl = document.getElementById('earningsDetailEst');
+  var earningsDetailActualEl = document.getElementById('earningsDetailActual');
+  var earningsDetailSurpriseEl = document.getElementById('earningsDetailSurprise');
+  var earningsDetailDateEl = document.getElementById('earningsDetailDate');
+  var earningsDetailReportedLabelEl = document.getElementById('earningsDetailReportedLabel');
+  var earningsPts = [];
+
+  function finSelectEarningsQuarter(i) {
+    var p = earningsPts[i];
+    if (!p) return;
+
+    earningsScatterSvg.querySelectorAll('[data-i]').forEach(function (el) {
+      el.classList.toggle('is-selected', +el.getAttribute('data-i') === i);
+    });
+    earningsScatterLabels.querySelectorAll('.earnings-scatter__col').forEach(function (el) {
+      el.classList.toggle('is-selected', +el.getAttribute('data-i') === i);
+    });
+
+    earningsDetailQuarterEl.textContent = p.q;
+    earningsDetailEstEl.textContent = p.est.toFixed(2);
+    if (p.actual !== null) {
+      earningsDetailActualEl.textContent = p.actual.toFixed(2);
+      var surprise = (p.actual / p.est - 1) * 100;
+      earningsDetailSurpriseEl.textContent = (surprise >= 0 ? '+' : '') + surprise.toFixed(1) + '%';
+      var beat = p.actual >= p.est;
+      earningsDetailBadgeEl.hidden = false;
+      earningsDetailBadgeEl.textContent = beat ? 'Beat' : 'Miss';
+      earningsDetailBadgeEl.className = 'earnings-detail__badge ' + (beat ? 'beat' : 'miss');
+      earningsDetailReportedLabelEl.textContent = 'Reported';
+      earningsDetailDateEl.textContent = finFormatDate(p.date);
+    } else {
+      earningsDetailActualEl.textContent = '—';
+      earningsDetailSurpriseEl.textContent = '—';
+      earningsDetailBadgeEl.hidden = true;
+      earningsDetailReportedLabelEl.textContent = 'Reporting';
+      earningsDetailDateEl.textContent = finFormatDate(p.date);
+    }
+  }
+
+  function finRenderEarningsFull() {
+    var pts = EARNINGS_HISTORY.concat([EARNINGS_NEXT]);
+    earningsPts = pts;
+    var W = 300, H = 200, padX = 22, padY = 22;
+    var allVals = [];
+    pts.forEach(function (p) { allVals.push(p.est); if (p.actual !== null) allVals.push(p.actual); });
+    var min = Math.max(0, Math.floor(Math.min.apply(null, allVals) * 2) / 2 - 0.5);
+    var max = Math.ceil(Math.max.apply(null, allVals) * 2) / 2 + 0.5;
+    var range = (max - min) || 1;
+    function y(v) { return padY + (H - padY - 20) * (1 - (v - min) / range); }
+    function x(i) { return padX + (i / (pts.length - 1)) * (W - padX * 2); }
+
+    var svg = '';
+    for (var g = Math.ceil(min * 2) / 2; g <= max + 0.001; g += 0.5) {
+      var gy = y(g);
+      svg += '<line x1="' + padX + '" x2="' + (W - padX) + '" y1="' + gy.toFixed(1) + '" y2="' + gy.toFixed(1) + '" stroke="#232627" stroke-width="1" stroke-dasharray="2 3"></line>';
+      svg += '<text x="' + (W - padX + 3) + '" y="' + (gy + 3).toFixed(1) + '" font-size="7.5" fill="#6b6b6b">' + g.toFixed(2) + '</text>';
+    }
+    pts.forEach(function (p, i) {
+      var px = x(i);
+      svg += '<circle class="earnings-dot--est" data-i="' + i + '" cx="' + px.toFixed(1) + '" cy="' + y(p.est).toFixed(1) + '" r="6.5"></circle>';
+      if (p.actual !== null) {
+        svg += '<circle class="earnings-dot--actual" data-i="' + i + '" cx="' + px.toFixed(1) + '" cy="' + y(p.actual).toFixed(1) + '" r="7.5"></circle>';
+      }
+    });
+    earningsScatterSvg.innerHTML = svg;
+    /* Trend arrow under each quarter: green up when actual beat estimate,
+       red down when it missed, a dash for the quarter that hasn't reported
+       yet — same beat/miss read as the detail panel below, just at a glance. */
+    earningsScatterLabels.innerHTML = pts.map(function (p, i) {
+      var trend = p.actual === null ? '<span class="earnings-scatter__trend">—</span>' :
+        (p.actual >= p.est ? '<span class="earnings-scatter__trend up">▲</span>' : '<span class="earnings-scatter__trend down">▼</span>');
+      return '<div class="earnings-scatter__col" data-i="' + i + '"><span class="earnings-scatter__q">' + p.q + '</span>' + trend + '</div>';
+    }).join('');
+    earnEstValEl.textContent = EARNINGS_NEXT.est.toFixed(2);
+
+    earningsScatterSvg.querySelectorAll('[data-i]').forEach(function (el) {
+      el.addEventListener('click', function () { finSelectEarningsQuarter(+el.getAttribute('data-i')); });
+    });
+    earningsScatterLabels.querySelectorAll('.earnings-scatter__col').forEach(function (el) {
+      el.addEventListener('click', function () { finSelectEarningsQuarter(+el.getAttribute('data-i')); });
+    });
+
+    finSelectEarningsQuarter(EARNINGS_HISTORY.length - 1);
+  }
+
+  /* ---- Earnings Calendar: market-wide, keyed by ISO date. Real, recognizable
+     tickers for visual verisimilitude (matching the Wealthsimple/MooMoo reference
+     screenshots) — the EPS/beat-miss figures themselves are illustrative, not
+     sourced from anywhere real. KSTL's own next report is seeded in too, so
+     scrolling far enough forward surfaces it alongside everyone else's. ---- */
+  var CAL_COLORS = ['#3a6b3f', '#8a3f3f', '#31527d', '#7a6a2a', '#5a3f7d', '#7d4a2a', '#2a6b63', '#7d3f63'];
+  function calColor(i) { return CAL_COLORS[i % CAL_COLORS.length]; }
+  var EARNINGS_CALENDAR = {};
+  (function seedCalendar() {
+    var entries = [
+      [-2, 'RY', 'Royal Bank of Canada', 4.10, 4.23],
+      [-2, 'TD', 'Toronto-Dominion Bank', 2.65, 2.73],
+      [-1, 'MRVL', 'Marvell Technology Inc.', 0.98, 0.94],
+      [-1, 'ADSK', 'Autodesk Inc.', 3.18, 3.30],
+      [0, 'WDAY', 'Workday Inc.', 2.55, 2.75],
+      [0, 'DG', 'Dollar General Corp.', 2.42, 2.48],
+      [1, 'CRM', 'Salesforce Inc.', 5.75, 5.90],
+      [1, 'SNPS', 'Synopsys Inc.', 4.02, 3.91],
+      [2, 'CRWD', 'CrowdStrike Holdings Inc.', 0.29, 0.31],
+      [2, 'VEEV', 'Veeva Systems Inc.', 2.20, 2.35],
+      [5, 'NVDA', 'NVIDIA Corp.', 2.10, 2.22],
+      [5, 'AFRM', 'Affirm Holdings Inc.', 0.30, 0.28],
+      [8, 'AAPL', 'Apple Inc.', 1.95, 2.02],
+      [12, 'A', 'Agilent Technologies Inc.', 1.58, 1.62],
+      [EARNINGS_DAYS_UNTIL, 'KSTL', 'Kestrel Systems', EARNINGS_NEXT.est, null]
+    ];
+    entries.forEach(function (e, i) {
+      var key = isoKey(addDays(CHART_NOW, e[0]));
+      if (!EARNINGS_CALENDAR[key]) EARNINGS_CALENDAR[key] = [];
+      EARNINGS_CALENDAR[key].push({ ticker: e[1], name: e[2], est: e[3], actual: e[4], color: calColor(i) });
+    });
+  })();
+
+  var calDayStripEl = document.getElementById('calDayStrip');
+  var calWeekLabelEl = document.getElementById('calWeekLabel');
+  var calDayHeadingEl = document.getElementById('calDayHeading');
+  var calCompanyListEl = document.getElementById('calCompanyList');
+  var calWeekPrevBtn = document.getElementById('calWeekPrev');
+  var calWeekNextBtn = document.getElementById('calWeekNext');
+  var CAL_DOW = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+  var calWeekOffset = 0;
+  var calSelectedDate = null;
+
+  function calStartOfWeek(d) {
+    var r = new Date(d);
+    r.setDate(r.getDate() - r.getDay());
+    r.setHours(0, 0, 0, 0);
+    return r;
+  }
+
+  function calRenderDay() {
+    var key = isoKey(calSelectedDate);
+    calDayHeadingEl.textContent = MONTHS_SHORT[calSelectedDate.getMonth()] + ' ' + calSelectedDate.getDate();
+    var entries = EARNINGS_CALENDAR[key] || [];
+    if (!entries.length) {
+      calCompanyListEl.innerHTML = '<div class="cal-empty-note">No earnings scheduled.</div>';
+      return;
+    }
+    calCompanyListEl.innerHTML = entries.map(function (e) {
+      var beat = e.actual === null ? null : e.actual >= e.est;
+      var epsStr = e.actual === null ? '$' + e.est.toFixed(2) + ' est.' : '$' + e.actual.toFixed(2) + ' EPS';
+      var badge = beat === null ? '' : '<div class="cal-company-badge ' + (beat ? 'beat' : 'miss') + '">' + (beat ? 'Beat' : 'Miss') + '</div>';
+      return '<div class="cal-company-row">' +
+        '<div class="cal-company-logo" style="background:' + e.color + '">' + e.ticker.charAt(0) + '</div>' +
+        '<div><div class="cal-company-name">' + e.name + '</div><div class="cal-company-ticker">' + e.ticker + '</div></div>' +
+        '<div class="cal-company-right"><div class="cal-company-eps">' + epsStr + '</div>' + badge + '</div>' +
+        '</div>';
+    }).join('');
+  }
+
+  function calRenderWeek() {
+    var base = calStartOfWeek(CHART_NOW);
+    var weekStart = addDays(base, calWeekOffset * 7);
+    calWeekLabelEl.textContent = calWeekOffset === 0 ? 'This Week' :
+      (calWeekOffset === 1 ? 'Next Week' : (calWeekOffset === -1 ? 'Last Week' :
+      (calWeekOffset > 0 ? calWeekOffset + ' Weeks Out' : Math.abs(calWeekOffset) + ' Weeks Ago')));
+
+    var days = [];
+    for (var i = 0; i < 7; i++) days.push(addDays(weekStart, i));
+
+    if (!calSelectedDate || calSelectedDate < weekStart || calSelectedDate > addDays(weekStart, 6)) {
+      var todayInWeek = days.some(function (d) { return isoKey(d) === isoKey(CHART_NOW); });
+      calSelectedDate = todayInWeek ? new Date(CHART_NOW) : days[0];
+    }
+
+    calDayStripEl.innerHTML = days.map(function (d) {
+      var key = isoKey(d);
+      var entries = EARNINGS_CALENDAR[key] || [];
+      var isToday = key === isoKey(CHART_NOW);
+      var isActive = key === isoKey(calSelectedDate);
+      var logos = entries.slice(0, 3).map(function (e) {
+        return '<span style="background:' + e.color + '">' + e.ticker.charAt(0) + '</span>';
+      }).join('');
+      return '<button type="button" class="cal-day-btn' + (isActive ? ' active' : '') + (isToday ? ' is-today' : '') + '" data-date="' + key + '">' +
+        '<span class="cal-day-btn__dow">' + CAL_DOW[d.getDay()] + '</span>' +
+        '<span class="cal-day-btn__num">' + d.getDate() + '</span>' +
+        '<span class="cal-day-btn__logos">' + logos + '</span>' +
+        '</button>';
+    }).join('');
+
+    calDayStripEl.querySelectorAll('.cal-day-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        calSelectedDate = new Date(btn.getAttribute('data-date') + 'T00:00:00');
+        calDayStripEl.querySelectorAll('.cal-day-btn').forEach(function (b) { b.classList.toggle('active', b === btn); });
+        calRenderDay();
+      });
+    });
+
+    calRenderDay();
+  }
+  calWeekPrevBtn.addEventListener('click', function () { calWeekOffset--; calSelectedDate = null; calRenderWeek(); });
+  calWeekNextBtn.addEventListener('click', function () { calWeekOffset++; calSelectedDate = null; calRenderWeek(); });
+
+  /* ---- Open/close wiring for all three overlays, with the calendar returning
+     to whichever page opened it. ---- */
+  var financialsOverlayEl = document.getElementById('financialsOverlay');
+  var financialsTriggerEl = document.getElementById('financialsTrigger');
+  var finBackBtnEl = document.getElementById('finBackBtn');
+  var finCalBtnEl = document.getElementById('finCalBtn');
+  var earningsOverlayEl = document.getElementById('earningsOverlay');
+  var earningsBackBtnEl = document.getElementById('earningsBackBtn');
+  var earningsCalBtnEl = document.getElementById('earningsCalBtn');
+  var calendarOverlayEl = document.getElementById('calendarOverlay');
+  var calBackBtnEl = document.getElementById('calBackBtn');
+  var calendarReturnTo = financialsOverlayEl;
+
+  function openFinancialsOverlay() { financialsOverlayEl.hidden = false; finRenderAll(); }
+  function closeFinancialsOverlay() { financialsOverlayEl.hidden = true; }
+  financialsTriggerEl.addEventListener('click', openFinancialsOverlay);
+  financialsTriggerEl.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') openFinancialsOverlay(); });
+  finBackBtnEl.addEventListener('click', closeFinancialsOverlay);
+
+  function openEarningsOverlay() { earningsOverlayEl.hidden = false; finRenderEarningsFull(); }
+  function closeEarningsOverlay() { earningsOverlayEl.hidden = true; }
+  finEarningsBoxEl.addEventListener('click', openEarningsOverlay);
+  finEarningsBoxEl.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') openEarningsOverlay(); });
+  earningsBackBtnEl.addEventListener('click', closeEarningsOverlay);
+
+  function openCalendarOverlay(returnTo) { calendarReturnTo = returnTo; calendarOverlayEl.hidden = false; calRenderWeek(); }
+  function closeCalendarOverlay() { calendarOverlayEl.hidden = true; }
+  finCalBtnEl.addEventListener('click', function (e) { e.stopPropagation(); openCalendarOverlay(financialsOverlayEl); });
+  earningsCalBtnEl.addEventListener('click', function (e) { e.stopPropagation(); openCalendarOverlay(earningsOverlayEl); });
+  calBackBtnEl.addEventListener('click', closeCalendarOverlay);
+
+  finSyncRanges();
+  finRenderAll();
+
   /* ---------- Thesis / Kill Criteria / Prediction detail overlays ---------- */
   var DETAIL = {
     thesis: {
@@ -4738,7 +5262,7 @@ p { margin: 0; }
     }
   };
 
-  var HORIZON_LABEL = { '1y': '1 year', '3y': '3 years', '5y': '5+ years' };
+  var HORIZON_LABEL = { '1y': '1 year', '3y': '3 years', '5y': '5 years' };
 
   function escapeHtml(s) {
     return String(s).replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; });
@@ -5030,7 +5554,6 @@ p { margin: 0; }
   var historySectionEl = document.getElementById('historySection');
   var historyDividerEl = document.getElementById('historyDivider');
   var positionSectionEl = document.getElementById('positionSection');
-  var positionDividerEl = document.getElementById('positionDivider');
   var DEFAULT_ACTIVITY_HTML = activityFeedEl.innerHTML;
   var NEW_USER_ACTIVITY_HTML =
     '<div class="activity-row"><div class="dot dot--white"></div><p>New 52-Week High <span class="muted">· 93.81</span></p></div>' +
@@ -5062,9 +5585,8 @@ p { margin: 0; }
     historyViewMore.hidden = isNewUser;
 
     /* First-time user has no position at all, so drop the whole "Position"
-       section (and its leading divider) rather than showing an empty state. */
+       section rather than showing an empty state. */
     positionSectionEl.hidden = isNewUser;
-    positionDividerEl.hidden = isNewUser;
 
     /* Same treatment for "History" — no trade activity to show at all yet,
        so remove the whole section (and its leading divider) instead of an
