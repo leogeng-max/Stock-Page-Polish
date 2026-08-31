@@ -588,7 +588,6 @@ p { margin: 0; }
   display: flex;
   flex-direction: column;
   gap: 20px;
-  width: 282.65px;
 }
 .activity-row {
   display: flex;
@@ -607,6 +606,8 @@ p { margin: 0; }
 }
 .activity-row .muted { color: #929292; font-weight: 400; }
 .activity-row .reg { font-weight: 400; }
+.activity-row--link { cursor: pointer; }
+.activity-row__chev { margin-left: auto; font-size: 14px; color: #6b6b6b; font-weight: 300; flex-shrink: 0; }
 
 /* ---------- Price block ---------- */
 .price-block {
@@ -973,7 +974,7 @@ p { margin: 0; }
 }
 .chart-popup__timestamp .time { color: #ffffff; }
 .chart-popup__target-badge {
-  color: #8fb0c9;
+  color: #4a7dff;
   white-space: nowrap;
 }
 .chart-popup__row {
@@ -992,10 +993,9 @@ p { margin: 0; }
   color: #ffffff;
   letter-spacing: -0.15px;
 }
-.chart-popup__val.is-ahead { color: #30d158; }
-.chart-popup__val.is-behind { color: #ff3533; }
 .chart-popup__val.is-spx { color: #c9a24b; }
-.chart-popup__subval {
+.chart-popup__val .stat-arrow { margin-left: 3px; }
+.chart-popup__subval-inline {
   font-size: 11px;
   color: #c9a24b;
   letter-spacing: -0.1px;
@@ -1096,7 +1096,7 @@ p { margin: 0; }
   transition: opacity 0.15s ease;
 }
 #chartSpxPath { stroke: #c9a24b; stroke-width: 1.3; }
-#chartTargetPath { stroke: #8fb0c9; stroke-width: 1.2; stroke-dasharray: 4 3; }
+#chartTargetPath { stroke: #4a7dff; stroke-width: 1.2; stroke-dasharray: 4 3; }
 .chart-canvas-wrap.is-scrubbing #chartSpxPath,
 .chart-canvas-wrap.is-scrubbing #chartTargetPath {
   opacity: 1;
@@ -1533,6 +1533,14 @@ p { margin: 0; }
   color: #ffffff;
   letter-spacing: -0.36px;
 }
+.fin-overlay-ticker {
+  font-size: 14.5px;
+  color: #ffffff;
+  letter-spacing: -0.28px;
+  white-space: nowrap;
+}
+.fin-overlay-ticker .sep { color: #929292; }
+.fin-overlay-ticker .chg { font-size: 12px; color: #929292; letter-spacing: -0.24px; margin-left: 2px; }
 .ir-overlay__subtitle {
   margin: 20px 0 20px;
   font-size: 12px;
@@ -1814,42 +1822,6 @@ p { margin: 0; }
 .fin-table tbody tr.row-on .num { color: #ffffff; }
 
 /* ---------- Earnings detail overlay ---------- */
-.earnings-view-tabs {
-  display: flex;
-  gap: 18px;
-  margin-top: 20px;
-}
-.earnings-view-tabs button {
-  background: none;
-  border: none;
-  padding: 0 0 8px;
-  font-size: 17px;
-  font-weight: 600;
-  color: #6b6b6b;
-  cursor: pointer;
-  position: relative;
-}
-.earnings-view-tabs button.active { color: #ffffff; }
-.earnings-next {
-  margin-top: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-.earnings-next__period { font-size: 14px; color: #ffffff; letter-spacing: -0.2px; }
-.earnings-next__date { font-size: 12.5px; color: #929292; }
-.earnings-legend {
-  display: flex;
-  gap: 18px;
-  margin-top: 18px;
-  font-size: 11px;
-  color: #929292;
-}
-.earnings-legend span { display: flex; align-items: center; gap: 6px; }
-.earnings-legend b { color: #ffffff; font-weight: 500; }
-.earnings-legend .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-.earnings-legend .dot--est { border: 1.4px dashed #6b6b6b; }
 .earnings-scatter { width: 100%; height: 200px; display: block; margin-top: 16px; overflow: visible; }
 .earnings-scatter__labels {
   display: flex;
@@ -1872,16 +1844,19 @@ p { margin: 0; }
 #earningsScatterSvg .earnings-dot--actual { fill: #4a7dff; opacity: 0.45; cursor: pointer; transition: opacity .15s ease; transform-box: fill-box; transform-origin: center; }
 #earningsScatterSvg .earnings-dot--actual.is-selected { opacity: 1; }
 .fin-earnings-mini .earnings-dot--actual { fill: #4a7dff; }
-/* Revenue view gets its own accent color, so it always reads as visually
-   distinct from the Earnings (EPS) view even mid-tap. */
-#earningsOverlay.earnings-view--revenue .earnings-legend .dot--est { border-color: #a78bfa; }
-#earningsOverlay.earnings-view--revenue #earningsScatterSvg .earnings-dot--est { stroke: #a78bfa; }
-#earningsOverlay.earnings-view--revenue #earningsScatterSvg .earnings-dot--actual { fill: #a78bfa; }
-/* Entrance animation for the dots/axis labels/quarter columns whenever the
-   chart (re)renders — a view switch or a fresh open. */
+/* Revenue view keeps the bar treatment — its own accent color so it always
+   reads as visually distinct from the Earnings (EPS) dot scatter. */
+.earnings-est-tick { stroke: #a78bfa; stroke-width: 1.4; stroke-dasharray: 2 2; }
+#earningsScatterSvg .earnings-bar { fill: #a78bfa; opacity: 0.45; transition: opacity .15s ease; transform-box: fill-box; transform-origin: bottom; }
+#earningsScatterSvg .earnings-bar.is-selected { opacity: 1; }
+#earningsScatterSvg .earnings-hit { fill: transparent; cursor: pointer; }
+/* Entrance animations for the dots/bars/axis labels/quarter columns whenever
+   the chart (re)renders — a view switch or a fresh open. */
 @keyframes earningsDotIn { from { opacity: 0; transform: scale(0.3); } to { opacity: 1; transform: scale(1); } }
+@keyframes earningsBarIn { from { opacity: 0; transform: scaleY(0.15); } to { opacity: 1; transform: scaleY(1); } }
 @keyframes earningsFadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 .earnings-anim-dot { animation: earningsDotIn .4s cubic-bezier(.34,1.56,.64,1) backwards; }
+.earnings-anim-bar { animation: earningsBarIn .4s cubic-bezier(.34,1.56,.64,1) backwards; transform-box: fill-box; transform-origin: bottom; }
 .earnings-anim-fade { animation: earningsFadeIn .35s ease backwards; }
 .earnings-detail {
   margin-top: 20px;
@@ -1898,40 +1873,61 @@ p { margin: 0; }
 }
 .earnings-detail__quarter { font-size: 18px; font-weight: 600; color: #ffffff; letter-spacing: -0.3px; }
 .earnings-detail__badge {
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 600;
-  padding: 2px 9px;
-  border-radius: 20px;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
+  color: #ffffff;
+  letter-spacing: -0.2px;
 }
 .earnings-detail__badge[hidden] { display: none; }
-.earnings-detail__badge.beat { color: #30d158; background: rgba(48,209,88,0.14); }
-.earnings-detail__badge.miss { color: #ff3533; background: rgba(255,53,51,0.14); }
+.earnings-detail__badge .stat-arrow { margin-left: 3px; }
 .earnings-detail__stats {
   margin-top: 16px;
   display: flex;
   justify-content: space-between;
 }
-.earnings-detail__stat .k { font-size: 12px; color: #929292; }
-.earnings-detail__stat .v { margin-top: 4px; font-size: 14.5px; color: #ffffff; letter-spacing: -0.2px; }
-.earnings-detail__reported { margin-top: 16px; font-size: 12px; color: #929292; }
+.earnings-detail__stat .k { font-size: 11px; color: #929292; letter-spacing: -0.22px; }
+.earnings-detail__stat .v { margin-top: 5px; font-size: 14px; color: #ffffff; letter-spacing: -0.15px; }
+.earnings-detail__reported { margin-top: 16px; font-size: 11px; color: #929292; letter-spacing: -0.22px; }
 .earnings-detail__reported span { color: #ffffff; }
-.earnings-about {
-  margin-top: 22px;
-  padding-top: 18px;
-  border-top: 1px solid #232627;
+.fin-info-btn { font-size: 15px; }
+.earnings-about-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  z-index: 290;
 }
-.earnings-about__head {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  font-size: 13px;
+.earnings-about-backdrop[hidden] { display: none; }
+.earnings-about-sheet {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 300;
+  background: #141414;
+  border-top: 1px solid #2a2a2a;
+  border-radius: 20px 20px 0 0;
+  padding: 10px 20px 28px;
+  animation: earningsSheetUp 0.25s ease;
+}
+.earnings-about-sheet[hidden] { display: none; }
+@keyframes earningsSheetUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+.earnings-about-sheet__handle {
+  width: 36px;
+  height: 4px;
+  border-radius: 2px;
+  background: #3a3a3a;
+  margin: 0 auto 18px;
+}
+.earnings-about-sheet__head {
+  font-size: 14px;
+  font-weight: 600;
   color: #ffffff;
   letter-spacing: -0.2px;
 }
-.earnings-about__i { font-size: 13px; color: #929292; }
-.earnings-about__text {
+.earnings-about-sheet__text {
   margin-top: 10px;
   font-size: 12.5px;
   color: #929292;
@@ -1965,9 +1961,10 @@ p { margin: 0; }
 }
 .earnings-history-table td.lbl { text-align: left; }
 .earnings-history-table td.muted { color: #929292; }
-.earnings-history-table td.up { color: #30d158; }
-.earnings-history-table td.down { color: #ff3533; }
 .earnings-history-table tr:first-child td { border-top: none; font-weight: 600; }
+.earnings-history-table tbody tr { cursor: pointer; transition: background 0.15s ease; }
+.earnings-history-table tbody tr.is-selected { background: rgba(255,255,255,0.06); }
+.earnings-history-table .stat-arrow { margin-left: 4px; }
 
 /* ---------- Earnings calendar overlay ---------- */
 .cal-week-nav {
@@ -2469,6 +2466,11 @@ p { margin: 0; }
 
   <!-- Activity feed -->
   <div class="activity-feed" id="activityFeed">
+    <div class="activity-row activity-row--link" id="earningsActivityRow" role="button" tabindex="0">
+      <div class="dot dot--amber"></div>
+      <p>KSTL Q2 FY26 earnings <span class="muted" id="earningsActivityWhen">in 45 days</span></p>
+      <span class="chev activity-row__chev">›</span>
+    </div>
     <div class="activity-row">
       <div class="dot dot--white"></div>
       <p>New 52-Week High <span class="muted">· 93.81</span></p>
@@ -2646,6 +2648,8 @@ p { margin: 0; }
     <a class="link-row" href="#">Research Notes <span class="chev">›</span></a>
   </div>
 
+  <div class="divider" id="positionDivider" style="margin-bottom:24px;"></div>
+
   <!-- Notes card -->
   <div class="notes-card" id="notesCard">
     <div class="notes-idle" id="notesIdle"><span>Notes</span></div>
@@ -2786,10 +2790,6 @@ p { margin: 0; }
         </div>
         <div class="chart-popup__row">
           <div class="chart-popup__stat">
-            <div class="label-11">Avg Prc</div>
-            <div class="chart-popup__val" id="popAvgPrc">45.22</div>
-          </div>
-          <div class="chart-popup__stat">
             <div class="label-11">% Chg</div>
             <div class="chart-popup__val" id="popPctChg">+2.85%</div>
           </div>
@@ -2797,16 +2797,15 @@ p { margin: 0; }
             <div class="label-11">Volume</div>
             <div class="chart-popup__val" id="popVolume">47.34K</div>
           </div>
-        </div>
-        <div class="chart-popup__row" id="chartPopupPosRow">
-          <div class="chart-popup__stat">
+          <div class="chart-popup__stat" id="chartPopupPosStat">
             <div class="label-11">Position</div>
             <div class="chart-popup__val" id="popPosPct">+18.0%</div>
           </div>
-          <div class="chart-popup__stat">
+        </div>
+        <div class="chart-popup__row" id="chartPopupPosRow">
+          <div class="chart-popup__stat" style="flex: 1.8;">
             <div class="label-11">vs S&amp;P</div>
-            <div class="chart-popup__val is-spx" id="popVsSpx">+7.0 pp</div>
-            <div class="chart-popup__subval" id="popSpxPct">(S&amp;P 500 +11.0%)</div>
+            <div class="chart-popup__val is-spx"><span id="popVsSpx">+7.0 pp</span> <span class="chart-popup__subval-inline" id="popSpxPct">(S&amp;P 500 +11.0%)</span></div>
           </div>
           <div class="chart-popup__stat">
             <div class="label-11">vs Target</div>
@@ -2937,6 +2936,8 @@ p { margin: 0; }
     </div>
   </div>
 
+  <div class="divider"></div>
+
   <!-- Financials / Investor Relations / Ownership -->
   <div class="finrel-section">
     <div class="finrel-block finrel-block--link" id="financialsTrigger" role="button" tabindex="0">
@@ -2948,14 +2949,6 @@ p { margin: 0; }
         <div class="cell"><div class="label-11">Free Cash Flow</div><div class="val">88.7M <span class="delta">-4.1%</span> <span class="stat-arrow is-down">▼</span></div></div>
         <div class="cell"><div class="label-11">Operating Margin</div><div class="val">25.3% <span class="delta">+2.1pp</span> <span class="stat-arrow is-up">▲</span></div></div>
       </div>
-      <div class="finrel-footnote">Quarterly · tap for full statements, ratios, and prior periods.<br>Powered by Fiscal.ai</div>
-    </div>
-
-    <div class="divider"></div>
-
-    <div class="finrel-block finrel-block--link" id="investorRelationsTrigger" role="button" tabindex="0">
-      <div class="section-header">Investor Relations <span class="chev">›</span></div>
-      <div class="finrel-footnote">Next earnings: Q2 FY26 · Aug 6, 2026 · Quarterly calls, transcripts &amp; filings</div>
     </div>
 
     <div class="divider"></div>
@@ -3176,7 +3169,7 @@ p { margin: 0; }
       <button type="button" class="ir-back-btn" id="finBackBtn" aria-label="Back">
         <img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiB2aWV3Qm94PSIwIDAgMTYgMTYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJTVkciPgo8cGF0aCBpZD0iVmVjdG9yIiBkPSJNMTAuNSAzTDUuNSA4TDEwLjUgMTMiIHN0cm9rZT0iI0M3QzdDNyIgc3Ryb2tlLXdpZHRoPSIxLjQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L2c+Cjwvc3ZnPgo=" alt="">
         </button>
-        <span class="ir-overlay__title">Financials</span>
+        <span class="fin-overlay-ticker">KSTL <span class="sep">·</span> <span id="finHeaderPrice">87.60</span> USD <span class="chg" id="finHeaderChg">+1.45%</span></span>
         <div class="fin-header-right">
           <button type="button" class="fin-cal-btn" id="finCalBtn" aria-label="Earnings calendar">
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="1.5" y="3" width="15" height="13" rx="1.6" stroke="currentColor" stroke-width="1.3"/><path d="M1.5 6.8H16.5" stroke="currentColor" stroke-width="1.3"/><path d="M5 1.4V4M13 1.4V4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
@@ -3246,36 +3239,28 @@ p { margin: 0; }
       <button type="button" class="ir-back-btn" id="earningsBackBtn" aria-label="Back">
         <img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiB2aWV3Qm94PSIwIDAgMTYgMTYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJTVkciPgo8cGF0aCBpZD0iVmVjdG9yIiBkPSJNMTAuNSAzTDUuNSA4TDEwLjUgMTMiIHN0cm9rZT0iI0M3QzdDNyIgc3Ryb2tlLXdpZHRoPSIxLjQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L2c+Cjwvc3ZnPgo=" alt="">
       </button>
-      <span class="ir-overlay__title">Earnings</span>
+      <span class="fin-overlay-ticker">KSTL <span class="sep">·</span> <span id="earningsHeaderPrice">87.60</span> USD <span class="chg" id="earningsHeaderChg">+1.45%</span></span>
       <div class="fin-header-right">
         <button type="button" class="fin-cal-btn" id="earningsCalBtn" aria-label="Earnings calendar">
           <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="1.5" y="3" width="15" height="13" rx="1.6" stroke="currentColor" stroke-width="1.3"/><path d="M1.5 6.8H16.5" stroke="currentColor" stroke-width="1.3"/><path d="M5 1.4V4M13 1.4V4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
         </button>
+        <button type="button" class="fin-cal-btn fin-info-btn" id="earningsInfoBtn" aria-label="About earnings">ⓘ</button>
       </div>
     </div>
 
-    <div class="earnings-view-tabs" id="earningsViewTabs">
-      <button type="button" class="active" data-view="earnings">Earnings</button>
-      <button type="button" data-view="revenue">Revenue</button>
+    <div class="fin-tabs" id="earningsViewTabs">
+      <button type="button" class="fin-tab active" data-view="earnings">Earnings</button>
+      <button type="button" class="fin-tab" data-view="revenue">Revenue</button>
     </div>
 
-    <div class="earnings-next">
-      <span class="earnings-next__period" id="earningsNextPeriod">Q2 FY26</span>
-      <span class="earnings-next__date" id="earningsNextDate">Aug 6, 2026</span>
-    </div>
-
-    <div class="earnings-legend">
-      <span><span class="dot dot--est"></span> Estimate <b id="earnEstVal">2.33</b></span>
-    </div>
-
-    <svg class="earnings-scatter" id="earningsScatterSvg" viewBox="0 0 300 200" preserveAspectRatio="none"></svg>
+    <svg class="earnings-scatter" id="earningsScatterSvg" viewBox="0 0 300 200" preserveAspectRatio="none" style="margin-top:20px"></svg>
     <div class="earnings-scatter__labels" id="earningsScatterLabels"></div>
 
     <div class="earnings-detail" id="earningsDetail">
       <div class="earnings-detail__company">KSTL <span class="muted">Kestrel Systems</span></div>
       <div class="earnings-detail__quarter-row">
         <span class="earnings-detail__quarter" id="earningsDetailQuarter">Q1 FY26</span>
-        <span class="earnings-detail__badge beat" id="earningsDetailBadge">Beat</span>
+        <span class="earnings-detail__badge" id="earningsDetailBadge">Beat <span class="stat-arrow is-up">▲</span></span>
       </div>
       <div class="earnings-detail__stats">
         <div class="earnings-detail__stat"><div class="k">Estimate</div><div class="v" id="earningsDetailEst">0.84</div></div>
@@ -3285,11 +3270,6 @@ p { margin: 0; }
       <div class="earnings-detail__reported"><span id="earningsDetailReportedLabel">Reported</span> <span id="earningsDetailDate">Jun 18, 2026</span></div>
     </div>
 
-    <div class="earnings-about" id="earningsAbout">
-      <div class="earnings-about__head"><span class="earnings-about__i">ⓘ</span> About <span id="earningsAboutNoun">earnings</span></div>
-      <div class="earnings-about__text" id="earningsAboutText">Earnings per share (EPS) shows how much profit a company earned for each share. Compare actual EPS with analyst estimates to see whether the company beat, met, or missed expectations.</div>
-    </div>
-
     <div class="earnings-history-wrap">
       <table class="earnings-history-table">
         <thead>
@@ -3297,6 +3277,13 @@ p { margin: 0; }
         </thead>
         <tbody id="earningsHistoryBody"></tbody>
       </table>
+    </div>
+
+    <div class="earnings-about-backdrop" id="earningsAboutBackdrop" hidden></div>
+    <div class="earnings-about-sheet" id="earningsAboutSheet" hidden>
+      <div class="earnings-about-sheet__handle"></div>
+      <div class="earnings-about-sheet__head">About <span id="earningsAboutNoun">earnings</span></div>
+      <div class="earnings-about-sheet__text" id="earningsAboutText">Earnings per share (EPS) shows how much profit a company earned for each share. Compare actual EPS with analyst estimates to see whether the company beat, met, or missed expectations.</div>
     </div>
   </div>
 
@@ -3643,7 +3630,6 @@ p { margin: 0; }
   var popPrice = document.getElementById('popPrice');
   var popChg = document.getElementById('popChg');
   var popTurnover = document.getElementById('popTurnover');
-  var popAvgPrc = document.getElementById('popAvgPrc');
   var popPctChg = document.getElementById('popPctChg');
   var popVolume = document.getElementById('popVolume');
   var popTime = document.getElementById('popTime');
@@ -4054,29 +4040,34 @@ p { margin: 0; }
     popPrice.textContent = price.toFixed(2);
     popChg.textContent = (chg >= 0 ? '+' : '') + chg.toFixed(2);
     popPctChg.textContent = (pct >= 0 ? '+' : '') + pct.toFixed(2) + '%';
-    popAvgPrc.textContent = ((DAY_HIGH + DAY_LOW) / 2).toFixed(2);
     popTurnover.textContent = (10 + frac * 8).toFixed(2) + 'M';
     popVolume.textContent = (30 + frac * 25).toFixed(2) + 'K';
     popTime.textContent = formatPopupTimestamp(frac, CHART_RANGE_FMT, CHART_RANGE_SPAN_DAYS);
 
     /* Position vs S&P vs target, evaluated at this same scrub point — but
-       never before the entry date. All three read exactly 0 there by
-       construction, so clamping to it just holds them flat for any point
-       before the position existed, instead of showing a hypothetical
-       "since entry" figure for a date nobody actually held anything. */
-    var statFrac = currentEntryInView ? Math.max(frac, currentEntryFrac) : frac;
-    var stockPctHere = valueAtFrac(currentStockPct, statFrac);
-    var spxPctHere = valueAtFrac(currentSpxPct, statFrac);
-    var targetPctHere = valueAtFrac(currentTargetPct, statFrac);
-    var vsSpx = stockPctHere - spxPctHere;
-    var vsTarget = stockPctHere - targetPctHere;
+       there's nothing to show before the entry date at all (no position
+       existed yet), so the labels stay put and the values just read "–"
+       instead of a flat/hypothetical 0%. */
+    var beforeEntry = currentEntryInView && frac < currentEntryFrac;
+    if (beforeEntry) {
+      popPosPct.textContent = '–';
+      popSpxPct.textContent = '–';
+      popVsSpx.textContent = '–';
+      popVsTarget.textContent = '–';
+    } else {
+      var stockPctHere = valueAtFrac(currentStockPct, frac);
+      var spxPctHere = valueAtFrac(currentSpxPct, frac);
+      var targetPctHere = valueAtFrac(currentTargetPct, frac);
+      var vsSpx = stockPctHere - spxPctHere;
+      var vsTarget = stockPctHere - targetPctHere;
+      var targetUp = vsTarget >= 0;
 
-    popPosPct.textContent = (stockPctHere >= 0 ? '+' : '') + stockPctHere.toFixed(1) + '%';
-    popSpxPct.textContent = '(S&P 500 ' + (spxPctHere >= 0 ? '+' : '') + spxPctHere.toFixed(1) + '%)';
-    popVsSpx.textContent = (vsSpx >= 0 ? '+' : '') + vsSpx.toFixed(1) + ' pp';
-    popVsTarget.textContent = (vsTarget >= 0 ? '+' : '') + vsTarget.toFixed(1) + ' pp';
-    popVsTarget.classList.toggle('is-ahead', vsTarget >= 0);
-    popVsTarget.classList.toggle('is-behind', vsTarget < 0);
+      popPosPct.textContent = (stockPctHere >= 0 ? '+' : '') + stockPctHere.toFixed(1) + '%';
+      popSpxPct.textContent = '(S&P 500 ' + (spxPctHere >= 0 ? '+' : '') + spxPctHere.toFixed(1) + '%)';
+      popVsSpx.textContent = (vsSpx >= 0 ? '+' : '') + vsSpx.toFixed(1) + ' pp';
+      popVsTarget.innerHTML = (targetUp ? '+' : '') + vsTarget.toFixed(1) + ' pp' +
+        ' <span class="stat-arrow ' + (targetUp ? 'is-up">▲' : 'is-down">▼') + '</span>';
+    }
   }
 
   function showInteraction(clientX) {
@@ -4333,6 +4324,10 @@ p { margin: 0; }
   /* ---------- Live market simulation (header, price block, position stats) ---------- */
   var headerPrice = document.getElementById('headerPrice');
   var headerChg = document.getElementById('headerChg');
+  var finHeaderPrice = document.getElementById('finHeaderPrice');
+  var finHeaderChg = document.getElementById('finHeaderChg');
+  var earningsHeaderPrice = document.getElementById('earningsHeaderPrice');
+  var earningsHeaderChg = document.getElementById('earningsHeaderChg');
   var pbPrice = document.getElementById('pbPrice');
   var pbChangeAbs = document.getElementById('pbChangeAbs');
   var pbChangePct = document.getElementById('pbChangePct');
@@ -4514,6 +4509,10 @@ p { margin: 0; }
 
     headerPrice.textContent = headerDisplayPrice.toFixed(2);
     headerChg.textContent = (headerPct >= 0 ? '+' : '') + headerPct.toFixed(2) + '%';
+    finHeaderPrice.textContent = headerDisplayPrice.toFixed(2);
+    finHeaderChg.textContent = headerChg.textContent;
+    earningsHeaderPrice.textContent = headerDisplayPrice.toFixed(2);
+    earningsHeaderChg.textContent = headerChg.textContent;
     pbPrice.textContent = pbDisplayPrice.toFixed(2);
     pbChangeAbs.textContent = fmtSigned(pbChange);
     pbChangePct.textContent = (pbPct >= 0 ? '+' : '') + pbPct.toFixed(2) + '%';
@@ -4699,13 +4698,9 @@ p { margin: 0; }
   setInterval(tickClock, 1000);
 
   /* ---------- Investor Relations detail overlay ---------- */
-  var irTrigger = document.getElementById('investorRelationsTrigger');
   var irOverlay = document.getElementById('irOverlay');
   var irBackBtn = document.getElementById('irBackBtn');
-  function openIrOverlay() { irOverlay.hidden = false; }
   function closeIrOverlay() { irOverlay.hidden = true; }
-  irTrigger.addEventListener('click', openIrOverlay);
-  irTrigger.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') openIrOverlay(); });
   irBackBtn.addEventListener('click', closeIrOverlay);
 
   /* ---------- Financials / Earnings / Earnings Calendar detail overlays ----------
@@ -5078,11 +5073,6 @@ p { margin: 0; }
 
   var earningsScatterSvg = document.getElementById('earningsScatterSvg');
   var earningsScatterLabels = document.getElementById('earningsScatterLabels');
-  var earnEstValEl = document.getElementById('earnEstVal');
-  var earningsNextPeriodEl = document.getElementById('earningsNextPeriod');
-  var earningsNextDateEl = document.getElementById('earningsNextDate');
-  earningsNextPeriodEl.textContent = EARNINGS_NEXT.q;
-  earningsNextDateEl.textContent = finFormatDate(EARNINGS_NEXT.date);
 
   /* ---- Selecting a quarter (tap its dot or its label) updates the detail
      panel below the chart in place — no popup sheet, matching how
@@ -5099,6 +5089,10 @@ p { margin: 0; }
   var earningsHistoryBodyEl = document.getElementById('earningsHistoryBody');
   var earningsViewTabsEl = document.getElementById('earningsViewTabs');
   var earningsPts = [];
+  earningsHistoryBodyEl.addEventListener('click', function (e) {
+    var tr = e.target.closest('tr[data-i]');
+    if (tr) finSelectEarningsQuarter(+tr.getAttribute('data-i'));
+  });
 
   function finSelectEarningsQuarter(i) {
     var p = earningsPts[i];
@@ -5111,17 +5105,23 @@ p { margin: 0; }
     earningsScatterLabels.querySelectorAll('.earnings-scatter__col').forEach(function (el) {
       el.classList.toggle('is-selected', +el.getAttribute('data-i') === i);
     });
+    earningsHistoryBodyEl.querySelectorAll('tr[data-i]').forEach(function (el) {
+      el.classList.toggle('is-selected', +el.getAttribute('data-i') === i);
+    });
 
     earningsDetailQuarterEl.textContent = p.q;
     earningsDetailEstEl.textContent = earningsValFmt(p.est, view);
     if (p.actual !== null) {
       earningsDetailActualEl.textContent = earningsValFmt(p.actual, view);
       var surprise = (p.actual / p.est - 1) * 100;
-      earningsDetailSurpriseEl.textContent = (surprise >= 0 ? '+' : '') + surprise.toFixed(2) + '%';
+      var surpriseUp = surprise >= 0;
+      earningsDetailSurpriseEl.innerHTML = (surpriseUp ? '+' : '') + surprise.toFixed(2) + '%' +
+        ' <span class="stat-arrow ' + (surpriseUp ? 'is-up">▲' : 'is-down">▼') + '</span>';
       var beat = p.actual >= p.est;
       earningsDetailBadgeEl.hidden = false;
-      earningsDetailBadgeEl.textContent = beat ? 'Beat' : 'Miss';
-      earningsDetailBadgeEl.className = 'earnings-detail__badge ' + (beat ? 'beat' : 'miss');
+      earningsDetailBadgeEl.innerHTML = (beat ? 'Beat' : 'Miss') +
+        ' <span class="stat-arrow ' + (beat ? 'is-up">▲' : 'is-down">▼') + '</span>';
+      earningsDetailBadgeEl.className = 'earnings-detail__badge';
       earningsDetailReportedLabelEl.textContent = 'Reported';
       earningsDetailDateEl.textContent = finFormatDate(p.date);
     } else {
@@ -5143,18 +5143,18 @@ p { margin: 0; }
 
   function finRenderEarningsHistory() {
     var view = earningsView;
-    var rows = earningsPts.slice().reverse();
-    earningsHistoryBodyEl.innerHTML = rows.map(function (p) {
+    var rows = earningsPts.map(function (p, i) { return { p: p, i: i }; }).reverse();
+    earningsHistoryBodyEl.innerHTML = rows.map(function (item) {
+      var p = item.p;
       var actualCell = p.actual === null ? '<td class="muted">—</td>' :
-        '<td class="' + (p.actual >= p.est ? 'up' : 'down') + '">' + earningsValFmt(p.actual, view) + '</td>';
-      return '<tr><td class="lbl">' + finFormatDate(p.date) + '</td><td class="lbl">' + p.q + '</td>' +
+        '<td>' + earningsValFmt(p.actual, view) + ' <span class="stat-arrow ' + (p.actual >= p.est ? 'is-up">▲' : 'is-down">▼') + '</span></td>';
+      return '<tr data-i="' + item.i + '"><td class="lbl">' + finFormatDate(p.date) + '</td><td class="lbl">' + p.q + '</td>' +
         '<td>' + earningsValFmt(p.est, view) + '</td>' + actualCell + '</tr>';
     }).join('');
   }
 
   function finRenderEarningsFull() {
     var cfg = EARNINGS_VIEWS[earningsView];
-    earningsOverlayEl.classList.toggle('earnings-view--revenue', earningsView === 'revenue');
     var pts = cfg.history.concat([cfg.next]);
     earningsPts = pts;
     var W = 300, H = 200, padX = 22, padY = 22;
@@ -5171,7 +5171,6 @@ p { margin: 0; }
     var max = Math.ceil(rawMax / step) * step + step;
     var range = (max - min) || 1;
     function y(v) { return padY + (H - padY - 20) * (1 - (v - min) / range); }
-    function x(i) { return padX + (i / (pts.length - 1)) * (W - padX * 2); }
 
     var svg = '';
     var gi = 0;
@@ -5180,14 +5179,36 @@ p { margin: 0; }
       svg += '<line x1="' + padX + '" x2="' + (W - padX) + '" y1="' + gy.toFixed(1) + '" y2="' + gy.toFixed(1) + '" stroke="#232627" stroke-width="1" stroke-dasharray="2 3"></line>';
       svg += '<text class="earnings-anim-fade" style="animation-delay:' + (gi++ * 25) + 'ms" x="' + (W - padX + 3) + '" y="' + (gy + 3).toFixed(1) + '" font-size="7.5" fill="#6b6b6b">' + (cfg.unit === 'currency' ? finFmt(g, 'currency') : g.toFixed(2)) + '</text>';
     }
-    pts.forEach(function (p, i) {
-      var px = x(i);
-      var delay = (i * 45) + 'ms';
-      svg += '<circle class="earnings-dot--est earnings-anim-dot" style="animation-delay:' + delay + '" data-i="' + i + '" cx="' + px.toFixed(1) + '" cy="' + y(p.est).toFixed(1) + '" r="6.5"></circle>';
-      if (p.actual !== null) {
-        svg += '<circle class="earnings-dot--actual earnings-anim-dot" style="animation-delay:' + delay + '" data-i="' + i + '" cx="' + px.toFixed(1) + '" cy="' + y(p.actual).toFixed(1) + '" r="7.5"></circle>';
-      }
-    });
+    /* Revenue keeps the bar treatment; Earnings goes back to the original
+       dashed-ring-estimate / solid-dot-actual scatter. */
+    if (earningsView === 'revenue') {
+      var n = pts.length;
+      var colW = (W - padX * 2) / n;
+      var baseline = padY + (H - padY - 20);
+      var barW = Math.min(16, colW * 0.34);
+      var slotCenterX = function (i) { return padX + colW * (i + 0.5); };
+      pts.forEach(function (p, i) {
+        var cx = slotCenterX(i);
+        var delay = (i * 45) + 'ms';
+        var estY = y(p.est);
+        svg += '<rect class="earnings-hit" data-i="' + i + '" x="' + (padX + colW * i).toFixed(1) + '" y="' + padY + '" width="' + colW.toFixed(1) + '" height="' + (baseline - padY).toFixed(1) + '"></rect>';
+        svg += '<line class="earnings-est-tick earnings-anim-fade" style="animation-delay:' + delay + '" x1="' + (cx - barW / 2 - 3).toFixed(1) + '" x2="' + (cx + barW / 2 + 3).toFixed(1) + '" y1="' + estY.toFixed(1) + '" y2="' + estY.toFixed(1) + '"></line>';
+        if (p.actual !== null) {
+          var actY = y(p.actual);
+          svg += '<rect class="earnings-bar earnings-anim-bar" style="animation-delay:' + delay + '" data-i="' + i + '" x="' + (cx - barW / 2).toFixed(1) + '" y="' + actY.toFixed(1) + '" width="' + barW.toFixed(1) + '" height="' + (baseline - actY).toFixed(1) + '" rx="2"></rect>';
+        }
+      });
+    } else {
+      var x = function (i) { return padX + (i / (pts.length - 1)) * (W - padX * 2); };
+      pts.forEach(function (p, i) {
+        var px = x(i);
+        var delay = (i * 45) + 'ms';
+        svg += '<circle class="earnings-dot--est earnings-anim-dot" style="animation-delay:' + delay + '" data-i="' + i + '" cx="' + px.toFixed(1) + '" cy="' + y(p.est).toFixed(1) + '" r="6.5"></circle>';
+        if (p.actual !== null) {
+          svg += '<circle class="earnings-dot--actual earnings-anim-dot" style="animation-delay:' + delay + '" data-i="' + i + '" cx="' + px.toFixed(1) + '" cy="' + y(p.actual).toFixed(1) + '" r="7.5"></circle>';
+        }
+      });
+    }
     earningsScatterSvg.innerHTML = svg;
     /* Trend arrow under each quarter: green up when actual beat estimate,
        red down when it missed, a dash for the quarter that hasn't reported
@@ -5197,7 +5218,6 @@ p { margin: 0; }
         (p.actual >= p.est ? '<span class="earnings-scatter__trend up">▲</span>' : '<span class="earnings-scatter__trend down">▼</span>');
       return '<div class="earnings-scatter__col earnings-anim-fade" style="animation-delay:' + (i * 45) + 'ms" data-i="' + i + '"><span class="earnings-scatter__q">' + p.q + '</span>' + trend + '</div>';
     }).join('');
-    earnEstValEl.textContent = earningsValFmt(cfg.next.est, earningsView);
     earningsAboutNounEl.textContent = cfg.noun;
     earningsAboutTextEl.textContent = cfg.about;
 
@@ -5342,6 +5362,9 @@ p { margin: 0; }
   var earningsOverlayEl = document.getElementById('earningsOverlay');
   var earningsBackBtnEl = document.getElementById('earningsBackBtn');
   var earningsCalBtnEl = document.getElementById('earningsCalBtn');
+  var earningsInfoBtnEl = document.getElementById('earningsInfoBtn');
+  var earningsAboutSheetEl = document.getElementById('earningsAboutSheet');
+  var earningsAboutBackdropEl = document.getElementById('earningsAboutBackdrop');
   var calendarOverlayEl = document.getElementById('calendarOverlay');
   var calBackBtnEl = document.getElementById('calBackBtn');
   var calendarReturnTo = financialsOverlayEl;
@@ -5353,10 +5376,15 @@ p { margin: 0; }
   finBackBtnEl.addEventListener('click', closeFinancialsOverlay);
 
   function openEarningsOverlay() { earningsOverlayEl.hidden = false; finRenderEarningsFull(); }
-  function closeEarningsOverlay() { earningsOverlayEl.hidden = true; }
+  function closeEarningsOverlay() { earningsOverlayEl.hidden = true; closeEarningsAboutSheet(); }
   finEarningsBoxEl.addEventListener('click', openEarningsOverlay);
   finEarningsBoxEl.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') openEarningsOverlay(); });
   earningsBackBtnEl.addEventListener('click', closeEarningsOverlay);
+
+  function openEarningsAboutSheet() { earningsAboutBackdropEl.hidden = false; earningsAboutSheetEl.hidden = false; }
+  function closeEarningsAboutSheet() { earningsAboutBackdropEl.hidden = true; earningsAboutSheetEl.hidden = true; }
+  earningsInfoBtnEl.addEventListener('click', function (e) { e.stopPropagation(); openEarningsAboutSheet(); });
+  earningsAboutBackdropEl.addEventListener('click', closeEarningsAboutSheet);
 
   function openCalendarOverlay(returnTo) { calendarReturnTo = returnTo; calendarOverlayEl.hidden = false; calRenderWeek(); }
   function closeCalendarOverlay() { calendarOverlayEl.hidden = true; }
@@ -5712,7 +5740,21 @@ p { margin: 0; }
   var positionFullEl = document.getElementById('positionFull');
   var positionMetaEl = document.getElementById('positionMeta');
   var activityFeedEl = document.getElementById('activityFeed');
+  /* "KSTL Q2 FY26 earnings in 45 days" — same countdown already driving the
+     Financials/Earnings pages, just surfaced as a tappable activity item.
+     Wired via delegation on the feed itself (not the row directly) since
+     applyPageState() below replaces activityFeed's innerHTML wholesale when
+     switching preview states — a listener on the row would be lost then. */
+  var earningsActivityWhenEl = document.getElementById('earningsActivityWhen');
+  earningsActivityWhenEl.textContent = EARNINGS_DAYS_UNTIL <= 1 ? 'tomorrow' : 'in ' + EARNINGS_DAYS_UNTIL + ' days';
+  activityFeedEl.addEventListener('click', function (e) {
+    if (e.target.closest('#earningsActivityRow')) openEarningsOverlay();
+  });
+  activityFeedEl.addEventListener('keydown', function (e) {
+    if ((e.key === 'Enter' || e.key === ' ') && e.target.closest('#earningsActivityRow')) openEarningsOverlay();
+  });
   var chartPopupPosRow = document.getElementById('chartPopupPosRow');
+  var chartPopupPosStat = document.getElementById('chartPopupPosStat');
   var chartPopupTargetBadge = document.getElementById('chartPopupTargetBadge');
   var memoEmptyCard = document.getElementById('memoEmptyCard');
   var memoCards = document.querySelectorAll('.memo-section > .rich-card');
@@ -5724,6 +5766,7 @@ p { margin: 0; }
   var historySectionEl = document.getElementById('historySection');
   var historyDividerEl = document.getElementById('historyDivider');
   var positionSectionEl = document.getElementById('positionSection');
+  var positionDividerEl = document.getElementById('positionDivider');
   var DEFAULT_ACTIVITY_HTML = activityFeedEl.innerHTML;
   var NEW_USER_ACTIVITY_HTML =
     '<div class="activity-row"><div class="dot dot--white"></div><p>New 52-Week High <span class="muted">· 93.81</span></p></div>' +
@@ -5757,6 +5800,7 @@ p { margin: 0; }
     /* First-time user has no position at all, so drop the whole "Position"
        section rather than showing an empty state. */
     positionSectionEl.hidden = isNewUser;
+    positionDividerEl.hidden = isNewUser;
 
     /* Same treatment for "History" — no trade activity to show at all yet,
        so remove the whole section (and its leading divider) instead of an
@@ -5792,6 +5836,7 @@ p { margin: 0; }
     chartHasPosition = !isNewUser;
     chartCanvasWrap.classList.toggle('no-position', isNewUser);
     chartPopupPosRow.style.display = isNewUser ? 'none' : '';
+    chartPopupPosStat.style.display = isNewUser ? 'none' : '';
     chartPopupTargetBadge.style.display = isNewUser ? 'none' : '';
     var activeRangeEl = chartTabs.querySelector('.active');
     if (activeRangeEl) renderChartRange(activeRangeEl.getAttribute('data-range'));
