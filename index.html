@@ -2611,14 +2611,13 @@ p { margin: 0; }
       <div class="stat-grid-2">
         <div class="stat">
           <div class="label-11">Market Value</div>
-          <div class="stat-value-15"><span id="posMarketValueUSD">18,943.49</span> <span class="sub" id="posMarketValuePct">+1.0%</span> <span class="stat-arrow" id="posMarketValueArrow">▲</span></div>
-          <div class="stat-sub-line"><span id="posMarketValueCAD">25,949.99</span> CAD <span id="posMarketValuePctCAD">+1.0%</span> <span class="stat-arrow" id="posMarketValueArrowCad">▲</span></div>
-          <div class="stat-ah-line" id="posMarketValueAhLine" hidden><svg class="ah-moon ah-moon--badge" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 1020.354 15.354z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="posMarketValueAh">18,970.24</span> <span id="posMarketValueAhPct">+1.2%</span></div>
+          <div class="stat-value-15"><span id="posMarketValueUSD">18,943.49</span></div>
+          <div class="stat-sub-line"><span id="posMarketValueCAD">25,949.99</span> CAD</div>
+          <div class="stat-ah-line" id="posMarketValueAhLine" hidden><svg class="ah-moon ah-moon--badge" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 1020.354 15.354z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="posMarketValueAh">18,970.24</span></div>
         </div>
         <div class="stat">
           <div class="label-11">Portfolio Weight</div>
           <div class="stat-value-15" id="posWeight">42.2%</div>
-          <div class="stat-ah-line" id="posWeightAhLine" hidden><svg class="ah-moon ah-moon--badge" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 1020.354 15.354z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="posWeightAh">42.3%</span></div>
         </div>
       </div>
 
@@ -2646,7 +2645,6 @@ p { margin: 0; }
           <div class="label-11">S&amp;P 500 (same window)</div>
           <div class="stat-value-15"><span id="posSPReturnUSD">+4,733.51</span> <span class="sub" id="posSPReturnPct">+35.6%</span> <span class="stat-arrow" id="posSPReturnArrow">▲</span></div>
           <div class="stat-sub-line"><span id="posSPReturnCAD">+6,484.36</span> CAD <span id="posSPReturnPctCAD">+35.6%</span> <span class="stat-arrow" id="posSPReturnArrowCad">▲</span></div>
-          <div class="stat-ah-line" id="posSPReturnAhLine" hidden><svg class="ah-moon ah-moon--badge" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 1020.354 15.354z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="posSPReturnAh">+4,733.51</span> <span id="posSPReturnAhPct">+35.6%</span></div>
         </div>
       </div>
 
@@ -2655,7 +2653,7 @@ p { margin: 0; }
           <div class="label-11">Alpha</div>
           <div class="stat-value-15 stat-alpha-line"><span id="posAlphaUSD">+912.98</span> <span class="alpha-pp" id="posAlpha">+6.9 pp</span> <span class="stat-arrow" id="posAlphaArrow">▲</span></div>
           <div class="stat-sub-line stat-alpha-line"><span id="posAlphaCAD">+911.98</span> CAD <span class="alpha-pp" id="posAlphaPpCad">+6.9 pp</span> <span class="stat-arrow" id="posAlphaArrowCad">▲</span></div>
-          <div class="stat-ah-line" id="posAlphaAhLine" hidden><svg class="ah-moon ah-moon--badge" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 1020.354 15.354z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="posAlphaAh">+7.0 pp</span></div>
+          <div class="stat-ah-line" id="posAlphaAhLine" hidden><svg class="ah-moon ah-moon--badge" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 1020.354 15.354z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="posAlphaAh">+915.20</span> <span id="posAlphaAhPp">+7.0 pp</span></div>
         </div>
       </div>
     </div>
@@ -4247,11 +4245,7 @@ p { margin: 0; }
 
   var marketClock = document.getElementById('marketClock');
   var posMarketValueUSD = document.getElementById('posMarketValueUSD');
-  var posMarketValuePct = document.getElementById('posMarketValuePct');
   var posMarketValueCAD = document.getElementById('posMarketValueCAD');
-  var posMarketValuePctCAD = document.getElementById('posMarketValuePctCAD');
-  var posMarketValueArrow = document.getElementById('posMarketValueArrow');
-  var posMarketValueArrowCad = document.getElementById('posMarketValueArrowCad');
   var posBookCostUSD = document.getElementById('posBookCostUSD');
   var posBookCostCAD = document.getElementById('posBookCostCAD');
   var posAvgCostUSD = document.getElementById('posAvgCostUSD');
@@ -4276,17 +4270,12 @@ p { margin: 0; }
   var posAlphaArrowCad = document.getElementById('posAlphaArrowCad');
   var posMarketValueAhLine = document.getElementById('posMarketValueAhLine');
   var posMarketValueAh = document.getElementById('posMarketValueAh');
-  var posMarketValueAhPct = document.getElementById('posMarketValueAhPct');
   var posUnrealizedAhLine = document.getElementById('posUnrealizedAhLine');
   var posUnrealizedAh = document.getElementById('posUnrealizedAh');
   var posUnrealizedAhPct = document.getElementById('posUnrealizedAhPct');
-  var posSPReturnAhLine = document.getElementById('posSPReturnAhLine');
-  var posSPReturnAh = document.getElementById('posSPReturnAh');
-  var posSPReturnAhPct = document.getElementById('posSPReturnAhPct');
   var posAlphaAhLine = document.getElementById('posAlphaAhLine');
   var posAlphaAh = document.getElementById('posAlphaAh');
-  var posWeightAhLine = document.getElementById('posWeightAhLine');
-  var posWeightAh = document.getElementById('posWeightAh');
+  var posAlphaAhPp = document.getElementById('posAlphaAhPp');
   var posWeight = document.getElementById('posWeight');
   var CAD_RATE = 1.36995;
 
@@ -4383,14 +4372,11 @@ p { margin: 0; }
     var headerPct = (headerChange / market.prevClose) * 100;
     var pbChange = pbDisplayPrice - market.prevClose;
     var pbPct = (pbChange / market.prevClose) * 100;
-    var change = statsPrice - market.prevClose;
-    var pct = (change / market.prevClose) * 100;
     var marketValue = statsPrice * market.shares;
     var weight = (marketValue / market.totalPortfolio) * 100;
     var unrealizedPL = marketValue - market.costBasis;
     var unrealizedPLPct = (unrealizedPL / market.costBasis) * 100;
     var alphaPp = unrealizedPLPct - market.spPLPct;
-    var pctStr = (pct >= 0 ? '+' : '') + pct.toFixed(1) + '%';
 
     headerPrice.textContent = headerDisplayPrice.toFixed(2);
     headerChg.textContent = (headerPct >= 0 ? '+' : '') + headerPct.toFixed(2) + '%';
@@ -4422,14 +4408,7 @@ p { margin: 0; }
     }
 
     posMarketValueUSD.textContent = fmtMoney(marketValue);
-    posMarketValuePct.textContent = pctStr;
     posMarketValueCAD.textContent = fmtMoney(marketValue * CAD_RATE);
-    posMarketValuePctCAD.textContent = pctStr;
-    posMarketValueArrow.textContent = posMarketValueArrowCad.textContent = pct >= 0 ? '▲' : '▼';
-    posMarketValueArrow.classList.toggle('is-up', pct >= 0);
-    posMarketValueArrow.classList.toggle('is-down', pct < 0);
-    posMarketValueArrowCad.classList.toggle('is-up', pct >= 0);
-    posMarketValueArrowCad.classList.toggle('is-down', pct < 0);
     posUnrealizedUSD.textContent = fmtSigned(unrealizedPL);
     posUnrealizedPct.textContent = (unrealizedPLPct >= 0 ? '+' : '') + unrealizedPLPct.toFixed(1) + '%';
     posUnrealizedCAD.textContent = fmtSigned(unrealizedPL * CAD_RATE);
@@ -4487,25 +4466,19 @@ p { margin: 0; }
        stay anchored to the close. */
     posMarketValueAhLine.hidden = !showExt;
     posUnrealizedAhLine.hidden = !showExt;
-    posSPReturnAhLine.hidden = !showExt;
     posAlphaAhLine.hidden = !showExt;
-    posWeightAhLine.hidden = !showExt;
     if (showExt) {
       var ahMarketValue = sessionPrice * market.shares;
-      var ahMarketValuePct = ((sessionPrice - market.prevClose) / market.prevClose) * 100;
       var ahUnrealizedPL = ahMarketValue - market.costBasis;
       var ahUnrealizedPLPct = (ahUnrealizedPL / market.costBasis) * 100;
       var ahAlphaPp = ahUnrealizedPLPct - market.spPLPct;
-      var ahWeight = (ahMarketValue / market.totalPortfolio) * 100;
+      var ahAlphaDollar = ahUnrealizedPL - spPL;
 
       posMarketValueAh.textContent = fmtMoney(ahMarketValue);
-      posMarketValueAhPct.textContent = (ahMarketValuePct >= 0 ? '+' : '') + ahMarketValuePct.toFixed(1) + '%';
       posUnrealizedAh.textContent = fmtSigned(ahUnrealizedPL);
       posUnrealizedAhPct.textContent = (ahUnrealizedPLPct >= 0 ? '+' : '') + ahUnrealizedPLPct.toFixed(1) + '%';
-      posSPReturnAh.textContent = fmtSigned(spPL);
-      posSPReturnAhPct.textContent = spPctStr;
-      posAlphaAh.textContent = (ahAlphaPp >= 0 ? '+' : '') + ahAlphaPp.toFixed(1) + ' pp';
-      posWeightAh.textContent = ahWeight.toFixed(1) + '%';
+      posAlphaAh.textContent = fmtSigned(ahAlphaDollar);
+      posAlphaAhPp.textContent = (ahAlphaPp >= 0 ? '+' : '') + ahAlphaPp.toFixed(1) + ' pp';
     }
 
     /* Chart tooltip copy: "Full" stays exactly as-is (no label). Market
