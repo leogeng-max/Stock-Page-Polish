@@ -911,7 +911,6 @@ p { margin: 0; }
 }
 .stat-ah-line[hidden] { display: none; }
 .stat-ah-line .dot { flex-shrink: 0; }
-.stat-alpha-line { color: #ffffff; }
 .alpha-pp { font-size: 12px; letter-spacing: -0.3px; }
 .stat-arrow { font-size: 10px; margin-left: 2px; }
 .stat-arrow.is-up { color: #30d158; }
@@ -1075,6 +1074,7 @@ p { margin: 0; }
   letter-spacing: -0.22px;
 }
 .chart-tooltip__session-row[hidden] { display: none; }
+.chart-tooltip__session-price { font-size: 15px; font-weight: 300; color: #ffffff; letter-spacing: -0.3px; }
 .chart-tooltip__close-row {
   margin-top: 2px;
 }
@@ -1650,16 +1650,7 @@ p { margin: 0; }
 .info-table tr:last-child td { border-bottom: 1px solid #111111; }
 .info-section { padding-bottom: 34px; }
 .info-num { font-size: 11px; letter-spacing: 0.04em; color: #8C8880; display: block; padding-bottom: 6px; }
-.info-h2 { font-size: 16px; font-weight: 600; letter-spacing: -0.1px; color: #111111; padding-bottom: 8px; }
-.info-deck {
-  font-size: 14.5px;
-  line-height: 1.45;
-  font-weight: 600;
-  color: #111111;
-  letter-spacing: -0.1px;
-  padding-bottom: 14px;
-  max-width: 30ch;
-}
+.info-h2 { font-size: 16px; font-weight: 600; letter-spacing: -0.1px; color: #111111; padding-bottom: 10px; }
 .info-body { font-size: 13.5px; line-height: 1.62; color: #8C8880; }
 .info-body + .info-body { padding-top: 10px; }
 .info-hr { border: 0; border-top: 1px solid #DEDCD4; margin: 0 0 28px; }
@@ -1731,6 +1722,15 @@ p { margin: 0; }
   font-size: 11px;
   color: #767676;
 }
+.fin-tabs-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 22px;
+}
+.fin-tabs-row .fin-tabs { margin-top: 0; }
+.fin-tabs-row .fin-currency-note { margin-top: 0; flex-shrink: 0; }
 .fin-earnings-box {
   margin-top: 18px;
   background: #0a0a0a;
@@ -1768,6 +1768,8 @@ p { margin: 0; }
 }
 .fin-earnings-mini-legend .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
 .fin-earnings-mini-legend .dot--est { border: 1.3px dashed #6b6b6b; }
+.earnings-scatter-legend { justify-content: flex-end; margin-top: 20px; }
+.earnings-scatter-legend .legend-tick { width: 12px; height: 0; border-top: 1.4px dashed #a78bfa; flex-shrink: 0; }
 .fin-earnings-mini { width: 100%; height: 54px; display: block; margin-top: 8px; overflow: visible; }
 .fin-earnings-mini__labels {
   display: flex;
@@ -2780,6 +2782,7 @@ p { margin: 0; }
         <div class="chart-tooltip__label chart-tooltip__close-row" id="chartCloseLabel" hidden>Close</div>
         <div class="chart-tooltip__session-row" id="chartSessionRow" hidden>
           <svg class="ah-moon ah-moon--badge" id="chartSessionIcon" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 1020.354 15.354z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="chart-tooltip__session-price" id="chartSessionPrice">87.70</span>
           <span id="chartSessionChange">-1.50 (-1.18%)</span>
         </div>
       </span>
@@ -3197,7 +3200,6 @@ p { margin: 0; }
     <section class="info-section">
       <span class="info-num">01</span>
       <h2 class="info-h2">Alerts</h2>
-      <p class="info-deck">Real-time monitoring of your position.</p>
       <p class="info-body">Alerts appear for any security held or under review. They flag order fills, position-level events, and quarterly earnings, as well as delisting notices. A thesis or kill criteria left blank at purchase surfaces here as an outstanding item. The value is not more information. It is knowing which position requires attention, and when.</p>
     </section>
     <hr class="info-hr">
@@ -3205,7 +3207,6 @@ p { margin: 0; }
     <section class="info-section">
       <span class="info-num">02</span>
       <h2 class="info-h2">The one liner</h2>
-      <p class="info-deck">Brevity is a test of conviction.</p>
       <p class="info-body">The one liner states the thesis in a single sentence, and carries to the active positions screen so every holding shows its case without being opened. The full reasoning stays in the memo. This is the line returned to when checking whether the position still holds. A thesis that cannot be stated in one line cannot be monitored against a price.</p>
     </section>
     <hr class="info-hr">
@@ -3213,7 +3214,6 @@ p { margin: 0; }
     <section class="info-section">
       <span class="info-num">03</span>
       <h2 class="info-h2">The memo</h2>
-      <p class="info-deck">No position is taken without a memo.</p>
       <p class="info-body">The memo records classification, role in the portfolio, thesis, kill criteria, prediction, and source. Thesis and kill criteria can be left blank at purchase and completed later.</p>
       <p class="info-body">Memos are not edited in place. Each revision is issued as a new dated memo, which becomes the current case while every memo before it stays intact and viewable. Nothing is overwritten.</p>
     </section>
@@ -3222,7 +3222,6 @@ p { margin: 0; }
     <section class="info-section">
       <span class="info-num">04</span>
       <h2 class="info-h2">The prediction</h2>
-      <p class="info-deck">Fixed before the outcome is known.</p>
       <p class="info-body">The prediction records the probability you assign to the thesis, the return hurdle, and the horizon over which you expect it to resolve. It can be revised at any time, and each earlier version stays dated and viewable. What that preserves is the sequence: the claim fixed first, the outcome that settles it second.</p>
     </section>
     <hr class="info-hr">
@@ -3230,7 +3229,6 @@ p { margin: 0; }
     <section class="info-section">
       <span class="info-num">05</span>
       <h2 class="info-h2">Notes</h2>
-      <p class="info-deck">Deliberately off the record.</p>
       <p class="info-body">Notes keep no history. They can be rewritten at any time, nothing prior is retained, and nothing in them enters the memo. Unsettled thinking requires a surface that keeps no record.</p>
     </section>
     <hr class="info-hr">
@@ -3238,7 +3236,6 @@ p { margin: 0; }
     <section class="info-section">
       <span class="info-num">06</span>
       <h2 class="info-h2">Position and returns</h2>
-      <p class="info-deck">The same capital, held in the index.</p>
       <p class="info-body">The position's return is shown alongside the return the same capital would have produced in the S&amp;P 500 over the same period. The difference isolates what choosing this business added or cost against holding the index instead.</p>
     </section>
     <hr class="info-hr">
@@ -3246,7 +3243,6 @@ p { margin: 0; }
     <section class="info-section">
       <span class="info-num">07</span>
       <h2 class="info-h2">Financials</h2>
-      <p class="info-deck">The operating reality behind the market price.</p>
       <p class="info-body">Financials holds the income statement, balance sheet, cash flow, and key ratios, in both quarterly and annual form, alongside the earnings history and the next reporting date. Each figure is shown against the comparable prior period and across the reported history.</p>
       <div class="info-plate">Screenshot · Financials card</div>
     </section>
@@ -3255,7 +3251,6 @@ p { margin: 0; }
     <section class="info-section">
       <span class="info-num">08</span>
       <h2 class="info-h2">Fiscal.ai</h2>
-      <p class="info-deck">A sourced figure and a plausible one read identically.</p>
       <p class="info-body">Fiscal.ai holds the primary record of financials, ratios, and filings used across the platform. Any figure surfaced by the AI models below is checked against this record before it enters the case. The distinction matters: a plausible number and a sourced one can look identical until they are tested, and Fiscal.ai is what makes that test possible.</p>
     </section>
     <hr class="info-hr">
@@ -3263,7 +3258,6 @@ p { margin: 0; }
     <section class="info-section">
       <span class="info-num">09</span>
       <h2 class="info-h2">AI tools</h2>
-      <p class="info-deck">Information is abundant. Judgment is scarce.</p>
       <p class="info-body">The links open a working session for building a thesis and testing whether it survives. They accelerate research. They do not replace it. The model can develop the case with you. It cannot own the decision. A conclusion you did not build cannot be defended in a drawdown.</p>
       <div class="info-plate">Screenshot · AI tool rows</div>
     </section>
@@ -3272,7 +3266,6 @@ p { margin: 0; }
     <section class="info-section">
       <span class="info-num">10</span>
       <h2 class="info-h2">News</h2>
-      <p class="info-deck">Context for the price, not the case.</p>
       <p class="info-body">Recent headlines for the company are collected here. They give context for movement in the price and are not a substitute for the thesis already on file.</p>
       <div class="info-plate">Screenshot · News</div>
     </section>
@@ -3281,7 +3274,6 @@ p { margin: 0; }
     <section class="info-section">
       <span class="info-num">11</span>
       <h2 class="info-h2">History</h2>
-      <p class="info-deck">The record does not change with the outcome.</p>
       <p class="info-body">Each order is stamped with the memo in force on its execution date. A past decision can be read against the case that actually produced it. Outcomes change how a decision is remembered, and the record is what holds the original reasoning in place.</p>
     </section>
     <hr class="info-hr">
@@ -3289,7 +3281,6 @@ p { margin: 0; }
     <section class="info-section" style="padding-bottom: 0;">
       <span class="info-num">12</span>
       <h2 class="info-h2">Capital decision</h2>
-      <p class="info-deck">Capital is committed here.</p>
       <p class="info-body">This control opens the order flow and stays anchored at the bottom of the page. A purchase is placed against a memo already written. A sale closes the position against the memo in force. Transactions are cheap. Outcomes are not.</p>
     </section>
   </div>
@@ -3371,11 +3362,15 @@ p { margin: 0; }
       </div>
     </div>
 
-    <div class="fin-tabs" id="earningsViewTabs">
-      <button type="button" class="fin-tab active" data-view="earnings">Earnings</button>
-      <button type="button" class="fin-tab" data-view="revenue">Revenue</button>
+    <div class="fin-tabs-row">
+      <div class="fin-tabs" id="earningsViewTabs">
+        <button type="button" class="fin-tab active" data-view="earnings">Earnings</button>
+        <button type="button" class="fin-tab" data-view="revenue">Revenue</button>
+      </div>
+      <div class="fin-currency-note" id="earningsCurrencyNote" hidden>Currency in USD.</div>
     </div>
 
+    <div class="fin-earnings-mini-legend earnings-scatter-legend" id="earningsScatterLegend"><span class="dot dot--est" id="earningsScatterLegendDot"></span><span class="legend-tick" id="earningsScatterLegendTick" hidden></span> <span id="earningsScatterLegendText">Estimated EPS</span></div>
     <svg class="earnings-scatter" id="earningsScatterSvg" viewBox="0 0 300 200" preserveAspectRatio="none" style="margin-top:20px"></svg>
     <div class="earnings-scatter__labels" id="earningsScatterLabels"></div>
 
@@ -3726,6 +3721,7 @@ p { margin: 0; }
   var chartPrice = document.getElementById('chartPrice');
   var chartChange = document.getElementById('chartChange');
   var chartSessionRow = document.getElementById('chartSessionRow');
+  var chartSessionPrice = document.getElementById('chartSessionPrice');
   var chartSessionChange = document.getElementById('chartSessionChange');
   var chartCloseLabel = document.getElementById('chartCloseLabel');
   var chartPopup = document.getElementById('chartPopup');
@@ -4710,6 +4706,7 @@ p { margin: 0; }
     if (showExt) {
       var chartSessionChg = sessionPrice - market.prevClose;
       var chartSessionPct = (chartSessionChg / market.prevClose) * 100;
+      chartSessionPrice.textContent = sessionPrice.toFixed(2);
       chartSessionChange.textContent = (chartSessionChg >= 0 ? '+' : '') + chartSessionChg.toFixed(2) + ' (' + (chartSessionPct >= 0 ? '+' : '') + chartSessionPct.toFixed(2) + '%)';
     }
 
@@ -5130,7 +5127,7 @@ p { margin: 0; }
     }
   };
   var earningsView = 'earnings';
-  function earningsValFmt(v, view) { return (EARNINGS_VIEWS[view].unit === 'currency' ? '$' + finFmt(v, 'currency') : v.toFixed(2)); }
+  function earningsValFmt(v, view) { return (EARNINGS_VIEWS[view].unit === 'currency' ? finFmt(v, 'currency') : v.toFixed(2)); }
 
   function finRenderEarningsMini() {
     var pts = EARNINGS_HISTORY.concat([EARNINGS_NEXT]);
@@ -5166,6 +5163,10 @@ p { margin: 0; }
   var earningsDetailReportedLabelEl = document.getElementById('earningsDetailReportedLabel');
   var earningsAboutNounEl = document.getElementById('earningsAboutNoun');
   var earningsAboutTextEl = document.getElementById('earningsAboutText');
+  var earningsScatterLegendDotEl = document.getElementById('earningsScatterLegendDot');
+  var earningsScatterLegendTickEl = document.getElementById('earningsScatterLegendTick');
+  var earningsScatterLegendTextEl = document.getElementById('earningsScatterLegendText');
+  var earningsCurrencyNoteEl = document.getElementById('earningsCurrencyNote');
   var earningsHistoryBodyEl = document.getElementById('earningsHistoryBody');
   var earningsViewTabsEl = document.getElementById('earningsViewTabs');
   var earningsPts = [];
@@ -5300,6 +5301,11 @@ p { margin: 0; }
     }).join('');
     earningsAboutNounEl.textContent = cfg.noun;
     earningsAboutTextEl.textContent = cfg.about;
+    var isRevenue = earningsView === 'revenue';
+    earningsScatterLegendDotEl.hidden = isRevenue;
+    earningsScatterLegendTickEl.hidden = !isRevenue;
+    earningsScatterLegendTextEl.textContent = isRevenue ? 'Estimated Revenue' : 'Estimated EPS';
+    earningsCurrencyNoteEl.hidden = !isRevenue;
 
     earningsScatterSvg.querySelectorAll('[data-i]').forEach(function (el) {
       el.addEventListener('click', function () { finSelectEarningsQuarter(+el.getAttribute('data-i')); });
