@@ -253,7 +253,16 @@ p { margin: 0; }
   letter-spacing: -0.26px;
   margin-left: 4px;
 }
-.appbar__actions img { display: block; height: 13.2442px; width: 51px; }
+.appbar__actions { display: flex; align-items: center; gap: 14px; }
+.appbar__icon-btn {
+  display: block;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #ffffff;
+  cursor: pointer;
+}
+.appbar__icon-btn svg { display: block; width: 13px; height: 13.5px; }
 .dot {
   width: 4.65px;
   height: 4.65px;
@@ -1591,6 +1600,82 @@ p { margin: 0; }
 }
 .ir-filing-link .chev { font-size: 14px; color: #929292; font-weight: 300; }
 
+/* ---------- About this page (info) overlay ----------
+   Deliberately its own visual language (warm paper background, not the
+   app's black) — an editorial/reference surface, not another app screen. */
+.info-overlay {
+  background: #F4F2EB;
+  color: #111111;
+  padding: 24px 20px 40px;
+  animation: infoSheetUp 0.28s ease;
+}
+@keyframes infoSheetUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+.info-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.info-eyebrow { font-size: 12px; font-weight: 500; letter-spacing: -0.1px; color: #111111; }
+.info-close {
+  font-family: inherit;
+  font-size: 13px;
+  color: #8C8880;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+.info-h1 {
+  font-size: 24px;
+  line-height: 1.28;
+  letter-spacing: -0.4px;
+  font-weight: 600;
+  color: #111111;
+  margin-top: 200px;
+}
+.info-intro {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #8C8880;
+  padding: 14px 0 26px;
+  max-width: 32ch;
+}
+.info-table { width: 100%; border-collapse: collapse; margin-bottom: 36px; border-top: 1px solid #111111; }
+.info-table td { border-bottom: 1px solid #DEDCD4; padding: 11px 0; font-size: 12.5px; line-height: 1.4; vertical-align: top; }
+.info-table td.k { font-size: 12px; font-weight: 600; color: #111111; width: 40%; padding-right: 12px; }
+.info-table td.v { color: #8C8880; }
+.info-table tr:last-child td { border-bottom: 1px solid #111111; }
+.info-section { padding-bottom: 34px; }
+.info-num { font-size: 11px; letter-spacing: 0.04em; color: #8C8880; display: block; padding-bottom: 6px; }
+.info-h2 { font-size: 16px; font-weight: 600; letter-spacing: -0.1px; color: #111111; padding-bottom: 8px; }
+.info-deck {
+  font-size: 14.5px;
+  line-height: 1.45;
+  font-weight: 600;
+  color: #111111;
+  letter-spacing: -0.1px;
+  padding-bottom: 14px;
+  max-width: 30ch;
+}
+.info-body { font-size: 13.5px; line-height: 1.62; color: #8C8880; }
+.info-body + .info-body { padding-top: 10px; }
+.info-hr { border: 0; border-top: 1px solid #DEDCD4; margin: 0 0 28px; }
+.info-plate {
+  background: #101010;
+  border-radius: 6px;
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  color: #6E6A62;
+  margin: 14px 0 0;
+}
+
 /* ---------- Financials detail overlay ---------- */
 .fin-overlay-header {
   display: flex;
@@ -2361,7 +2446,14 @@ p { margin: 0; }
           <div class="appbar__back"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiB2aWV3Qm94PSIwIDAgMTYgMTYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJTVkciPgo8cGF0aCBpZD0iVmVjdG9yIiBkPSJNMTAuNSAzTDUuNSA4TDEwLjUgMTMiIHN0cm9rZT0iI0M3QzdDNyIgc3Ryb2tlLXdpZHRoPSIxLjQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L2c+Cjwvc3ZnPgo=" alt=""></div>
           <div class="appbar__ticker">KSTL<span class="price-reveal" id="headerPriceGroup"><span id="headerDotSep"> · </span><svg class="ah-moon ah-moon--badge ah-header-moon" id="headerAhDot" hidden width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 1020.354 15.354z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="headerPrice">87.00</span> USD<span class="chg" id="headerChg">+1.45%</span></span></div>
         </div>
-        <div class="appbar__actions"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjUxIiBoZWlnaHQ9IjEzLjI0NDIiIHZpZXdCb3g9IjAgMCA1MSAxMy4yNDQyIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8ZyBpZD0iRnJhbWUgMjA4NTY2NjM5OCI+CjxnIGlkPSJTVkciIGNsaXAtcGF0aD0idXJsKCNjbGlwMF8wXzQpIj4KPHBhdGggaWQ9IlZlY3RvciIgZD0iTTUuMzUzODYgMTAuMDY0MkM3Ljg4Nzg3IDEwLjA2NDIgOS45NDIxIDguMDA5OTcgOS45NDIxIDUuNDc1OTVDOS45NDIxIDIuOTQxOTQgNy44ODc4NyAwLjg4NzcxOCA1LjM1Mzg2IDAuODg3NzE4QzIuODE5ODUgMC44ODc3MTggMC43NjU2MjUgMi45NDE5NCAwLjc2NTYyNSA1LjQ3NTk1QzAuNzY1NjI1IDguMDA5OTcgMi44MTk4NSAxMC4wNjQyIDUuMzUzODYgMTAuMDY0MloiIHN0cm9rZT0id2hpdGUiLz4KPHBhdGggaWQ9IlZlY3Rvcl8yIiBkPSJNOC41NjI1IDguNjkyNDFMMTIuMjMzMSAxMi4zNjMiIHN0cm9rZT0id2hpdGUiLz4KPC9nPgo8ZyBpZD0iU1ZHXzIiIGNsaXAtcGF0aD0idXJsKCNjbGlwMV8wXzQpIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMzgsIDApIj4KPHBhdGggaWQ9IlZlY3Rvcl80IiBkPSJNODIuNDk5MyAxMi4zNzg2Qzg1LjY3ODkgMTIuMzc4NiA4OC4yNTY1IDkuODAxMDEgODguMjU2NSA2LjYyMTQyQzg4LjI1NjUgMy40NDE4NCA4NS42Nzg5IDAuODY0MjgxIDgyLjQ5OTMgMC44NjQyODFDNzkuMzE5NyAwLjg2NDI4MSA3Ni43NDIyIDMuNDQxODQgNzYuNzQyMiA2LjYyMTQyQzc2Ljc0MjIgOS44MDEwMSA3OS4zMTk3IDEyLjM3ODYgODIuNDk5MyAxMi4zNzg2WiIgc3Ryb2tlPSJ3aGl0ZSIvPgo8cGF0aCBpZD0iVmVjdG9yXzUiIGQ9Ik04Mi41IDUuOTczNjZWOS40MDkzNyIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIxLjEiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8cGF0aCBpZD0iVmVjdG9yXzYiIGQ9Ik04Mi41MDE2IDQuNTc4MzRDODIuODYwNSA0LjU3ODM0IDgzLjE1MTYgNC4yODczMyA4My4xNTE2IDMuOTI4MzRDODMuMTUxNiAzLjU2OTM2IDgyLjg2MDUgMy4yNzgzNCA4Mi41MDE2IDMuMjc4MzRDODIuMTQyNiAzLjI3ODM0IDgxLjg1MTYgMy41NjkzNiA4MS44NTE2IDMuOTI4MzRDODEuODUxNiA0LjI4NzMzIDgyLjE0MjYgNC41NzgzNCA4Mi41MDE2IDQuNTc4MzRaIiBmaWxsPSJ3aGl0ZSIvPgo8L2c+CjwvZz4KPGRlZnM+CjxjbGlwUGF0aCBpZD0iY2xpcDBfMF80Ij4KPHJlY3Qgd2lkdGg9IjEzIiBoZWlnaHQ9IjEzIiBmaWxsPSJ3aGl0ZSIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMCAwLjEyMjA5MykiLz4KPC9jbGlwUGF0aD4KPGNsaXBQYXRoIGlkPSJjbGlwMV8wXzQiPgo8cmVjdCB3aWR0aD0iMTMiIGhlaWdodD0iMTMiIGZpbGw9IndoaXRlIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSg3NiAwLjEyMjA5MykiLz4KPC9jbGlwUGF0aD4KPC9kZWZzPgo8L3N2Zz4K" alt=""></div>
+        <div class="appbar__actions">
+          <button type="button" class="appbar__icon-btn" id="searchBtn" aria-label="Search">
+            <svg viewBox="0 0 13 13.5" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5.35386 10.0642C7.88787 10.0642 9.9421 8.00997 9.9421 5.47595C9.9421 2.94194 7.88787 0.887718 5.35386 0.887718C2.81985 0.887718 0.765625 2.94194 0.765625 5.47595C0.765625 8.00997 2.81985 10.0642 5.35386 10.0642Z" stroke="currentColor"/><path d="M8.5625 8.69241L12.2331 12.363" stroke="currentColor"/></svg>
+          </button>
+          <button type="button" class="appbar__icon-btn" id="infoBtn" aria-label="About this page">
+            <svg viewBox="0 0 13 13.5" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.4993 12.3786C9.6789 12.3786 12.2565 9.80101 12.2565 6.62142C12.2565 3.44184 9.6789 0.864281 6.4993 0.864281C3.3197 0.864281 0.7422 3.44184 0.7422 6.62142C0.7422 9.80101 3.3197 12.3786 6.4993 12.3786Z" stroke="currentColor"/><path d="M6.5 5.97366V9.40937" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/><path d="M6.5016 4.57834C6.8605 4.57834 7.1516 4.28733 7.1516 3.92834C7.1516 3.56936 6.8605 3.27834 6.5016 3.27834C6.1426 3.27834 5.8516 3.56936 5.8516 3.92834C5.8516 4.28733 6.1426 4.57834 6.5016 4.57834Z" fill="currentColor"/></svg>
+          </button>
+        </div>
       </div>
       <div class="appbar__thesis-line" id="appbarThesisLine"></div>
     </div>
@@ -3073,6 +3165,133 @@ p { margin: 0; }
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- About this page (info) overlay -->
+  <div class="ir-overlay info-overlay" id="infoOverlay" hidden>
+    <div class="info-top">
+      <span class="info-eyebrow">Stock page</span>
+      <button type="button" class="info-close" id="infoCloseBtn">Close</button>
+    </div>
+
+    <h1 class="info-h1">This page adapts to your position.</h1>
+    <p class="info-intro">Content changes depending on whether you currently hold a position. Sections are listed below in the order they appear.</p>
+
+    <table class="info-table">
+      <tbody>
+        <tr><td class="k">Alerts</td><td class="v">Monitoring and order activity</td></tr>
+        <tr><td class="k">One liner</td><td class="v">Appears once a position is open</td></tr>
+        <tr><td class="k">Memo</td><td class="v">Created at purchase</td></tr>
+        <tr><td class="k">Prediction</td><td class="v">Probability, hurdle, and horizon</td></tr>
+        <tr><td class="k">Notes</td><td class="v">Optional, off the record</td></tr>
+        <tr><td class="k">Position &amp; returns</td><td class="v">Return versus the S&amp;P 500</td></tr>
+        <tr><td class="k">Financials</td><td class="v">Reported results, quarterly and annual</td></tr>
+        <tr><td class="k">Fiscal.ai</td><td class="v">Sourced data behind every figure</td></tr>
+        <tr><td class="k">AI tools</td><td class="v">Grounded in Fiscal.ai data</td></tr>
+        <tr><td class="k">News</td><td class="v">Headlines for the company</td></tr>
+        <tr><td class="k">History</td><td class="v">Past orders and the memo behind each</td></tr>
+        <tr><td class="k">Capital decision</td><td class="v">Buy or sell</td></tr>
+      </tbody>
+    </table>
+
+    <section class="info-section">
+      <span class="info-num">01</span>
+      <h2 class="info-h2">Alerts</h2>
+      <p class="info-deck">Real-time monitoring of your position.</p>
+      <p class="info-body">Alerts appear for any security held or under review. They flag order fills, position-level events, and quarterly earnings, as well as delisting notices. A thesis or kill criteria left blank at purchase surfaces here as an outstanding item. The value is not more information. It is knowing which position requires attention, and when.</p>
+    </section>
+    <hr class="info-hr">
+
+    <section class="info-section">
+      <span class="info-num">02</span>
+      <h2 class="info-h2">The one liner</h2>
+      <p class="info-deck">Brevity is a test of conviction.</p>
+      <p class="info-body">The one liner states the thesis in a single sentence, and carries to the active positions screen so every holding shows its case without being opened. The full reasoning stays in the memo. This is the line returned to when checking whether the position still holds. A thesis that cannot be stated in one line cannot be monitored against a price.</p>
+    </section>
+    <hr class="info-hr">
+
+    <section class="info-section">
+      <span class="info-num">03</span>
+      <h2 class="info-h2">The memo</h2>
+      <p class="info-deck">No position is taken without a memo.</p>
+      <p class="info-body">The memo records classification, role in the portfolio, thesis, kill criteria, prediction, and source. Thesis and kill criteria can be left blank at purchase and completed later.</p>
+      <p class="info-body">Memos are not edited in place. Each revision is issued as a new dated memo, which becomes the current case while every memo before it stays intact and viewable. Nothing is overwritten.</p>
+    </section>
+    <hr class="info-hr">
+
+    <section class="info-section">
+      <span class="info-num">04</span>
+      <h2 class="info-h2">The prediction</h2>
+      <p class="info-deck">Fixed before the outcome is known.</p>
+      <p class="info-body">The prediction records the probability you assign to the thesis, the return hurdle, and the horizon over which you expect it to resolve. It can be revised at any time, and each earlier version stays dated and viewable. What that preserves is the sequence: the claim fixed first, the outcome that settles it second.</p>
+    </section>
+    <hr class="info-hr">
+
+    <section class="info-section">
+      <span class="info-num">05</span>
+      <h2 class="info-h2">Notes</h2>
+      <p class="info-deck">Deliberately off the record.</p>
+      <p class="info-body">Notes keep no history. They can be rewritten at any time, nothing prior is retained, and nothing in them enters the memo. Unsettled thinking requires a surface that keeps no record.</p>
+    </section>
+    <hr class="info-hr">
+
+    <section class="info-section">
+      <span class="info-num">06</span>
+      <h2 class="info-h2">Position and returns</h2>
+      <p class="info-deck">The same capital, held in the index.</p>
+      <p class="info-body">The position's return is shown alongside the return the same capital would have produced in the S&amp;P 500 over the same period. The difference isolates what choosing this business added or cost against holding the index instead.</p>
+    </section>
+    <hr class="info-hr">
+
+    <section class="info-section">
+      <span class="info-num">07</span>
+      <h2 class="info-h2">Financials</h2>
+      <p class="info-deck">The operating reality behind the market price.</p>
+      <p class="info-body">Financials holds the income statement, balance sheet, cash flow, and key ratios, in both quarterly and annual form, alongside the earnings history and the next reporting date. Each figure is shown against the comparable prior period and across the reported history.</p>
+      <div class="info-plate">Screenshot · Financials card</div>
+    </section>
+    <hr class="info-hr">
+
+    <section class="info-section">
+      <span class="info-num">08</span>
+      <h2 class="info-h2">Fiscal.ai</h2>
+      <p class="info-deck">A sourced figure and a plausible one read identically.</p>
+      <p class="info-body">Fiscal.ai holds the primary record of financials, ratios, and filings used across the platform. Any figure surfaced by the AI models below is checked against this record before it enters the case. The distinction matters: a plausible number and a sourced one can look identical until they are tested, and Fiscal.ai is what makes that test possible.</p>
+    </section>
+    <hr class="info-hr">
+
+    <section class="info-section">
+      <span class="info-num">09</span>
+      <h2 class="info-h2">AI tools</h2>
+      <p class="info-deck">Information is abundant. Judgment is scarce.</p>
+      <p class="info-body">The links open a working session for building a thesis and testing whether it survives. They accelerate research. They do not replace it. The model can develop the case with you. It cannot own the decision. A conclusion you did not build cannot be defended in a drawdown.</p>
+      <div class="info-plate">Screenshot · AI tool rows</div>
+    </section>
+    <hr class="info-hr">
+
+    <section class="info-section">
+      <span class="info-num">10</span>
+      <h2 class="info-h2">News</h2>
+      <p class="info-deck">Context for the price, not the case.</p>
+      <p class="info-body">Recent headlines for the company are collected here. They give context for movement in the price and are not a substitute for the thesis already on file.</p>
+      <div class="info-plate">Screenshot · News</div>
+    </section>
+    <hr class="info-hr">
+
+    <section class="info-section">
+      <span class="info-num">11</span>
+      <h2 class="info-h2">History</h2>
+      <p class="info-deck">The record does not change with the outcome.</p>
+      <p class="info-body">Each order is stamped with the memo in force on its execution date. A past decision can be read against the case that actually produced it. Outcomes change how a decision is remembered, and the record is what holds the original reasoning in place.</p>
+    </section>
+    <hr class="info-hr">
+
+    <section class="info-section" style="padding-bottom: 0;">
+      <span class="info-num">12</span>
+      <h2 class="info-h2">Capital decision</h2>
+      <p class="info-deck">Capital is committed here.</p>
+      <p class="info-body">This control opens the order flow and stays anchored at the bottom of the page. A purchase is placed against a memo already written. A sale closes the position against the memo in force. Transactions are cheap. Outcomes are not.</p>
+    </section>
   </div>
 
   <!-- Financials detail overlay -->
@@ -4560,6 +4779,13 @@ p { margin: 0; }
   var irBackBtn = document.getElementById('irBackBtn');
   function closeIrOverlay() { irOverlay.hidden = true; }
   irBackBtn.addEventListener('click', closeIrOverlay);
+
+  /* ---------- About this page (info) overlay ---------- */
+  var infoBtn = document.getElementById('infoBtn');
+  var infoOverlay = document.getElementById('infoOverlay');
+  var infoCloseBtn = document.getElementById('infoCloseBtn');
+  infoBtn.addEventListener('click', function () { infoOverlay.hidden = false; });
+  infoCloseBtn.addEventListener('click', function () { infoOverlay.hidden = true; });
 
   /* ---------- Financials / Earnings detail overlays ----------
      Per the 8/28 team meeting: tapping "Financials" opens a full statements page
