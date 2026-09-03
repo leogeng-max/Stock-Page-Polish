@@ -1661,6 +1661,67 @@ p { margin: 0; }
   margin: 14px 0 0;
 }
 
+/* ---------- Position detail overlay (Figma: Post-MVP II 3.0, node 3789:1288) ---------- */
+.pos-detail-overlay { padding: 0; }
+.pos-detail-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 65px;
+  padding: 0 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.pos-detail-exit { font-size: 14px; font-weight: 700; color: #c7c7c7; letter-spacing: -0.28px; }
+.pos-detail-title { text-align: right; padding: 24px 20px 0; }
+.pos-detail-title__label { font-size: 18px; color: #929292; letter-spacing: -1.08px; }
+.pos-detail-title__name { margin-top: 5px; font-size: 18px; color: #ffffff; letter-spacing: -1.08px; }
+.pos-detail-body { padding: 30px 20px 40px; }
+.pos-detail-account-filter { font-size: 14px; color: #929292; letter-spacing: -0.28px; }
+.pos-detail-group { margin-top: 40px; }
+.pos-detail-group--accounts { margin-top: 50px; }
+.pos-detail-group__label {
+  font-size: 14px;
+  color: #c7c7c7;
+  letter-spacing: -0.28px;
+}
+.pos-detail-rows { margin-top: 25px; }
+.pos-detail-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+}
+.pos-detail-row .k { font-size: 14px; color: #929292; letter-spacing: -0.28px; }
+.pos-detail-row .v { font-size: 15px; color: #ffffff; letter-spacing: -0.3px; text-align: right; white-space: nowrap; flex-shrink: 0; }
+.pos-detail-row .v .unit { color: #929292; }
+.pos-detail-row .v .unit.pct { font-size: 12px; }
+.pos-detail-row .v .stat-arrow { margin-left: 3px; }
+.pos-detail-account-rows { margin-top: 25px; }
+.pos-detail-account-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+}
+.pos-detail-account-row__main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 1;
+  gap: 12px;
+  color: #ffffff;
+  font-size: 15px;
+  letter-spacing: -0.3px;
+}
+.pos-detail-account-row__main .amt .unit { color: #929292; }
+.pos-detail-account-row .chev {
+  color: #929292;
+  font-size: 11px;
+  flex-shrink: 0;
+}
+
 /* ---------- Financials detail overlay ---------- */
 .fin-overlay-header {
   display: flex;
@@ -2685,7 +2746,7 @@ p { margin: 0; }
 
   <!-- Position section -->
   <div class="stat-section" id="positionSection">
-    <div class="section-header">Position <span class="chev">›</span></div>
+    <div class="section-header" id="positionHeaderTrigger" role="button" tabindex="0" style="cursor:pointer;">Position <span class="chev">›</span></div>
     <div class="position-meta" id="positionMeta">Entered 10.14.25 · Held 8 months</div>
 
     <div class="rich-card__empty" id="positionEmpty" hidden>
@@ -3294,6 +3355,92 @@ p { margin: 0; }
       <h2 class="info-h2">Capital Decision</h2>
       <p class="info-body">Capital Decision opens the order flow to buy or sell the security.</p>
     </section>
+  </div>
+
+  <!-- Position detail overlay -->
+  <div class="ir-overlay pos-detail-overlay" id="positionDetailOverlay" hidden>
+    <div class="pos-detail-header">
+      <button type="button" class="ir-back-btn" id="posDetailBackBtn" aria-label="Back">
+        <img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiB2aWV3Qm94PSIwIDAgMTYgMTYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJTVkciPgo8cGF0aCBpZD0iVmVjdG9yIiBkPSJNMTAuNSAzTDUuNSA4TDEwLjUgMTMiIHN0cm9rZT0iI0M3QzdDNyIgc3Ryb2tlLXdpZHRoPSIxLjQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L2c+Cjwvc3ZnPgo=" alt="">
+      </button>
+      <span class="pos-detail-exit">Exit</span>
+    </div>
+
+    <div class="pos-detail-title">
+      <div class="pos-detail-title__label">Position</div>
+      <div class="pos-detail-title__name">KSTL · Kestrel Systems</div>
+    </div>
+
+    <div class="pos-detail-body">
+      <div class="pos-detail-account-filter">All Accounts</div>
+
+      <div class="pos-detail-group">
+        <div class="pos-detail-group__label">Position Summary</div>
+        <div class="pos-detail-rows">
+          <div class="pos-detail-row"><span class="k">Market Value</span><span class="v"><span id="posDetailMarketValue">25,998.63</span> <span class="unit">CAD</span></span></div>
+          <div class="divider"></div>
+          <div class="pos-detail-row"><span class="k">Portfolio Weight</span><span class="v" id="posDetailWeight">42.3%</span></div>
+          <div class="divider"></div>
+        </div>
+      </div>
+
+      <div class="pos-detail-group">
+        <div class="pos-detail-group__label">Position Details</div>
+        <div class="pos-detail-rows">
+          <div class="pos-detail-row"><span class="k">Shares</span><span class="v" id="posDetailShares">216.39</span></div>
+          <div class="divider"></div>
+          <div class="pos-detail-row"><span class="k">Book Cost</span><span class="v"><span id="posDetailBookCost">18,217.60</span> <span class="unit">CAD</span></span></div>
+          <div class="divider"></div>
+          <div class="pos-detail-row"><span class="k">Avg. Cost / Share</span><span class="v"><span id="posDetailAvgCost">84.21</span> <span class="unit">CAD</span></span></div>
+          <div class="divider"></div>
+        </div>
+      </div>
+
+      <div class="pos-detail-group">
+        <div class="pos-detail-group__label">Performance Since Entry</div>
+        <div class="pos-detail-rows">
+          <div class="pos-detail-row">
+            <span class="k">Unrealized P/L</span>
+            <span class="v"><span id="posDetailUnrealized">+7,825.75</span> <span class="unit">CAD</span> <span class="unit pct" id="posDetailUnrealizedPct">(+43.0%)</span> <span class="stat-arrow" id="posDetailUnrealizedArrow">▲</span></span>
+          </div>
+          <div class="divider"></div>
+          <div class="pos-detail-row">
+            <span class="k">S&amp;P 500 (Same Window)</span>
+            <span class="v"><span id="posDetailSP">+6,478.33</span> <span class="unit">CAD</span> <span class="unit pct" id="posDetailSPPct">(+35.6%)</span> <span class="stat-arrow" id="posDetailSPArrow">▲</span></span>
+          </div>
+          <div class="divider"></div>
+          <div class="pos-detail-row">
+            <span class="k">Alpha</span>
+            <span class="v"><span id="posDetailAlpha">+1,358.19</span> <span class="unit">CAD</span> <span class="unit pct" id="posDetailAlphaPp">(+7.5 pp)</span> <span class="stat-arrow" id="posDetailAlphaArrow">▲</span></span>
+          </div>
+          <div class="divider"></div>
+        </div>
+      </div>
+
+      <div class="pos-detail-group pos-detail-group--accounts">
+        <div class="pos-detail-group__label">Breakdown by Account</div>
+        <div class="pos-detail-account-rows">
+          <div class="pos-detail-account-row">
+            <div class="pos-detail-account-row__main">
+              <span class="name">TFSA</span>
+              <span class="amt"><span id="posDetailTfsaAmt">15,599.18</span> <span class="unit">CAD</span></span>
+              <span class="pct" id="posDetailTfsaPct">25.4%</span>
+            </div>
+            <span class="chev">⌄</span>
+          </div>
+          <div class="divider"></div>
+          <div class="pos-detail-account-row">
+            <div class="pos-detail-account-row__main">
+              <span class="name">RRSP</span>
+              <span class="amt"><span id="posDetailRrspAmt">10,399.45</span> <span class="unit">CAD</span></span>
+              <span class="pct" id="posDetailRrspPct">16.9%</span>
+            </div>
+            <span class="chev">⌄</span>
+          </div>
+          <div class="divider"></div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Financials detail overlay -->
@@ -4503,6 +4650,24 @@ p { margin: 0; }
   var posAlphaAh = document.getElementById('posAlphaAh');
   var posAlphaAhPp = document.getElementById('posAlphaAhPp');
   var posWeight = document.getElementById('posWeight');
+  var posDetailMarketValue = document.getElementById('posDetailMarketValue');
+  var posDetailWeight = document.getElementById('posDetailWeight');
+  var posDetailShares = document.getElementById('posDetailShares');
+  var posDetailBookCost = document.getElementById('posDetailBookCost');
+  var posDetailAvgCost = document.getElementById('posDetailAvgCost');
+  var posDetailUnrealized = document.getElementById('posDetailUnrealized');
+  var posDetailUnrealizedPct = document.getElementById('posDetailUnrealizedPct');
+  var posDetailUnrealizedArrow = document.getElementById('posDetailUnrealizedArrow');
+  var posDetailSP = document.getElementById('posDetailSP');
+  var posDetailSPPct = document.getElementById('posDetailSPPct');
+  var posDetailSPArrow = document.getElementById('posDetailSPArrow');
+  var posDetailAlpha = document.getElementById('posDetailAlpha');
+  var posDetailAlphaPp = document.getElementById('posDetailAlphaPp');
+  var posDetailAlphaArrow = document.getElementById('posDetailAlphaArrow');
+  var posDetailTfsaAmt = document.getElementById('posDetailTfsaAmt');
+  var posDetailTfsaPct = document.getElementById('posDetailTfsaPct');
+  var posDetailRrspAmt = document.getElementById('posDetailRrspAmt');
+  var posDetailRrspPct = document.getElementById('posDetailRrspPct');
   var CAD_RATE = 1.36995;
 
   var pbAhChangeRow = document.getElementById('pbAhChangeRow');
@@ -4671,6 +4836,38 @@ p { margin: 0; }
     posAlphaArrowCad.classList.toggle('is-down', alphaPp < 0);
     posWeight.textContent = weight.toFixed(1) + '%';
 
+    /* Position detail page (Figma): CAD-denominated single-value rows,
+       plus S&P 500 / Alpha which the Figma spec was missing. "Breakdown by
+       Account" has no real per-account data behind it, so it's a synthetic
+       60/40 TFSA/RRSP split of the real totals — internally consistent,
+       not a separate data source. */
+    var marketValueCAD = marketValue * CAD_RATE;
+    posDetailMarketValue.textContent = fmtMoney(marketValueCAD);
+    posDetailWeight.textContent = weight.toFixed(1) + '%';
+    posDetailShares.textContent = market.shares.toFixed(2);
+    posDetailBookCost.textContent = fmtMoney(market.costBasis * CAD_RATE);
+    posDetailAvgCost.textContent = (market.costBasis / market.shares * CAD_RATE).toFixed(2);
+    posDetailUnrealized.textContent = fmtSigned(unrealizedPL * CAD_RATE);
+    posDetailUnrealizedPct.textContent = '(' + (unrealizedPLPct >= 0 ? '+' : '') + unrealizedPLPct.toFixed(1) + '%)';
+    posDetailUnrealizedArrow.textContent = unrealizedPLPct >= 0 ? '▲' : '▼';
+    posDetailUnrealizedArrow.classList.toggle('is-up', unrealizedPLPct >= 0);
+    posDetailUnrealizedArrow.classList.toggle('is-down', unrealizedPLPct < 0);
+    posDetailSP.textContent = fmtSigned(spPL * CAD_RATE);
+    posDetailSPPct.textContent = '(' + spPctStr + ')';
+    posDetailSPArrow.textContent = market.spPLPct >= 0 ? '▲' : '▼';
+    posDetailSPArrow.classList.toggle('is-up', market.spPLPct >= 0);
+    posDetailSPArrow.classList.toggle('is-down', market.spPLPct < 0);
+    posDetailAlpha.textContent = fmtSigned(alphaDollar * CAD_RATE);
+    posDetailAlphaPp.textContent = '(' + (alphaPp >= 0 ? '+' : '') + alphaPp.toFixed(1) + ' pp)';
+    posDetailAlphaArrow.textContent = alphaPp >= 0 ? '▲' : '▼';
+    posDetailAlphaArrow.classList.toggle('is-up', alphaPp >= 0);
+    posDetailAlphaArrow.classList.toggle('is-down', alphaPp < 0);
+    var TFSA_SHARE = 0.6;
+    posDetailTfsaAmt.textContent = fmtMoney(marketValueCAD * TFSA_SHARE);
+    posDetailTfsaPct.textContent = (weight * TFSA_SHARE).toFixed(1) + '%';
+    posDetailRrspAmt.textContent = fmtMoney(marketValueCAD * (1 - TFSA_SHARE));
+    posDetailRrspPct.textContent = (weight * (1 - TFSA_SHARE)).toFixed(1) + '%';
+
     /* Prediction card shows two independently-sourced figures side by side:
        "since purchase" reuses alphaPp verbatim (the same value driving the
        Position section's Alpha, so the two can never diverge/disagree), and
@@ -4794,6 +4991,16 @@ p { margin: 0; }
   var infoCloseBtn = document.getElementById('infoCloseBtn');
   infoBtn.addEventListener('click', function () { infoOverlay.hidden = false; });
   infoCloseBtn.addEventListener('click', function () { infoOverlay.hidden = true; });
+
+  /* ---------- Position detail overlay ---------- */
+  var positionHeaderTriggerEl = document.getElementById('positionHeaderTrigger');
+  var positionDetailOverlayEl = document.getElementById('positionDetailOverlay');
+  var posDetailBackBtnEl = document.getElementById('posDetailBackBtn');
+  function openPositionDetailOverlay() { positionDetailOverlayEl.hidden = false; }
+  function closePositionDetailOverlay() { positionDetailOverlayEl.hidden = true; }
+  positionHeaderTriggerEl.addEventListener('click', openPositionDetailOverlay);
+  positionHeaderTriggerEl.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') openPositionDetailOverlay(); });
+  posDetailBackBtnEl.addEventListener('click', closePositionDetailOverlay);
 
   /* ---------- Financials / Earnings detail overlays ----------
      Per the 8/28 team meeting: tapping "Financials" opens a full statements page
