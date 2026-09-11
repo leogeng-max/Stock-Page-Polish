@@ -982,6 +982,23 @@ p { margin: 0; }
   color: #c7c7c7;
   letter-spacing: -0.28px;
 }
+.peer-block { margin-top: 30px; }
+.peer-row {
+  margin-top: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+.peer-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  color: #ffffff;
+  letter-spacing: -0.28px;
+}
+.peer-item .stat-arrow { margin-left: 0; }
+.peer-pct { font-size: 12px; color: #929292; letter-spacing: -0.24px; }
 .chart-popup {
   position: absolute;
   top: -130px;
@@ -1492,7 +1509,30 @@ p { margin: 0; }
   color: #ffffff;
   letter-spacing: -0.28px;
 }
+.keystats-grid .sub-note {
+  font-size: 10px;
+  color: #6b6b6b;
+  letter-spacing: -0.2px;
+}
 .keystats-grid { padding-bottom: 15px; }
+
+/* ---------- Ownership & Insider Activity ---------- */
+.ownership-section { margin: 0 20px; padding-bottom: 40px; }
+.ownership-subhead { margin-top: 32px; font-size: 15px; color: #ffffff; letter-spacing: -0.14px; }
+.ownership-holders {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.ownership-holder-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.ownership-holder-row .k { font-size: 14px; color: #929292; letter-spacing: -0.28px; }
+.ownership-holder-row .v { font-size: 15px; color: #ffffff; letter-spacing: -0.3px; }
+.ownership-section .history-list { margin-top: 16px; }
 
 /* ---------- Financials ---------- */
 .finrel-section { margin: 0 20px; }
@@ -1531,7 +1571,6 @@ p { margin: 0; }
   letter-spacing: -0.22px;
   line-height: 1.6;
 }
-
 /* ---------- Investor Relations detail overlay ---------- */
 .ir-overlay {
   position: absolute;
@@ -2581,7 +2620,7 @@ p { margin: 0; }
   <div class="activity-feed" id="activityFeed">
     <div class="activity-row activity-row--link" id="earningsActivityRow" role="button" tabindex="0">
       <div class="dot dot--amber"></div>
-      <p>KSTL Q2 FY26 earnings <span class="muted" id="earningsActivityWhen">in 45 days</span></p>
+      <p>KSTL Q2 FY26 earnings <span class="muted" id="earningsActivityWhen">in 45 days</span><span class="muted"> &middot; implied move <span id="earningsImpliedMove">&plusmn;6.8%</span></span></p>
       <span class="chev activity-row__chev">›</span>
     </div>
     <div class="activity-row">
@@ -2930,6 +2969,15 @@ p { margin: 0; }
       <div class="cell"><div class="label-11">Fiscal year end</div><div class="val">January</div></div>
       <div class="cell"><div class="label-11">Free float</div><div class="val">96.1%</div></div>
     </div>
+
+    <div class="peer-block">
+      <div class="label-11">Sector Peers</div>
+      <div class="peer-row">
+        <span class="peer-item">NVDA <span class="stat-arrow is-up">▲</span> <span class="peer-pct">+0.8%</span></span>
+        <span class="peer-item">AVGO <span class="stat-arrow is-down">▼</span> <span class="peer-pct">-0.3%</span></span>
+        <span class="peer-item">AMD <span class="stat-arrow is-up">▲</span> <span class="peer-pct">+1.4%</span></span>
+      </div>
+    </div>
   </div>
 
   <!-- Chart section -->
@@ -3104,13 +3152,85 @@ p { margin: 0; }
       <div class="cell"><div class="label-11">Enterprise Value (EV)</div><div class="val">903.3M</div></div>
       <div class="cell"><div class="label-11">Shares Outstanding</div><div class="val">115.3M</div></div>
       <div class="cell"><div class="label-11">Dividend Yield</div><div class="val">-</div></div>
-      <div class="cell"><div class="label-11">P/E</div><div class="val">40.6</div></div>
-      <div class="cell"><div class="label-11">EV/EBITDA</div><div class="val">18.9</div></div>
+      <div class="cell"><div class="label-11">P/E</div><div class="val">40.6</div><div class="sub-note">62nd pct. of 3Y range (28–52)</div></div>
+      <div class="cell"><div class="label-11">EV/EBITDA</div><div class="val">18.9</div><div class="sub-note">55th pct. of 3Y range (12–24)</div></div>
       <div class="cell"><div class="label-11">EV/Sales</div><div class="val">3.4</div></div>
       <div class="cell"><div class="label-11">P/FCF</div><div class="val">32.3</div></div>
       <div class="cell"><div class="label-11">EV / Gross Profit</div><div class="val">32.3</div></div>
-      <div class="cell"><div class="label-11">P/B</div><div class="val">8.2</div></div>
+      <div class="cell"><div class="label-11">P/B</div><div class="val">8.2</div><div class="sub-note">71st pct. of 3Y range (4.1–9.6)</div></div>
+      <div class="cell"><div class="label-11">Beta (5Y monthly)</div><div class="val">1.35</div></div>
     </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Ownership & Insider Activity -->
+  <div class="ownership-section">
+    <div class="section-header">Ownership</div>
+    <div class="keystats-grid" style="margin-top:20px;">
+      <div class="cell"><div class="label-11">Institutional Ownership</div><div class="val">71.4%</div></div>
+      <div class="cell"><div class="label-11">Insider Ownership</div><div class="val">9.8%</div></div>
+      <div class="cell"><div class="label-11">Short % of Float</div><div class="val">2.1%</div></div>
+      <div class="cell"><div class="label-11">Days to Cover</div><div class="val">1.6</div></div>
+    </div>
+
+    <div class="ownership-subhead">Top Institutional Holders</div>
+    <div class="ownership-holders">
+      <div class="ownership-holder-row"><span class="k">Vanguard Group</span><span class="v">8.9%</span></div>
+      <div class="ownership-holder-row"><span class="k">BlackRock</span><span class="v">7.4%</span></div>
+      <div class="ownership-holder-row"><span class="k">State Street</span><span class="v">4.1%</span></div>
+      <div class="ownership-holder-row"><span class="k">FMR (Fidelity)</span><span class="v">3.2%</span></div>
+    </div>
+    <div class="finrel-footnote">Based on most recent 13F filings, reported quarterly with a delay.</div>
+
+    <div class="ownership-subhead">Recent Insider Transactions</div>
+    <div class="history-list">
+      <div class="history-item">
+        <div class="col">
+          <div class="history-date">08.14.26</div>
+          <div class="history-type">Buy <span class="suffix">· Open Market</span></div>
+          <div class="history-account">R. Halden &middot; CEO</div>
+        </div>
+        <div class="col col--right">
+          <div class="history-price">84.10</div>
+          <div class="history-shares">12,000 shares</div>
+        </div>
+      </div>
+      <div class="history-item">
+        <div class="col">
+          <div class="history-date">08.02.26</div>
+          <div class="history-type all-muted">Sell <span class="suffix">· 10b5-1 Plan</span></div>
+          <div class="history-account">M. Oyelaran &middot; CFO</div>
+        </div>
+        <div class="col col--right">
+          <div class="history-price muted">86.40</div>
+          <div class="history-shares">4,500 shares</div>
+        </div>
+      </div>
+      <div class="history-item">
+        <div class="col">
+          <div class="history-date">07.21.26</div>
+          <div class="history-type">Buy <span class="suffix">· Open Market</span></div>
+          <div class="history-account">J. Farrow &middot; Director</div>
+        </div>
+        <div class="col col--right">
+          <div class="history-price">79.85</div>
+          <div class="history-shares">2,200 shares</div>
+        </div>
+      </div>
+      <div class="history-item">
+        <div class="col">
+          <div class="history-date">06.30.26</div>
+          <div class="history-type all-muted">Sell <span class="suffix">· 10b5-1 Plan</span></div>
+          <div class="history-account">R. Halden &middot; CEO</div>
+        </div>
+        <div class="col col--right">
+          <div class="history-price muted">81.20</div>
+          <div class="history-shares">3,000 shares</div>
+        </div>
+      </div>
+    </div>
+    <div class="finrel-footnote">Based on SEC Form 4 filings. Open-market transactions are discretionary; 10b5-1 trades follow a pre-set plan and are less informative on their own.</div>
   </div>
 
   <div class="divider"></div>
@@ -3411,8 +3531,9 @@ p { margin: 0; }
     <section class="info-section">
       <span class="info-num">07</span>
       <h2 class="info-h2">Company Profile</h2>
-      <p class="info-body">Company Profile provides a high-level overview of the business and basic company information.</p>
-      <p class="info-body">Price history and market data provide additional context, including trading ranges, volume, market capitalization, shares outstanding, dividend yield, and other market information.</p>
+      <p class="info-body">Company Profile provides a high-level overview of the business and basic company information, plus sector peers for a quick relative read.</p>
+      <p class="info-body">Price history and market data provide additional context, including trading ranges, volume, market capitalization, shares outstanding, dividend yield, beta, institutional and insider ownership, and short interest — the positioning data that shows who else holds the stock and how it behaves relative to the market.</p>
+      <p class="info-body">Valuation multiples (P/E, EV/EBITDA, P/B) are shown alongside where they sit in the stock's own 3-year range, so a multiple reads as cheap or expensive relative to its own history, not just as a bare number.</p>
     </section>
     <hr class="info-hr">
 
