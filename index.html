@@ -850,8 +850,14 @@ p { margin: 0; }
 }
 .link-row[hidden] { display: none; }
 .research-prompt-link {
+  width: calc(100% - 40px);
   margin: 20px 20px 0;
   padding-bottom: 0;
+  background: none;
+  border: none;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
 }
 .section-cta {
   margin-top: 20px;
@@ -982,23 +988,6 @@ p { margin: 0; }
   color: #c7c7c7;
   letter-spacing: -0.28px;
 }
-.peer-block { margin-top: 30px; }
-.peer-row {
-  margin-top: 12px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-.peer-item {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 13px;
-  color: #ffffff;
-  letter-spacing: -0.28px;
-}
-.peer-item .stat-arrow { margin-left: 0; }
-.peer-pct { font-size: 12px; color: #929292; letter-spacing: -0.24px; }
 .chart-popup {
   position: absolute;
   top: -130px;
@@ -1509,30 +1498,7 @@ p { margin: 0; }
   color: #ffffff;
   letter-spacing: -0.28px;
 }
-.keystats-grid .sub-note {
-  font-size: 10px;
-  color: #6b6b6b;
-  letter-spacing: -0.2px;
-}
 .keystats-grid { padding-bottom: 15px; }
-
-/* ---------- Ownership & Insider Activity ---------- */
-.ownership-section { margin: 0 20px; padding-bottom: 40px; }
-.ownership-subhead { margin-top: 32px; font-size: 15px; color: #ffffff; letter-spacing: -0.14px; }
-.ownership-holders {
-  margin-top: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-.ownership-holder-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-}
-.ownership-holder-row .k { font-size: 14px; color: #929292; letter-spacing: -0.28px; }
-.ownership-holder-row .v { font-size: 15px; color: #ffffff; letter-spacing: -0.3px; }
-.ownership-section .history-list { margin-top: 16px; }
 
 /* ---------- Financials ---------- */
 .finrel-section { margin: 0 20px; }
@@ -1571,6 +1537,7 @@ p { margin: 0; }
   letter-spacing: -0.22px;
   line-height: 1.6;
 }
+
 /* ---------- Investor Relations detail overlay ---------- */
 .ir-overlay {
   position: absolute;
@@ -1740,6 +1707,60 @@ p { margin: 0; }
   overflow: hidden;
   pointer-events: none;
 }
+
+/* ---------- Research Prompt overlay (1:1 recreation of the Figma "Allocator's
+   Guide" frame — node 2661:3039, file 1lnXbGO2ljBgEupHyTpyL8 — its own
+   dedicated classes, not shared with the other info sheets, since the type
+   scale/colors/rhythm here are deliberately different from those.) ---------- */
+.rp-overlay {
+  position: absolute;
+  inset: 14px;
+  border-radius: 30px;
+  background: #F4F2EB;
+  color: #1A1A1A;
+  z-index: 200;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+.rp-overlay::-webkit-scrollbar { display: none; width: 0; height: 0; }
+.rp-overlay[hidden] { display: none; }
+.rp-handle-row { display: flex; justify-content: center; padding-top: 12px; }
+.rp-handle { width: 36px; height: 4px; border-radius: 2px; background: #D6D4CC; }
+.rp-top { display: flex; align-items: center; justify-content: space-between; padding: 28px 20px 0; }
+.rp-eyebrow { font-size: 11px; font-weight: 500; letter-spacing: 1.32px; text-transform: uppercase; color: #8B8B84; }
+.rp-close { background: none; border: none; padding: 4px; margin: -4px; cursor: pointer; color: #1A1A1A; font-size: 15px; line-height: 1; }
+.rp-title { margin: 44px 20px 0; max-width: 90%; font-size: 34px; font-weight: 600; text-transform: uppercase; letter-spacing: -0.34px; line-height: 1.14; color: #1A1A1A; }
+.rp-subtitle { margin: 44px 20px 0; font-size: 19px; line-height: 1.33; color: #8B8B84; }
+.rp-image-wrap { margin: 50px 20px 0; }
+.rp-image-wrap svg { display: block; width: 100%; height: auto; }
+.rp-contents { margin: 73px 20px 0 20px; padding-bottom: 1px; border-top: 1px solid #1A1A1A; }
+.rp-contents-label { display: block; font-size: 13px; font-weight: 500; color: #8B8B84; letter-spacing: 0.04em; padding: 22px 0 6px; }
+.rp-toc-row { display: flex; align-items: baseline; gap: 16px; padding: 14px 0; border-bottom: 1px solid #DEDCD4; }
+.rp-toc-row:last-child { border-bottom: 1px solid #1A1A1A; }
+.rp-toc-num { flex: none; width: 20px; font-size: 13px; color: #8B8B84; font-weight: 600; }
+.rp-toc-title { font-size: 16px; color: #8B8B84; }
+
+.rp-section { margin: 88px 20px 0; }
+.rp-kicker { display: flex; align-items: baseline; gap: 12px; }
+.rp-kicker-num { font-size: 13px; color: #8B8B84; }
+.rp-kicker-label { font-size: 13px; font-weight: 500; color: #1A1A1A; letter-spacing: 0.26px; }
+.rp-h { margin-top: 26px; font-size: 21px; font-weight: 600; line-height: 1.25; letter-spacing: -0.1px; color: #1A1A1A; }
+.rp-p { margin-top: 24px; font-size: 16px; line-height: 1.65; color: #55554F; }
+.rp-p.rp-p-tight { margin-top: 8px; }
+.rp-bold { color: #1A1A1A; font-weight: 600; }
+.rp-sub { margin-top: 32px; }
+.rp-sub-num { display: block; font-size: 13px; color: #8B8B84; }
+.rp-sub-title { margin-top: 2px; font-size: 16px; font-weight: 600; color: #1A1A1A; line-height: 1.25; }
+
+.rp-closing-hr { margin: 88px 20px 0; border: 0; border-top: 1px solid #1A1A1A; }
+.rp-closing { margin: 30px 20px 0; font-size: 18px; line-height: 1.28; color: #1A1A1A; }
+.rp-closing.rp-bold { font-weight: 600; }
+.rp-caption { margin: 24px 20px 0; font-size: 13px; color: #8B8B84; }
+.rp-footer-hr { margin: 32px 20px 0; border: 0; border-top: 1px solid #1A1A1A; }
+.rp-footer { margin: 0 20px; padding-bottom: 40px; }
+.rp-footer-row { display: flex; justify-content: space-between; padding: 14px 0; }
+.rp-footer-k { font-size: 15px; color: #8B8B84; }
+.rp-footer-v { font-size: 15px; font-weight: 600; color: #1A1A1A; }
 
 /* ---------- Position detail overlay (blended: real-app design + performance-dashboard data) ---------- */
 .pos-detail-title { text-align: right; margin-top: 24px; }
@@ -2620,7 +2641,7 @@ p { margin: 0; }
   <div class="activity-feed" id="activityFeed">
     <div class="activity-row activity-row--link" id="earningsActivityRow" role="button" tabindex="0">
       <div class="dot dot--amber"></div>
-      <p>KSTL Q2 FY26 earnings <span class="muted" id="earningsActivityWhen">in 45 days</span><span class="muted"> &middot; implied move <span id="earningsImpliedMove">&plusmn;6.8%</span></span></p>
+      <p>KSTL Q2 FY26 earnings <span class="muted" id="earningsActivityWhen">in 45 days</span></p>
       <span class="chev activity-row__chev">›</span>
     </div>
     <div class="activity-row">
@@ -2969,15 +2990,6 @@ p { margin: 0; }
       <div class="cell"><div class="label-11">Fiscal year end</div><div class="val">January</div></div>
       <div class="cell"><div class="label-11">Free float</div><div class="val">96.1%</div></div>
     </div>
-
-    <div class="peer-block">
-      <div class="label-11">Sector Peers</div>
-      <div class="peer-row">
-        <span class="peer-item">NVDA <span class="stat-arrow is-up">▲</span> <span class="peer-pct">+0.8%</span></span>
-        <span class="peer-item">AVGO <span class="stat-arrow is-down">▼</span> <span class="peer-pct">-0.3%</span></span>
-        <span class="peer-item">AMD <span class="stat-arrow is-up">▲</span> <span class="peer-pct">+1.4%</span></span>
-      </div>
-    </div>
   </div>
 
   <!-- Chart section -->
@@ -3152,85 +3164,13 @@ p { margin: 0; }
       <div class="cell"><div class="label-11">Enterprise Value (EV)</div><div class="val">903.3M</div></div>
       <div class="cell"><div class="label-11">Shares Outstanding</div><div class="val">115.3M</div></div>
       <div class="cell"><div class="label-11">Dividend Yield</div><div class="val">-</div></div>
-      <div class="cell"><div class="label-11">P/E</div><div class="val">40.6</div><div class="sub-note">62nd pct. of 3Y range (28–52)</div></div>
-      <div class="cell"><div class="label-11">EV/EBITDA</div><div class="val">18.9</div><div class="sub-note">55th pct. of 3Y range (12–24)</div></div>
+      <div class="cell"><div class="label-11">P/E</div><div class="val">40.6</div></div>
+      <div class="cell"><div class="label-11">EV/EBITDA</div><div class="val">18.9</div></div>
       <div class="cell"><div class="label-11">EV/Sales</div><div class="val">3.4</div></div>
       <div class="cell"><div class="label-11">P/FCF</div><div class="val">32.3</div></div>
       <div class="cell"><div class="label-11">EV / Gross Profit</div><div class="val">32.3</div></div>
-      <div class="cell"><div class="label-11">P/B</div><div class="val">8.2</div><div class="sub-note">71st pct. of 3Y range (4.1–9.6)</div></div>
-      <div class="cell"><div class="label-11">Beta (5Y monthly)</div><div class="val">1.35</div></div>
+      <div class="cell"><div class="label-11">P/B</div><div class="val">8.2</div></div>
     </div>
-  </div>
-
-  <div class="divider"></div>
-
-  <!-- Ownership & Insider Activity -->
-  <div class="ownership-section">
-    <div class="section-header">Ownership</div>
-    <div class="keystats-grid" style="margin-top:20px;">
-      <div class="cell"><div class="label-11">Institutional Ownership</div><div class="val">71.4%</div></div>
-      <div class="cell"><div class="label-11">Insider Ownership</div><div class="val">9.8%</div></div>
-      <div class="cell"><div class="label-11">Short % of Float</div><div class="val">2.1%</div></div>
-      <div class="cell"><div class="label-11">Days to Cover</div><div class="val">1.6</div></div>
-    </div>
-
-    <div class="ownership-subhead">Top Institutional Holders</div>
-    <div class="ownership-holders">
-      <div class="ownership-holder-row"><span class="k">Vanguard Group</span><span class="v">8.9%</span></div>
-      <div class="ownership-holder-row"><span class="k">BlackRock</span><span class="v">7.4%</span></div>
-      <div class="ownership-holder-row"><span class="k">State Street</span><span class="v">4.1%</span></div>
-      <div class="ownership-holder-row"><span class="k">FMR (Fidelity)</span><span class="v">3.2%</span></div>
-    </div>
-    <div class="finrel-footnote">Based on most recent 13F filings, reported quarterly with a delay.</div>
-
-    <div class="ownership-subhead">Recent Insider Transactions</div>
-    <div class="history-list">
-      <div class="history-item">
-        <div class="col">
-          <div class="history-date">08.14.26</div>
-          <div class="history-type">Buy <span class="suffix">· Open Market</span></div>
-          <div class="history-account">R. Halden &middot; CEO</div>
-        </div>
-        <div class="col col--right">
-          <div class="history-price">84.10</div>
-          <div class="history-shares">12,000 shares</div>
-        </div>
-      </div>
-      <div class="history-item">
-        <div class="col">
-          <div class="history-date">08.02.26</div>
-          <div class="history-type all-muted">Sell <span class="suffix">· 10b5-1 Plan</span></div>
-          <div class="history-account">M. Oyelaran &middot; CFO</div>
-        </div>
-        <div class="col col--right">
-          <div class="history-price muted">86.40</div>
-          <div class="history-shares">4,500 shares</div>
-        </div>
-      </div>
-      <div class="history-item">
-        <div class="col">
-          <div class="history-date">07.21.26</div>
-          <div class="history-type">Buy <span class="suffix">· Open Market</span></div>
-          <div class="history-account">J. Farrow &middot; Director</div>
-        </div>
-        <div class="col col--right">
-          <div class="history-price">79.85</div>
-          <div class="history-shares">2,200 shares</div>
-        </div>
-      </div>
-      <div class="history-item">
-        <div class="col">
-          <div class="history-date">06.30.26</div>
-          <div class="history-type all-muted">Sell <span class="suffix">· 10b5-1 Plan</span></div>
-          <div class="history-account">R. Halden &middot; CEO</div>
-        </div>
-        <div class="col col--right">
-          <div class="history-price muted">81.20</div>
-          <div class="history-shares">3,000 shares</div>
-        </div>
-      </div>
-    </div>
-    <div class="finrel-footnote">Based on SEC Form 4 filings. Open-market transactions are discretionary; 10b5-1 trades follow a pre-set plan and are less informative on their own.</div>
   </div>
 
   <div class="divider"></div>
@@ -3275,7 +3215,7 @@ p { margin: 0; }
     </a>
   </div>
 
-  <a class="link-row research-prompt-link" href="#">Research Prompt <span class="chev">›</span></a>
+  <button type="button" class="link-row research-prompt-link" id="researchPromptTrigger">Research Prompt <span class="chev">›</span></button>
 
   <div class="divider" style="margin-top:40px;"></div>
 
@@ -3531,9 +3471,8 @@ p { margin: 0; }
     <section class="info-section">
       <span class="info-num">07</span>
       <h2 class="info-h2">Company Profile</h2>
-      <p class="info-body">Company Profile provides a high-level overview of the business and basic company information, plus sector peers for a quick relative read.</p>
-      <p class="info-body">Price history and market data provide additional context, including trading ranges, volume, market capitalization, shares outstanding, dividend yield, beta, institutional and insider ownership, and short interest — the positioning data that shows who else holds the stock and how it behaves relative to the market.</p>
-      <p class="info-body">Valuation multiples (P/E, EV/EBITDA, P/B) are shown alongside where they sit in the stock's own 3-year range, so a multiple reads as cheap or expensive relative to its own history, not just as a bare number.</p>
+      <p class="info-body">Company Profile provides a high-level overview of the business and basic company information.</p>
+      <p class="info-body">Price history and market data provide additional context, including trading ranges, volume, market capitalization, shares outstanding, dividend yield, and other market information.</p>
     </section>
     <hr class="info-hr">
 
@@ -3733,6 +3672,185 @@ p { margin: 0; }
         <tr><td class="k">Rank among open positions</td><td class="v">Where this position sits versus your other open positions, ranked by gain</td></tr>
       </tbody>
     </table>
+  </div>
+
+  <!-- Research Prompt overlay -->
+  <div class="rp-overlay" id="researchPromptOverlay" hidden>
+    <div class="rp-handle-row"><div class="rp-handle"></div></div>
+    <div class="rp-top">
+      <span class="rp-eyebrow">The Allocator's Guide</span>
+      <button type="button" class="rp-close" id="researchPromptCloseBtn" aria-label="Close">✕</button>
+    </div>
+
+    <h1 class="rp-title">The Allocator's Guide to Using AI</h1>
+    <p class="rp-subtitle">How to use these tools — and any AI — without surrendering your judgment.</p>
+
+    <div class="rp-image-wrap">
+      <svg viewBox="0 0 353 250" preserveAspectRatio="xMidYMid meet">
+        <rect x="0" y="0" width="353" height="250" fill="#141414"></rect>
+        <rect x="43.5" y="70.5" width="110" height="110" fill="none" stroke="#8B8B84" stroke-width="1"></rect>
+        <line x1="176.5" y1="50" x2="176.5" y2="200" stroke="#8B8B84" stroke-width="1"></line>
+        <rect x="200" y="70" width="110" height="110" fill="#D6D4CC"></rect>
+      </svg>
+    </div>
+
+    <div class="rp-contents">
+      <span class="rp-contents-label">Contents</span>
+      <div class="rp-toc-row"><span class="rp-toc-num">01</span><span class="rp-toc-title">The First Principle</span></div>
+      <div class="rp-toc-row"><span class="rp-toc-num">02</span><span class="rp-toc-title">On the Prompt We Include</span></div>
+      <div class="rp-toc-row"><span class="rp-toc-num">03</span><span class="rp-toc-title">What the Model Is</span></div>
+      <div class="rp-toc-row"><span class="rp-toc-num">04</span><span class="rp-toc-title">What the Model Cannot Do</span></div>
+      <div class="rp-toc-row"><span class="rp-toc-num">05</span><span class="rp-toc-title">The Failure Modes</span></div>
+      <div class="rp-toc-row"><span class="rp-toc-num">06</span><span class="rp-toc-title">Working Practice</span></div>
+      <div class="rp-toc-row"><span class="rp-toc-num">07</span><span class="rp-toc-title">The Right Perspective</span></div>
+    </div>
+
+    <section class="rp-section">
+      <div class="rp-kicker"><span class="rp-kicker-num">01</span><span class="rp-kicker-label">The First Principle</span></div>
+      <h2 class="rp-h">The AI is the associate. You are the allocator.</h2>
+      <p class="rp-p">You know what to do with an associate's work. You read it for what it surfaces, you check what it asserts, and you throw out the parts that do not survive contact with what you already know.</p>
+      <p class="rp-p">Nothing about this tool changes that relationship. It only makes the associate faster, cheaper, more available at midnight — and considerably more confident than the work warrants.</p>
+      <p class="rp-p rp-bold">Allocator development cannot be delegated.</p>
+    </section>
+
+    <section class="rp-section">
+      <div class="rp-kicker"><span class="rp-kicker-num">02</span><span class="rp-kicker-label">On the Prompt We Include</span></div>
+      <h2 class="rp-h">We include a research prompt. It is a convenience, not a prescription.</h2>
+      <p class="rp-p">It produces a starting board: what the business does, how it might be classified and what supports each reading, the bull and bear cases at equal weight, what would break the thesis, what drives value, and the figures most likely to change the picture if they are wrong.</p>
+      <div class="rp-sub">
+        <div class="rp-sub-title">It withholds four judgments deliberately</div>
+        <p class="rp-p rp-p-tight">classification, portfolio role, intrinsic value, and any verdict on attractiveness. Not because the model cannot generate them. Because a conclusion you did not build is worthless to you: undefendable in a drawdown, unscoreable afterward, and indistinguishable in the moment from one that is right.</p>
+      </div>
+      <div class="rp-sub">
+        <div class="rp-sub-title">Two consequences of that design, stated plainly:</div>
+        <p class="rp-p rp-p-tight">The board weighs competing views evenly by mandate. Real evidence rarely balances.</p>
+      </div>
+      <p class="rp-p rp-bold">So the board will present a 70/30 argument as though it were 50/50, and the symmetry tells you nothing.</p>
+      <p class="rp-p">Finding the lean is your work, and it starts on your second question.</p>
+      <p class="rp-p">And the board is scaffolding, not research. The conversation after it is where the tool earns anything. An operator who reads the board and stops has used a fraction of what is there.</p>
+      <p class="rp-p rp-bold">If you have a process, use it.</p>
+      <p class="rp-p">The prompt exists because a blank box is a bad starting point for a tool most people have not yet learned to distrust correctly. If that is not your problem, discard it. Everything below applies to whatever you type instead.</p>
+    </section>
+
+    <section class="rp-section">
+      <div class="rp-kicker"><span class="rp-kicker-num">03</span><span class="rp-kicker-label">What the Model Is</span></div>
+      <p class="rp-p" style="margin-top:26px;">An LLM is a consensus engine trained on public information. Three consequences bear on allocation:</p>
+      <div class="rp-sub">
+        <span class="rp-sub-num">01</span>
+        <div class="rp-sub-title">It is strongest where it matters least.</div>
+        <p class="rp-p rp-p-tight">The model is most reliable on facts the market already knows — which are, definitionally, in the price. Reliability and alpha live in different places.</p>
+      </div>
+      <div class="rp-sub">
+        <span class="rp-sub-num">02</span>
+        <div class="rp-sub-title">It is weakest where alpha lives.</div>
+        <p class="rp-p rp-p-tight">Non-consensus truths are under-represented in the training by construction. On your best ideas, the model is structurally biased toward the market's side of the argument.</p>
+        <p class="rp-p">This one has a use. When the model resists your thesis, it is showing you the consensus, not evidence about the company. That is worth knowing precisely. It is not worth mistaking for a counterargument.</p>
+      </div>
+      <div class="rp-sub">
+        <span class="rp-sub-num">03</span>
+        <div class="rp-sub-title">It is fluent regardless of whether it is correct.</div>
+        <p class="rp-p rp-p-tight">Coherence is the output format, not a signal of quality. The model produces it on demand, for true theses and false ones alike, at identical polish.</p>
+      </div>
+      <p class="rp-p rp-bold">Associates do excellent work. Allocators decide.</p>
+    </section>
+
+    <section class="rp-section">
+      <div class="rp-kicker"><span class="rp-kicker-num">04</span><span class="rp-kicker-label">What the Model Cannot Do</span></div>
+      <h2 class="rp-h">Four things, permanently.</h2>
+      <div class="rp-sub">
+        <span class="rp-sub-num">01</span>
+        <div class="rp-sub-title">It cannot verify.</div>
+        <p class="rp-p rp-p-tight">The model cannot distinguish what it knows from what it is reconstructing — recall and confabulation are indistinguishable from the inside and identical on the page. The [VERIFY] flags mark where it noticed its own uncertainty. They do not mark the boundary of it.</p>
+      </div>
+      <div class="rp-sub">
+        <span class="rp-sub-num">02</span>
+        <div class="rp-sub-title">It cannot gather the deciding evidence.</div>
+        <p class="rp-p rp-p-tight">Customer enthusiasm, product usage, the read across a table, channel checks. The evidence that settles your best ideas sits outside the public record — which puts it outside the model permanently, regardless of how good the model gets.</p>
+      </div>
+      <div class="rp-sub">
+        <span class="rp-sub-num">03</span>
+        <div class="rp-sub-title">It cannot own the decision.</div>
+        <p class="rp-p rp-p-tight">If the position works, you earned it. If it fails, there is no prompt to point at. Accountability is the price of judgment and it is non-transferable.</p>
+      </div>
+      <div class="rp-sub">
+        <span class="rp-sub-num">04</span>
+        <div class="rp-sub-title">It cannot be calibrated for you.</div>
+        <p class="rp-p rp-p-tight">The model has never been scored on a prediction. No track record, no feedback, no memory of being wrong. The board produces no probabilities — but you can extract one in conversation, and if you do, know what you are holding: a fluent guess with nothing behind it. Argue with it. Never size from it.</p>
+      </div>
+    </section>
+
+    <section class="rp-section">
+      <div class="rp-kicker"><span class="rp-kicker-num">05</span><span class="rp-kicker-label">The Failure Modes</span></div>
+      <h2 class="rp-h">Five. The first and fourth are the expensive ones.</h2>
+      <div class="rp-sub">
+        <span class="rp-sub-num">01</span>
+        <div class="rp-sub-title">Confabulation.</div>
+        <p class="rp-p rp-p-tight">The most dangerous output this tool produces is a specific figure that looks sourced and is not. Precision reads as provenance: "gross margin expanded 240bps to 61.3%" carries more false authority than "margins improved," because the decimal implies a filing behind it. There is not always a filing behind it. The model completes patterns, and a plausible number completes the pattern as cleanly as the true one.</p>
+      </div>
+      <div class="rp-sub">
+        <span class="rp-sub-num">02</span>
+        <div class="rp-sub-title">Enforced symmetry.</div>
+        <p class="rp-p rp-p-tight">Covered above. The balance is a design artifact, not a finding. The board will not lean; ask it to, and make it defend the lean.</p>
+      </div>
+      <div class="rp-sub">
+        <span class="rp-sub-num">03</span>
+        <div class="rp-sub-title">Narrative confidence.</div>
+        <p class="rp-p rp-p-tight">Stated confidence tracks the coherence of the model's own story, not the quality of the evidence under it. A tight narrative on three unverified figures reads better than a messy one on audited filings. This is the failure that survives sophistication — you can know it and still be moved by good prose at 11pm.</p>
+      </div>
+      <div class="rp-sub">
+        <span class="rp-sub-num">04</span>
+        <div class="rp-sub-title">Sycophancy.</div>
+        <p class="rp-p rp-p-tight">The one that costs money, and the design makes it worse rather than better.</p>
+        <p class="rp-p">Because the board hands you the judgments, the model holds no view of its own. The moment you state yours, there is nothing for it to drift from. It will find your framing insightful. It will locate support for the position you just announced. It will do this in the register of an analyst who has considered the matter.</p>
+        <p class="rp-p">The unprimed response is the only clean one you get. After that, watch the fold: if one sentence from you reverses its position, you did not persuade it — you revealed a preference and it obliged. Note that and discount accordingly.</p>
+      </div>
+      <div class="rp-sub">
+        <span class="rp-sub-num">05</span>
+        <div class="rp-sub-title">Staleness.</div>
+        <p class="rp-p rp-p-tight">The cutoff is known; the model's sense of now is not. It will discuss last year's guidance in the present tense without flagging it. Anything that moves gets pulled fresh, never recalled.</p>
+      </div>
+    </section>
+
+    <section class="rp-section">
+      <div class="rp-kicker"><span class="rp-kicker-num">06</span><span class="rp-kicker-label">Working Practice</span></div>
+      <h2 class="rp-h">Not rules. Consequences of the four limits above.</h2>
+      <p class="rp-p rp-bold">The ideas you love need the scrutiny most.</p>
+      <p class="rp-p rp-p-tight">Whatever your process, the failure is never the idea you were skeptical of. Consistency is the whole mechanism — and a tool that never tires is useful here precisely because you do.</p>
+      <p class="rp-p rp-bold">Verify before you form the view, not after.</p>
+      <p class="rp-p rp-p-tight">Confirming a figure you have already built a thesis around is not verification. It is looking for permission. Anything you cannot confirm, strike. If striking it collapses the case, that is the most valuable thing the board will ever tell you.</p>
+      <p class="rp-p rp-bold">Make it argue.</p>
+      <p class="rp-p rp-p-tight">It will not attack your thesis unprompted — it is built not to lead. So instruct it: steelman the opposite, name the weakest link, say what was smoothed over. An associate who agrees with you because you told them what you thought is not neutral. They are doing damage.</p>
+      <p class="rp-p rp-bold">Go where it cannot.</p>
+      <p class="rp-p rp-p-tight">The board's honesty about its own limits is the useful part. Those boundaries are assignments. Everyone will have the same board; the edge is in who went and looked.</p>
+      <p class="rp-p rp-bold">Carry it forward in your own words.</p>
+      <p class="rp-p rp-p-tight">Your classification, your estimate, your conditions for being wrong — with the model's reasoning underneath rather than in front. If you cannot write it yourself, you do not understand it well enough to own it.</p>
+      <p class="rp-p rp-bold">Score your own judgments.</p>
+      <p class="rp-p rp-p-tight">The model produces no probabilities. You do. Write them down before the outcome — what you chose, what you estimated, what you said would break it, how confident you were. Then check.</p>
+      <p class="rp-p">The model can never learn whether its guesses mean anything. <span class="rp-bold">You can. That asymmetry is the only edge here that no prompt can hand you.</span></p>
+      <p class="rp-p rp-bold">Never let it size the position.</p>
+      <p class="rp-p rp-p-tight">The model surfaces the opportunity. The evidence justifies the confidence. You commit the capital. Sophisticated allocators do not concentrate because an associate was articulate.</p>
+    </section>
+
+    <section class="rp-section">
+      <div class="rp-kicker"><span class="rp-kicker-num">07</span><span class="rp-kicker-label">The Right Perspective</span></div>
+      <h2 class="rp-h">Most investors will use AI to act faster. The opportunity is to use it to think better.</h2>
+      <p class="rp-p">Used badly, the model is a confidence machine: conviction without calibration, fluency without evidence, answers without ownership. That is the failure the industry already sells — speculation in the costume of research — now with better prose and no marginal cost.</p>
+      <p class="rp-p">Used well, it is judgment infrastructure: it forces every idea through the same gauntlet, surfaces the bear case you did not want, names the assumptions you were carrying silently, and tells you honestly where its own sight ends.</p>
+      <p class="rp-p">That last one is the whole test. A tool that knows its limits and says so is worth more than one that appears to have none.</p>
+    </section>
+
+    <hr class="rp-closing-hr">
+    <p class="rp-closing rp-bold">The difference is not the tool. The difference is the allocator.</p>
+    <p class="rp-closing">The market will not grade the board. The market will grade the decision.</p>
+    <p class="rp-closing rp-bold">The decision is yours. That is the point.</p>
+    <p class="rp-caption">Available anytime from Research Prompt.</p>
+
+    <hr class="rp-footer-hr">
+    <div class="rp-footer">
+      <div class="rp-footer-row"><span class="rp-footer-k">Subject</span><span class="rp-footer-v">Using AI</span></div>
+      <div class="rp-footer-row"><span class="rp-footer-k">Edition</span><span class="rp-footer-v">08 / 08</span></div>
+      <div class="rp-footer-row"><span class="rp-footer-k">Year</span><span class="rp-footer-v">2026</span></div>
+    </div>
   </div>
 
   <!-- Financials detail overlay -->
@@ -5400,6 +5518,12 @@ p { margin: 0; }
   var infoCloseBtn = document.getElementById('infoCloseBtn');
   infoBtn.addEventListener('click', function () { infoOverlay.hidden = false; });
   infoCloseBtn.addEventListener('click', function () { infoOverlay.hidden = true; });
+
+  var researchPromptTrigger = document.getElementById('researchPromptTrigger');
+  var researchPromptOverlay = document.getElementById('researchPromptOverlay');
+  var researchPromptCloseBtn = document.getElementById('researchPromptCloseBtn');
+  researchPromptTrigger.addEventListener('click', function () { researchPromptOverlay.hidden = false; });
+  researchPromptCloseBtn.addEventListener('click', function () { researchPromptOverlay.hidden = true; });
 
   /* ---------- Position detail overlay ---------- */
   var positionHeaderTriggerEl = document.getElementById('positionHeaderTrigger');
