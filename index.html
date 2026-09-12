@@ -849,16 +849,28 @@ p { margin: 0; }
   padding-bottom: 40px;
 }
 .link-row[hidden] { display: none; }
-.research-prompt-link {
-  width: calc(100% - 40px);
+.research-prompt-row {
   margin: 20px 20px 0;
   padding-bottom: 0;
+  justify-content: space-between;
+  gap: 12px;
+}
+.research-prompt-trigger, .allocators-guide-trigger {
+  display: flex;
+  align-items: center;
+  gap: 7px;
   background: none;
   border: none;
+  padding: 0;
   font-family: inherit;
-  text-align: left;
+  color: #929292;
+  font-size: 11px;
+  letter-spacing: -0.22px;
+  text-transform: capitalize;
   cursor: pointer;
+  flex-shrink: 0;
 }
+.allocators-guide-trigger .info-icon { font-size: 12px; }
 .section-cta {
   margin-top: 20px;
   padding-bottom: 0;
@@ -1761,6 +1773,26 @@ p { margin: 0; }
 .rp-footer-row { display: flex; justify-content: space-between; padding: 14px 0; }
 .rp-footer-k { font-size: 15px; color: #8B8B84; }
 .rp-footer-v { font-size: 15px; font-weight: 600; color: #1A1A1A; }
+.rp-copy-btn { background: none; border: none; padding: 4px; margin: -4px; cursor: pointer; color: #1A1A1A; display: flex; align-items: center; }
+.rp-top-icons { display: flex; align-items: center; gap: 16px; }
+.rp-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 40px;
+  transform: translateX(-50%) translateY(6px);
+  background: #1A1A1A;
+  color: #F4F2EB;
+  font-size: 12.5px;
+  letter-spacing: -0.01em;
+  padding: 9px 14px;
+  border-radius: 4px;
+  opacity: 0;
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 300;
+  transition: opacity 200ms ease, transform 200ms ease;
+}
+.rp-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
 /* ---------- Position detail overlay (blended: real-app design + performance-dashboard data) ---------- */
 .pos-detail-title { text-align: right; margin-top: 24px; }
@@ -3215,7 +3247,10 @@ p { margin: 0; }
     </a>
   </div>
 
-  <button type="button" class="link-row research-prompt-link" id="researchPromptTrigger">Research Prompt <span class="chev">›</span></button>
+  <div class="link-row research-prompt-row">
+    <button type="button" class="research-prompt-trigger" id="researchPromptTrigger">Research Prompt <span class="chev">›</span></button>
+    <button type="button" class="allocators-guide-trigger" id="allocatorsGuideTrigger">The Allocator's Guide <span class="info-icon">ⓘ</span></button>
+  </div>
 
   <div class="divider" style="margin-top:40px;"></div>
 
@@ -3675,11 +3710,11 @@ p { margin: 0; }
   </div>
 
   <!-- Research Prompt overlay -->
-  <div class="rp-overlay" id="researchPromptOverlay" hidden>
+  <div class="rp-overlay" id="allocatorsGuideOverlay" hidden>
     <div class="rp-handle-row"><div class="rp-handle"></div></div>
     <div class="rp-top">
       <span class="rp-eyebrow">The Allocator's Guide</span>
-      <button type="button" class="rp-close" id="researchPromptCloseBtn" aria-label="Close">✕</button>
+      <button type="button" class="rp-close" id="allocatorsGuideCloseBtn" aria-label="Close">✕</button>
     </div>
 
     <h1 class="rp-title">The Allocator's Guide to Using AI</h1>
@@ -3851,6 +3886,139 @@ p { margin: 0; }
       <div class="rp-footer-row"><span class="rp-footer-k">Edition</span><span class="rp-footer-v">08 / 08</span></div>
       <div class="rp-footer-row"><span class="rp-footer-k">Year</span><span class="rp-footer-v">2026</span></div>
     </div>
+  </div>
+
+  <!-- Research Prompt overlay (the actual copyable prompt document) -->
+  <div class="rp-overlay" id="researchPromptOverlay" hidden>
+    <div class="rp-handle-row"><div class="rp-handle"></div></div>
+    <div class="rp-top">
+      <span class="rp-eyebrow">Research Prompt</span>
+      <div class="rp-top-icons">
+        <button type="button" class="rp-copy-btn" id="researchPromptCopyBtn" aria-label="Copy prompt">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="5.5" y="5.5" width="8" height="8" rx="1.25" stroke="currentColor"></rect>
+            <path d="M3 10.5V3.5C3 2.67157 3.67157 2 4.5 2H10.5" stroke="currentColor"></path>
+          </svg>
+        </button>
+        <button type="button" class="rp-close" id="researchPromptCloseBtn" aria-label="Close">✕</button>
+      </div>
+    </div>
+
+    <h1 class="rp-title">Research prompt</h1>
+    <p class="rp-subtitle">The strongest possible starting point for your own analysis — the facts, the framings, and the questions that matter. You form the view.</p>
+
+    <div class="rp-image-wrap">
+      <svg viewBox="0 0 353 204" preserveAspectRatio="xMidYMid meet">
+        <rect x="0" y="0" width="353" height="204" fill="#141414"></rect>
+        <line x1="176.5" y1="13.7" x2="176.5" y2="190" stroke="#8B8B84" stroke-width="1"></line>
+        <line x1="89" y1="102" x2="264" y2="102" stroke="#8B8B84" stroke-width="1"></line>
+        <circle cx="176.5" cy="102" r="64" fill="none" stroke="#8B8B84" stroke-width="1"></circle>
+        <circle cx="176.5" cy="102" r="34" fill="none" stroke="#8B8B84" stroke-width="1"></circle>
+        <circle cx="176.5" cy="102" r="3.2" fill="#FFFFFF"></circle>
+      </svg>
+    </div>
+
+    <div class="rp-contents">
+      <span class="rp-contents-label">Contents</span>
+      <div class="rp-toc-row"><span class="rp-toc-num">01</span><span class="rp-toc-title">The Setup</span></div>
+      <div class="rp-toc-row"><span class="rp-toc-num">02</span><span class="rp-toc-title">Absolute Rules</span></div>
+      <div class="rp-toc-row"><span class="rp-toc-num">03</span><span class="rp-toc-title">The Starting Board</span></div>
+      <div class="rp-toc-row"><span class="rp-toc-num">04</span><span class="rp-toc-title">The Close</span></div>
+    </div>
+
+    <div id="researchPromptText">
+      <section class="rp-section">
+        <div class="rp-kicker"><span class="rp-kicker-num">01</span><span class="rp-kicker-label">The Setup</span></div>
+        <p class="rp-p" style="margin-top:26px;">You are helping an investor begin researching [COMPANY NAME] ([TICKER]). Your job is to give them the strongest possible starting point for their own analysis — the facts, the framings, and the questions that matter — so they can form their own view. You do not form the view for them. This is educational research, not investment advice.</p>
+        <p class="rp-p">After this first response, the user will ask follow-up questions and the research becomes a conversation they lead.</p>
+        <p class="rp-p">If [COMPANY NAME] is the company operating this platform, disclose that at the top.</p>
+      </section>
+
+      <section class="rp-section">
+        <div class="rp-kicker"><span class="rp-kicker-num">02</span><span class="rp-kicker-label">Absolute Rules</span></div>
+        <p class="rp-p" style="margin-top:26px;">Never recommend buying, selling, holding, trimming, adding, exiting, avoiding, or sizing a position, in any words.</p>
+        <p class="rp-p">Never state or imply which classification, portfolio role, or valuation conclusion is correct. Present what points each way and let the user decide.</p>
+        <p class="rp-p">Never state a specific intrinsic value, price target, or margin-of-safety number in this first response. Frame what drives value; the user estimates it.</p>
+        <p class="rp-p">Never assign the user's probability, and never say whether the company is attractive, a pass, a buy, promote/set-aside, or any equivalent verdict.</p>
+        <p class="rp-p">Present the considerations for competing views at even weight. If you give what supports one framing, give what supports the alternative. Do not lead. Emphasis is a recommendation — avoid it.</p>
+        <p class="rp-p">Use real, current data from public filings and releases. Identify the source and period. Flag anything unverified with [VERIFY] and tell the user to confirm it in their Fiscal.ai subscription. Never present a recalled or estimated number as confirmed — a specific figure that looks sourced but is not is the most dangerous output this tool can produce.</p>
+        <p class="rp-p">Scale depth to the business; keep it a starting board, not an exhaustive report.</p>
+      </section>
+
+      <section class="rp-section">
+        <div class="rp-kicker"><span class="rp-kicker-num">03</span><span class="rp-kicker-label">The Starting Board</span></div>
+        <h2 class="rp-h">Produce this starting board.</h2>
+        <div class="rp-sub">
+          <span class="rp-sub-num">01</span>
+          <div class="rp-sub-title">What the company does</div>
+          <p class="rp-p rp-p-tight">Plain-language business, how it makes money, main segments, current scale, growth, profitability, balance-sheet position, one major recent development. End with: "The single most important thing to understand before analyzing this company is…"</p>
+        </div>
+        <div class="rp-sub">
+          <span class="rp-sub-num">02</span>
+          <div class="rp-sub-title">How you might classify it — and the case each way</div>
+          <p class="rp-p rp-p-tight">Lay out which of Compounder / Emerging compounder / Situational mispricing / Speculative the evidence points toward, with the genuine case for each realistic option stated at even weight. Where the facts rule one out, say why. Then: "Which classification fits your thesis is your call — it sets the lens for everything else." Do not choose one.</p>
+        </div>
+        <div class="rp-sub">
+          <span class="rp-sub-num">03</span>
+          <div class="rp-sub-title">What someone would need to believe for this to work</div>
+          <p class="rp-p rp-p-tight">The possible bull case in two to three sentences, and the single load-bearing assumption it rests on. Note briefly whether that assumption is one you can verify with data or one that depends on judgment.</p>
+        </div>
+        <div class="rp-sub">
+          <span class="rp-sub-num">04</span>
+          <div class="rp-sub-title">The other side</div>
+          <p class="rp-p rp-p-tight">The strongest version of the bear case, at equal weight to the bull. Not a strawman.</p>
+        </div>
+        <div class="rp-sub">
+          <span class="rp-sub-num">05</span>
+          <div class="rp-sub-title">Why this might be worth looking at now</div>
+          <p class="rp-p rp-p-tight">What has changed — price, valuation, inflection, product cycle, management, capital allocation, regulation, cycle, balance sheet, or overreaction. If nothing clearly has, say so; the absence of a timing reason is useful information.</p>
+        </div>
+        <div class="rp-sub">
+          <span class="rp-sub-num">06</span>
+          <div class="rp-sub-title">What could break the thesis</div>
+          <p class="rp-p rp-p-tight">Four to six specific, observable conditions worth watching that would call the original reasoning into question. Frame them as candidates for the user to adopt as their own review triggers — not as instructions, and with no action language (no sell/exit/trim/reduce/hold/avoid). State only what each condition would mean for the thesis.</p>
+        </div>
+        <div class="rp-sub">
+          <span class="rp-sub-num">07</span>
+          <div class="rp-sub-title">How to think about value</div>
+          <p class="rp-p rp-p-tight">The valuation method that fits this business and why a generic sector multiple might mislead; the one or two variables that most drive the outcome; and the specific inputs the user would need — and should verify in Fiscal.ai — to estimate value themselves. Do not state an intrinsic value, price target, or margin-of-safety number.</p>
+        </div>
+        <div class="rp-sub">
+          <span class="rp-sub-num">08</span>
+          <div class="rp-sub-title">Can it survive to get there</div>
+          <p class="rp-p rp-p-tight">Cash, debt, maturities, dilution risk, and whether the downside looks like temporary underperformance or permanent capital impairment. This is descriptive risk — state it plainly and specifically.</p>
+        </div>
+        <div class="rp-sub">
+          <span class="rp-sub-num">09</span>
+          <div class="rp-sub-title">Verify these first</div>
+          <p class="rp-p rp-p-tight">The five figures or disclosures most likely to change the picture if they are wrong or stale. For each: the data point, the period, why it matters, and where in Fiscal.ai to check it. Company-specific, not a generic checklist.</p>
+        </div>
+        <div class="rp-sub">
+          <span class="rp-sub-num">10</span>
+          <div class="rp-sub-title">Good next questions to ask</div>
+          <p class="rp-p rp-p-tight">Five sharp questions the user could ask you next to go deeper — e.g., "walk me through the bear case on [X]," "compare the unit economics to [peer]," "what would have to be true for the bull case to work," "show me the last three quarters of [metric]," "what's the strongest reason this stays cheap." This hands the conversation to the user.</p>
+        </div>
+      </section>
+
+      <section class="rp-section">
+        <div class="rp-kicker"><span class="rp-kicker-num">04</span><span class="rp-kicker-label">The Close</span></div>
+        <p class="rp-p" style="margin-top:26px;">Close with one line:</p>
+      </section>
+    </div>
+
+    <hr class="rp-closing-hr">
+    <p class="rp-closing">This is a starting point for your own research, not a recommendation.</p>
+    <p class="rp-closing">The judgments — how to classify it, what it's worth, whether it fits your portfolio — are yours to make.</p>
+    <p class="rp-caption">Copy the prompt in full and replace [COMPANY NAME] and [TICKER]. Available anytime from Research Prompt.</p>
+
+    <hr class="rp-footer-hr">
+    <div class="rp-footer">
+      <div class="rp-footer-row"><span class="rp-footer-k">Subject</span><span class="rp-footer-v">Research Prompt</span></div>
+      <div class="rp-footer-row"><span class="rp-footer-k">Edition</span><span class="rp-footer-v">07 / 08</span></div>
+      <div class="rp-footer-row"><span class="rp-footer-k">Year</span><span class="rp-footer-v">2026</span></div>
+    </div>
+
+    <div class="rp-toast" id="researchPromptToast" role="status">Prompt copied</div>
   </div>
 
   <!-- Financials detail overlay -->
@@ -5524,6 +5692,29 @@ p { margin: 0; }
   var researchPromptCloseBtn = document.getElementById('researchPromptCloseBtn');
   researchPromptTrigger.addEventListener('click', function () { researchPromptOverlay.hidden = false; });
   researchPromptCloseBtn.addEventListener('click', function () { researchPromptOverlay.hidden = true; });
+
+  var allocatorsGuideTrigger = document.getElementById('allocatorsGuideTrigger');
+  var allocatorsGuideOverlay = document.getElementById('allocatorsGuideOverlay');
+  var allocatorsGuideCloseBtn = document.getElementById('allocatorsGuideCloseBtn');
+  allocatorsGuideTrigger.addEventListener('click', function () { allocatorsGuideOverlay.hidden = false; });
+  allocatorsGuideCloseBtn.addEventListener('click', function () { allocatorsGuideOverlay.hidden = true; });
+
+  var researchPromptCopyBtn = document.getElementById('researchPromptCopyBtn');
+  var researchPromptToast = document.getElementById('researchPromptToast');
+  var researchPromptToastTimer = null;
+  researchPromptCopyBtn.addEventListener('click', function () {
+    var text = document.getElementById('researchPromptText').textContent.trim();
+    var done = function () {
+      researchPromptToast.classList.add('show');
+      if (researchPromptToastTimer) clearTimeout(researchPromptToastTimer);
+      researchPromptToastTimer = setTimeout(function () { researchPromptToast.classList.remove('show'); }, 1800);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, done);
+    } else {
+      done();
+    }
+  });
 
   /* ---------- Position detail overlay ---------- */
   var positionHeaderTriggerEl = document.getElementById('positionHeaderTrigger');
