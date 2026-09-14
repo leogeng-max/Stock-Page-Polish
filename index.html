@@ -849,6 +849,7 @@ p { margin: 0; }
   padding-bottom: 40px;
 }
 .link-row[hidden] { display: none; }
+.manage-fields-trigger { width: 100%; background: none; border: none; font-family: inherit; text-align: left; cursor: pointer; }
 .research-prompt-row {
   margin: 20px 20px 0;
   padding-bottom: 0;
@@ -1601,6 +1602,35 @@ p { margin: 0; }
   letter-spacing: -0.24px;
   line-height: 1.6;
 }
+
+/* ---------- Memo field re-engagement nudge (hidden-field recovery) ---------- */
+.field-nudge { margin-top: 40px; background: #0a0a0a; border: 1px solid rgba(255,255,255,0.11); padding: 17px 18px; }
+.field-nudge[hidden] { display: none; }
+.field-nudge__text { font-size: 13px; color: #c7c7c7; line-height: 1.5; letter-spacing: -0.1px; }
+.field-nudge__text b { color: #ffffff; font-weight: 600; }
+.field-nudge__actions { display: flex; gap: 24px; margin-top: 14px; }
+.field-nudge__btn { background: none; border: none; padding: 0; font-family: inherit; font-size: 13px; color: #929292; cursor: pointer; }
+.field-nudge__btn--primary { color: #ffffff; font-weight: 600; }
+
+/* ---------- Manage Fields overlay ---------- */
+.mf-intro { margin: 20px 0 0; font-size: 12px; color: #929292; letter-spacing: -0.24px; line-height: 1.6; }
+.mf-list { margin-top: 24px; }
+.mf-row { display: flex; align-items: center; justify-content: space-between; padding: 16px 0; border-bottom: 1px solid rgba(255,255,255,0.08); }
+.mf-row:last-child { border-bottom: none; }
+.mf-row__name { font-size: 15px; color: #ffffff; letter-spacing: -0.2px; }
+.mf-pill {
+  font-family: inherit;
+  font-size: 12px;
+  letter-spacing: -0.1px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: transparent;
+  color: #929292;
+  cursor: default;
+}
+button.mf-pill { cursor: pointer; }
+.mf-pill[data-hidden="false"] { color: #ffffff; border-color: rgba(255,255,255,0.3); }
 .ir-filing-list {
   margin-top: 20px;
   display: flex;
@@ -2588,6 +2618,7 @@ p { margin: 0; }
   <div class="burger-menu__title">Preview state</div>
   <button type="button" class="burger-menu__item active" data-page-state="full">Full</button>
   <button type="button" class="burger-menu__item" data-page-state="performance-preview">Full + Performance (Preview)</button>
+  <button type="button" class="burger-menu__item" data-page-state="hidden-fields-preview">Full + Hidden Fields (Preview)</button>
   <button type="button" class="burger-menu__item" data-page-state="market-close">Market Close</button>
   <button type="button" class="burger-menu__item" data-page-state="after-hours">Market After Hours</button>
   <button type="button" class="burger-menu__item" data-page-state="pre-market">Market Pre-Market</button>
@@ -2765,7 +2796,7 @@ p { margin: 0; }
     </div>
 
     <!-- Kill Criteria card -->
-    <div class="rich-card" data-state-target="kill">
+    <div class="rich-card" data-state-target="kill" id="killRichCard">
       <div class="rich-card__empty">
         <div class="warning-card">
           <div class="dot dot--amber2"></div>
@@ -2816,6 +2847,19 @@ p { margin: 0; }
       </div>
     </div>
 
+    <!-- Re-engagement nudge for a hidden memo field. Shown only in the
+         "Full + Hidden Fields (Preview)" burger-menu state, and only while
+         Kill Criteria is actually hidden — never on every visit, and never
+         a blocking modal (the whole point is to be easy to ignore, unlike
+         a Whoop-style "fill this in every time" prompt). -->
+    <div class="field-nudge" id="killNudge" hidden>
+      <div class="field-nudge__text">It's been a while since you hid <b>Kill Criteria</b>. Want to try it again?</div>
+      <div class="field-nudge__actions">
+        <button type="button" class="field-nudge__btn field-nudge__btn--primary" id="killNudgeAccept">Try it again</button>
+        <button type="button" class="field-nudge__btn" id="killNudgeDecline">No thanks</button>
+      </div>
+    </div>
+
     <div class="rich-card" data-state-target="prediction">
       <div class="rich-card__empty">
         <div class="warning-card">
@@ -2849,6 +2893,8 @@ p { margin: 0; }
     </div>
       </div>
     </div>
+
+    <button type="button" class="link-row manage-fields-trigger" id="manageFieldsTrigger" hidden>Manage Fields <span class="chev">›</span></button>
 
     <div class="notes-card research-notes-card" id="researchNotesCard">
       <div class="notes-idle" id="researchNotesIdle" hidden><span>Research Notes</span></div>
@@ -4019,6 +4065,25 @@ p { margin: 0; }
     </div>
 
     <div class="rp-toast" id="researchPromptToast" role="status">Prompt copied</div>
+  </div>
+
+  <!-- Manage Fields overlay -->
+  <div class="ir-overlay" id="manageFieldsOverlay" hidden>
+    <div class="ir-overlay__header">
+      <button type="button" class="ir-back-btn" id="manageFieldsBackBtn" aria-label="Back">
+        <img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiB2aWV3Qm94PSIwIDAgMTYgMTYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJTVkciPgo8cGF0aCBpZD0iVmVjdG9yIiBkPSJNMTAuNSAzTDUuNSA4TDEwLjUgMTMiIHN0cm9rZT0iI0M3QzdDNyIgc3Ryb2tlLXdpZHRoPSIxLjQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L2c+Cjwvc3ZnPgo=" alt="">
+      </button>
+      <span class="ir-overlay__title">Manage Fields</span>
+    </div>
+    <p class="mf-intro">Hidden fields are skipped everywhere — the buy flow and this memo. Turn one back on here whenever you want; it comes back empty, ready to fill in.</p>
+    <div class="mf-list">
+      <div class="mf-row"><span class="mf-row__name">Classification</span><span class="mf-pill" data-hidden="false">Shown</span></div>
+      <div class="mf-row"><span class="mf-row__name">Role</span><span class="mf-pill" data-hidden="false">Shown</span></div>
+      <div class="mf-row"><span class="mf-row__name">Thesis</span><span class="mf-pill" data-hidden="false">Shown</span></div>
+      <div class="mf-row"><span class="mf-row__name">Kill Criteria</span><button type="button" class="mf-pill" id="mfKillPill" data-hidden="true">Hidden</button></div>
+      <div class="mf-row"><span class="mf-row__name">Prediction</span><span class="mf-pill" data-hidden="false">Shown</span></div>
+      <div class="mf-row"><span class="mf-row__name">Source</span><span class="mf-pill" data-hidden="false">Shown</span></div>
+    </div>
   </div>
 
   <!-- Financials detail overlay -->
@@ -6757,6 +6822,14 @@ p { margin: 0; }
   var chartPopupPosRow = document.getElementById('chartPopupPosRow');
   var chartPopupPosStat = document.getElementById('chartPopupPosStat');
   var chartPopupTargetBadge = document.getElementById('chartPopupTargetBadge');
+  var killRichCardEl = document.getElementById('killRichCard');
+  var killNudgeEl = document.getElementById('killNudge');
+  var killNudgeAcceptBtn = document.getElementById('killNudgeAccept');
+  var killNudgeDeclineBtn = document.getElementById('killNudgeDecline');
+  var manageFieldsTriggerEl = document.getElementById('manageFieldsTrigger');
+  var manageFieldsOverlayEl = document.getElementById('manageFieldsOverlay');
+  var manageFieldsBackBtnEl = document.getElementById('manageFieldsBackBtn');
+  var mfKillPillEl = document.getElementById('mfKillPill');
   var memoEmptyCard = document.getElementById('memoEmptyCard');
   var memoCards = document.querySelectorAll('.memo-section > .rich-card');
   var memoHeaderRow = document.getElementById('memoHeaderRow');
@@ -6781,19 +6854,42 @@ p { margin: 0; }
     card.querySelector('.rich-card__full').hidden = !showFull;
   }
 
+  /* Hidden vs. skipped, demoed on Kill Criteria: "skipped" fields (Thesis,
+     here) still render as an empty placeholder card — they're part of the
+     flow, just unanswered. A "hidden" field renders nothing at all, in any
+     state; killFieldHidden is the one persistent flag standing in for that
+     per-field setting. Recoverable two ways, both landing in the same empty
+     "ready to fill in" state and neither auto-opening an edit screen: the
+     re-engagement nudge's "Try it again", or the Manage Fields pill. */
+  var killFieldHidden = true;
+  var isHiddenFieldsPreviewState = false;
+  var pageIsNewUserState = false;
+  function refreshKillFieldUI() {
+    killRichCardEl.hidden = pageIsNewUserState || (isHiddenFieldsPreviewState && killFieldHidden);
+    setRichCard('kill', !pageIsNewUserState && !isHiddenFieldsPreviewState);
+    killNudgeEl.hidden = !(isHiddenFieldsPreviewState && killFieldHidden);
+    mfKillPillEl.setAttribute('data-hidden', String(killFieldHidden));
+    mfKillPillEl.textContent = killFieldHidden ? 'Hidden' : 'Shown';
+  }
+
   function applyPageState(state) {
     var isNewUser = state === 'new-user';
     var isPerfPreview = state === 'performance-preview';
+    var isHiddenFieldsPreview = state === 'hidden-fields-preview';
+    pageIsNewUserState = isNewUser;
+    isHiddenFieldsPreviewState = isHiddenFieldsPreview;
+    if (isHiddenFieldsPreview) killFieldHidden = true; /* fresh demo each time this state is (re)selected */
     perfPreviewSectionEl.hidden = !isPerfPreview;
     perfPreviewDividerEl.hidden = !isPerfPreview;
+    manageFieldsTriggerEl.hidden = !isHiddenFieldsPreview;
 
-    setRichCard('thesis', !isNewUser);
-    setRichCard('kill', !isNewUser);
+    setRichCard('thesis', !isNewUser && !isHiddenFieldsPreview);
     setRichCard('prediction', !isNewUser);
     /* With no memo at all, show one unified "No investment memo" card
        instead of three separate empty placeholders. */
     memoEmptyCard.hidden = !isNewUser;
     memoCards.forEach(function (card) { card.hidden = isNewUser; });
+    refreshKillFieldUI();
     /* No memo at all means there's nothing for the "Memo" header/date or the
        Classification/Role row to describe, so hide them too. */
     memoHeaderRow.hidden = isNewUser;
@@ -6871,6 +6967,24 @@ p { margin: 0; }
       applyPageState(btn.getAttribute('data-page-state'));
       burgerMenu.hidden = true;
     });
+  });
+
+  /* ---------- Manage Fields overlay + hidden-field recovery ---------- */
+  manageFieldsTriggerEl.addEventListener('click', function () { manageFieldsOverlayEl.hidden = false; });
+  manageFieldsBackBtnEl.addEventListener('click', function () { manageFieldsOverlayEl.hidden = true; });
+  mfKillPillEl.addEventListener('click', function () {
+    killFieldHidden = !killFieldHidden;
+    refreshKillFieldUI();
+  });
+  killNudgeAcceptBtn.addEventListener('click', function () {
+    killFieldHidden = false;
+    refreshKillFieldUI();
+  });
+  killNudgeDeclineBtn.addEventListener('click', function () {
+    /* Illustrative only: a real build would stamp "declined at" here and
+       keep the nudge suppressed for ~30-60 days rather than just this
+       viewing — the field itself stays hidden either way. */
+    killNudgeEl.hidden = true;
   });
 
   applyPageState('full');
