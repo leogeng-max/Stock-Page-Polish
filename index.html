@@ -1695,12 +1695,13 @@ button.mf-pill { cursor: pointer; }
 .info-eyebrow { font-size: 12px; font-weight: 500; letter-spacing: -0.1px; color: #111111; }
 .info-close {
   font-family: inherit;
-  font-size: 13px;
-  color: #8C8880;
+  font-size: 16px;
+  color: #111111;
   background: none;
   border: none;
   padding: 0;
   cursor: pointer;
+  line-height: 1;
 }
 .info-h1 {
   font-size: 24px;
@@ -1803,7 +1804,12 @@ button.mf-pill { cursor: pointer; }
 .rp-footer-row { display: flex; justify-content: space-between; padding: 14px 0; }
 .rp-footer-k { font-size: 15px; color: #8B8B84; }
 .rp-footer-v { font-size: 15px; font-weight: 600; color: #1A1A1A; }
+.rp-tabs { display: flex; margin: 24px 20px 0; }
+.rp-tab { flex: 1; text-align: center; background: none; border: none; padding: 0 0 10px; font-family: inherit; font-size: 13px; font-weight: 500; color: #8B8B84; cursor: pointer; position: relative; }
+.rp-tab.active { color: #1A1A1A; }
+.rp-tab.active::after { content: ''; position: absolute; left: 8%; right: 8%; bottom: 0; height: 2px; background: #1A1A1A; border-radius: 2px; }
 .rp-copy-btn { background: none; border: none; padding: 4px; margin: -4px; cursor: pointer; color: #1A1A1A; display: flex; align-items: center; }
+.rp-copy-btn[hidden] { display: none; }
 .rp-top-icons { display: flex; align-items: center; gap: 16px; }
 .rp-toast {
   position: fixed;
@@ -3476,36 +3482,31 @@ button.mf-pill { cursor: pointer; }
 
   <!-- About this page (info) overlay -->
   <div class="ir-overlay info-overlay" id="infoOverlay" hidden>
-    <div class="info-top">
-      <span class="info-eyebrow">Stock Page</span>
-      <button type="button" class="info-close" id="infoCloseBtn">Close</button>
+    <div class="info-top" style="justify-content:flex-end;">
+      <button type="button" class="info-close" id="infoCloseBtn" aria-label="Close">✕</button>
     </div>
 
-    <h1 class="info-h1">This page adapts to your position.</h1>
-    <p class="info-intro">Content changes depending on whether you currently hold a position. Sections are listed below in the order they appear.</p>
-
-    <table class="info-table">
-      <tbody>
-        <tr><td class="k">Alerts</td><td class="v">Monitoring and order activity</td></tr>
-        <tr><td class="k">One liner</td><td class="v">Appears once a position is open</td></tr>
-        <tr><td class="k">Memo</td><td class="v">Created at purchase</td></tr>
-        <tr><td class="k">Prediction</td><td class="v">Probability, hurdle, and horizon</td></tr>
-        <tr><td class="k">Notes</td><td class="v">Optional, off the record</td></tr>
-        <tr><td class="k">Position</td><td class="v">Return versus the S&amp;P 500</td></tr>
-        <tr><td class="k">Company Profile</td><td class="v">Business overview and market data</td></tr>
-        <tr><td class="k">Financials</td><td class="v">Reported results, quarterly and annual</td></tr>
-        <tr><td class="k">Fiscal.ai</td><td class="v">AI-powered financial research</td></tr>
-        <tr><td class="k">Research with AI</td><td class="v">Continue research in ChatGPT, Claude, Gemini, Perplexity</td></tr>
-        <tr><td class="k">News</td><td class="v">Headlines for the company</td></tr>
-        <tr><td class="k">History</td><td class="v">Complete order history</td></tr>
-        <tr><td class="k">Capital Decision</td><td class="v">Buy or sell</td></tr>
-      </tbody>
-    </table>
-
-    <section class="info-section">
+    <section class="info-section" style="margin-top:24px;">
       <span class="info-num">01</span>
       <h2 class="info-h2">Alerts</h2>
       <p class="info-body">Alerts surface activity and developments that may require attention, including order activity, company events, earnings, and outstanding items related to your thesis and kill criteria.</p>
+        <div class="info-plate-live">
+          <div style="display:flex;flex-direction:column;gap:20px;">
+            <div class="activity-row">
+              <div class="dot dot--amber"></div>
+              <p>KSTL Q2 FY26 earnings <span class="muted">in 45 days</span></p>
+              <span class="chev activity-row__chev">›</span>
+            </div>
+            <div class="activity-row">
+              <div class="dot dot--green-b"></div>
+              <p>Limit Order Filled <span class="reg" style="font-weight:500">1000 @ 87.00</span> <span class="muted">05.06.26</span></p>
+            </div>
+            <div class="activity-row wrap">
+              <div class="dot dot--red" style="margin-top:3px"></div>
+              <p>Kill criteria 2 triggered: <span style="font-weight:500">margin below 68%</span></p>
+            </div>
+          </div>
+        </div>
     </section>
     <hr class="info-hr">
 
@@ -3513,6 +3514,14 @@ button.mf-pill { cursor: pointer; }
       <span class="info-num">02</span>
       <h2 class="info-h2">One liner</h2>
       <p class="info-body">The one liner asks you to reduce your thesis to a single sentence. It keeps the reason for owning the position visible at a glance.</p>
+        <div class="info-plate-live">
+          <div class="thesis-banner has-version" style="margin:0;">
+            <div class="thesis-display">
+              <span class="thesis-display__left"><span>Compute Demand Keeps Outpacing Supply.</span></span>
+              <span class="version-chip">v4 <span class="chev">›</span></span>
+            </div>
+          </div>
+        </div>
     </section>
     <hr class="info-hr">
 
@@ -3521,6 +3530,25 @@ button.mf-pill { cursor: pointer; }
       <h2 class="info-h2">Memo</h2>
       <p class="info-body">The memo records your thinking on a position: the stock's classification, its role in your portfolio, your thesis, kill criteria, prediction, and the source of the idea.</p>
       <p class="info-body">Each memo is immutable once created. Revisions create a new dated memo while preserving all prior versions.</p>
+        <div class="info-plate-live">
+          <div class="section-header--row">
+            <div class="section-header">Memo <span class="chev">›</span></div>
+            <div class="date">06.22.26</div>
+          </div>
+          <div class="class-role-row" style="margin-top:20px;">
+            <div class="col col--classification">
+              <div class="label-11">Classification</div>
+              <div class="value-14">Compounder</div>
+            </div>
+            <div class="col col--role">
+              <div class="label-11">Role</div>
+              <div class="role-value-row">
+                <div class="value-14">Core Position <span class="muted">· 42.20%</span></div>
+                <div class="wt-label">WT</div>
+              </div>
+            </div>
+          </div>
+        </div>
     </section>
     <hr class="info-hr">
 
@@ -3529,6 +3557,31 @@ button.mf-pill { cursor: pointer; }
       <h2 class="info-h2">Prediction</h2>
       <p class="info-body">The prediction records your belief about the stock: the probability of achieving a return hurdle within a defined time horizon.</p>
       <p class="info-body">Each prediction is dated and tracked against the subsequent performance of the position.</p>
+        <div class="info-plate-live">
+          <div class="prediction-card" style="margin-top:0;padding:0;">
+            <div class="rich-card__head">
+              <span class="label-11">Prediction</span>
+              <span class="version-chip">v3 <span class="chev">›</span></span>
+            </div>
+            <div class="pred-value">60% probability of 20%/yr over 3 years</div>
+            <div class="pred-track-row">
+              <div class="pred-track-stat">
+                <span class="pred-track-label">vs S&amp;P · since entry</span>
+                <div class="pred-track-valrow">
+                  <span class="pred-track-val">+6.9 pp</span>
+                  <span class="pred-track-arrow is-up">▲</span>
+                </div>
+              </div>
+              <div class="pred-track-stat">
+                <span class="pred-track-label">vs S&amp;P · since current prediction</span>
+                <div class="pred-track-valrow">
+                  <span class="pred-track-val">+7.0 pp</span>
+                  <span class="pred-track-arrow is-up">▲</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
     </section>
     <hr class="info-hr">
 
@@ -3537,6 +3590,11 @@ button.mf-pill { cursor: pointer; }
       <h2 class="info-h2">Notes</h2>
       <p class="info-body">Notes are a free-form space for temporary observations, research, and working thoughts.</p>
       <p class="info-body">Unlike memos, notes have no history. Changes replace what was there before.</p>
+        <div class="info-plate-live">
+          <div class="notes-card" style="margin:0;">
+            <div class="notes-idle"><span>Notes</span></div>
+          </div>
+        </div>
     </section>
     <hr class="info-hr">
 
@@ -3546,6 +3604,19 @@ button.mf-pill { cursor: pointer; }
       <p class="info-body">The Position section shows key information about your holding, including market value, book cost, and average cost per share.</p>
       <p class="info-body">It also compares the position with the S&amp;P 500 by calculating what the same buy and sell transactions would have produced in VFV over the same period.</p>
       <p class="info-body">Tap the Position section for a more detailed breakdown.</p>
+        <div class="info-plate-live">
+          <div class="stat-grid-2">
+            <div class="stat">
+              <div class="label-11">Market Value</div>
+              <div class="stat-value-15">18,943.49 <span class="sub">USD</span></div>
+              <div class="stat-sub-line">25,949.99 CAD</div>
+            </div>
+            <div class="stat">
+              <div class="label-11">Portfolio Weight</div>
+              <div class="stat-value-15">42.2%</div>
+            </div>
+          </div>
+        </div>
     </section>
     <hr class="info-hr">
 
@@ -3554,6 +3625,14 @@ button.mf-pill { cursor: pointer; }
       <h2 class="info-h2">Company Profile</h2>
       <p class="info-body">Company Profile provides a high-level overview of the business and basic company information.</p>
       <p class="info-body">Price history and market data provide additional context, including trading ranges, volume, market capitalization, shares outstanding, dividend yield, and other market information.</p>
+        <div class="info-plate-live">
+          <div class="profile-grid" style="margin-top:0;">
+            <div class="cell"><div class="label-11">Sector</div><div class="val">Information Technology</div></div>
+            <div class="cell"><div class="label-11">Headquarters</div><div class="val">Santa Clara, CA</div></div>
+            <div class="cell"><div class="label-11">Employees</div><div class="val">36,000</div></div>
+            <div class="cell"><div class="label-11">Fiscal year end</div><div class="val">January</div></div>
+          </div>
+        </div>
     </section>
     <hr class="info-hr">
 
@@ -3630,6 +3709,32 @@ button.mf-pill { cursor: pointer; }
       <span class="info-num">12</span>
       <h2 class="info-h2">History</h2>
       <p class="info-body">History contains your complete order history for the security, including buy and sell orders that were filled, cancelled, or expired.</p>
+        <div class="info-plate-live">
+          <div class="history-list">
+            <div class="history-item">
+              <div class="col">
+                <div class="history-date">06.27.26</div>
+                <div class="history-type">Buy <span class="suffix">· Market</span></div>
+                <div class="history-account">TFSA</div>
+              </div>
+              <div class="col col--right">
+                <div class="history-price">230.00</div>
+                <div class="history-shares">23 shares x 10.00</div>
+              </div>
+            </div>
+            <div class="history-item" style="border-bottom:none;">
+              <div class="col">
+                <div class="history-date">06.24.26</div>
+                <div class="history-type">Buy <span class="suffix">· Market</span></div>
+                <div class="history-account">RRSP</div>
+              </div>
+              <div class="col col--right">
+                <div class="history-price">230.00</div>
+                <div class="history-shares">23 shares x 10.00</div>
+              </div>
+            </div>
+          </div>
+        </div>
     </section>
     <hr class="info-hr">
 
@@ -3637,6 +3742,9 @@ button.mf-pill { cursor: pointer; }
       <span class="info-num">13</span>
       <h2 class="info-h2">Capital Decision</h2>
       <p class="info-body">Capital Decision opens the order flow to buy or sell the security.</p>
+        <div class="info-plate-live">
+          <div class="capital-decision" style="padding:24px 0;">Capital Decision</div>
+        </div>
     </section>
   </div>
 
@@ -3734,7 +3842,7 @@ button.mf-pill { cursor: pointer; }
   <div class="ir-overlay info-overlay" id="posDetailInfoOverlay" hidden>
     <div class="info-top">
       <span class="info-eyebrow">Position</span>
-      <button type="button" class="info-close" id="posDetailInfoCloseBtn">Close</button>
+      <button type="button" class="info-close" id="posDetailInfoCloseBtn" aria-label="Close">✕</button>
     </div>
     <h1 class="info-h1" style="margin-top:24px;">What's on this page.</h1>
     <p class="info-intro">Definitions for the figures shown on this position's detail page.</p>
@@ -3756,189 +3864,14 @@ button.mf-pill { cursor: pointer; }
   </div>
 
   <!-- Research Prompt overlay -->
-  <div class="rp-overlay" id="allocatorsGuideOverlay" hidden>
-    <div class="rp-handle-row"><div class="rp-handle"></div></div>
-    <div class="rp-top">
-      <span class="rp-eyebrow">The Allocator's Guide</span>
-      <button type="button" class="rp-close" id="allocatorsGuideCloseBtn" aria-label="Close">✕</button>
-    </div>
-
-    <h1 class="rp-title">The Allocator's Guide to Using AI</h1>
-    <p class="rp-subtitle">How to use these tools — and any AI — without surrendering your judgment.</p>
-
-    <div class="rp-image-wrap">
-      <svg viewBox="0 0 353 250" preserveAspectRatio="xMidYMid meet">
-        <rect x="0" y="0" width="353" height="250" fill="#141414"></rect>
-        <rect x="43.5" y="70.5" width="110" height="110" fill="none" stroke="#8B8B84" stroke-width="1"></rect>
-        <line x1="176.5" y1="50" x2="176.5" y2="200" stroke="#8B8B84" stroke-width="1"></line>
-        <rect x="200" y="70" width="110" height="110" fill="#D6D4CC"></rect>
-      </svg>
-    </div>
-
-    <div class="rp-contents">
-      <span class="rp-contents-label">Contents</span>
-      <div class="rp-toc-row"><span class="rp-toc-num">01</span><span class="rp-toc-title">The First Principle</span></div>
-      <div class="rp-toc-row"><span class="rp-toc-num">02</span><span class="rp-toc-title">On the Prompt We Include</span></div>
-      <div class="rp-toc-row"><span class="rp-toc-num">03</span><span class="rp-toc-title">What the Model Is</span></div>
-      <div class="rp-toc-row"><span class="rp-toc-num">04</span><span class="rp-toc-title">What the Model Cannot Do</span></div>
-      <div class="rp-toc-row"><span class="rp-toc-num">05</span><span class="rp-toc-title">The Failure Modes</span></div>
-      <div class="rp-toc-row"><span class="rp-toc-num">06</span><span class="rp-toc-title">Working Practice</span></div>
-      <div class="rp-toc-row"><span class="rp-toc-num">07</span><span class="rp-toc-title">The Right Perspective</span></div>
-    </div>
-
-    <section class="rp-section">
-      <div class="rp-kicker"><span class="rp-kicker-num">01</span><span class="rp-kicker-label">The First Principle</span></div>
-      <h2 class="rp-h">The AI is the associate. You are the allocator.</h2>
-      <p class="rp-p">You know what to do with an associate's work. You read it for what it surfaces, you check what it asserts, and you throw out the parts that do not survive contact with what you already know.</p>
-      <p class="rp-p">Nothing about this tool changes that relationship. It only makes the associate faster, cheaper, more available at midnight — and considerably more confident than the work warrants.</p>
-      <p class="rp-p rp-bold">Allocator development cannot be delegated.</p>
-    </section>
-
-    <section class="rp-section">
-      <div class="rp-kicker"><span class="rp-kicker-num">02</span><span class="rp-kicker-label">On the Prompt We Include</span></div>
-      <h2 class="rp-h">We include a research prompt. It is a convenience, not a prescription.</h2>
-      <p class="rp-p">It produces a starting board: what the business does, how it might be classified and what supports each reading, the bull and bear cases at equal weight, what would break the thesis, what drives value, and the figures most likely to change the picture if they are wrong.</p>
-      <div class="rp-sub">
-        <div class="rp-sub-title">It withholds four judgments deliberately</div>
-        <p class="rp-p rp-p-tight">classification, portfolio role, intrinsic value, and any verdict on attractiveness. Not because the model cannot generate them. Because a conclusion you did not build is worthless to you: undefendable in a drawdown, unscoreable afterward, and indistinguishable in the moment from one that is right.</p>
-      </div>
-      <div class="rp-sub">
-        <div class="rp-sub-title">Two consequences of that design, stated plainly:</div>
-        <p class="rp-p rp-p-tight">The board weighs competing views evenly by mandate. Real evidence rarely balances.</p>
-      </div>
-      <p class="rp-p rp-bold">So the board will present a 70/30 argument as though it were 50/50, and the symmetry tells you nothing.</p>
-      <p class="rp-p">Finding the lean is your work, and it starts on your second question.</p>
-      <p class="rp-p">And the board is scaffolding, not research. The conversation after it is where the tool earns anything. An operator who reads the board and stops has used a fraction of what is there.</p>
-      <p class="rp-p rp-bold">If you have a process, use it.</p>
-      <p class="rp-p">The prompt exists because a blank box is a bad starting point for a tool most people have not yet learned to distrust correctly. If that is not your problem, discard it. Everything below applies to whatever you type instead.</p>
-    </section>
-
-    <section class="rp-section">
-      <div class="rp-kicker"><span class="rp-kicker-num">03</span><span class="rp-kicker-label">What the Model Is</span></div>
-      <p class="rp-p" style="margin-top:26px;">An LLM is a consensus engine trained on public information. Three consequences bear on allocation:</p>
-      <div class="rp-sub">
-        <span class="rp-sub-num">01</span>
-        <div class="rp-sub-title">It is strongest where it matters least.</div>
-        <p class="rp-p rp-p-tight">The model is most reliable on facts the market already knows — which are, definitionally, in the price. Reliability and alpha live in different places.</p>
-      </div>
-      <div class="rp-sub">
-        <span class="rp-sub-num">02</span>
-        <div class="rp-sub-title">It is weakest where alpha lives.</div>
-        <p class="rp-p rp-p-tight">Non-consensus truths are under-represented in the training by construction. On your best ideas, the model is structurally biased toward the market's side of the argument.</p>
-        <p class="rp-p">This one has a use. When the model resists your thesis, it is showing you the consensus, not evidence about the company. That is worth knowing precisely. It is not worth mistaking for a counterargument.</p>
-      </div>
-      <div class="rp-sub">
-        <span class="rp-sub-num">03</span>
-        <div class="rp-sub-title">It is fluent regardless of whether it is correct.</div>
-        <p class="rp-p rp-p-tight">Coherence is the output format, not a signal of quality. The model produces it on demand, for true theses and false ones alike, at identical polish.</p>
-      </div>
-      <p class="rp-p rp-bold">Associates do excellent work. Allocators decide.</p>
-    </section>
-
-    <section class="rp-section">
-      <div class="rp-kicker"><span class="rp-kicker-num">04</span><span class="rp-kicker-label">What the Model Cannot Do</span></div>
-      <h2 class="rp-h">Four things, permanently.</h2>
-      <div class="rp-sub">
-        <span class="rp-sub-num">01</span>
-        <div class="rp-sub-title">It cannot verify.</div>
-        <p class="rp-p rp-p-tight">The model cannot distinguish what it knows from what it is reconstructing — recall and confabulation are indistinguishable from the inside and identical on the page. The [VERIFY] flags mark where it noticed its own uncertainty. They do not mark the boundary of it.</p>
-      </div>
-      <div class="rp-sub">
-        <span class="rp-sub-num">02</span>
-        <div class="rp-sub-title">It cannot gather the deciding evidence.</div>
-        <p class="rp-p rp-p-tight">Customer enthusiasm, product usage, the read across a table, channel checks. The evidence that settles your best ideas sits outside the public record — which puts it outside the model permanently, regardless of how good the model gets.</p>
-      </div>
-      <div class="rp-sub">
-        <span class="rp-sub-num">03</span>
-        <div class="rp-sub-title">It cannot own the decision.</div>
-        <p class="rp-p rp-p-tight">If the position works, you earned it. If it fails, there is no prompt to point at. Accountability is the price of judgment and it is non-transferable.</p>
-      </div>
-      <div class="rp-sub">
-        <span class="rp-sub-num">04</span>
-        <div class="rp-sub-title">It cannot be calibrated for you.</div>
-        <p class="rp-p rp-p-tight">The model has never been scored on a prediction. No track record, no feedback, no memory of being wrong. The board produces no probabilities — but you can extract one in conversation, and if you do, know what you are holding: a fluent guess with nothing behind it. Argue with it. Never size from it.</p>
-      </div>
-    </section>
-
-    <section class="rp-section">
-      <div class="rp-kicker"><span class="rp-kicker-num">05</span><span class="rp-kicker-label">The Failure Modes</span></div>
-      <h2 class="rp-h">Five. The first and fourth are the expensive ones.</h2>
-      <div class="rp-sub">
-        <span class="rp-sub-num">01</span>
-        <div class="rp-sub-title">Confabulation.</div>
-        <p class="rp-p rp-p-tight">The most dangerous output this tool produces is a specific figure that looks sourced and is not. Precision reads as provenance: "gross margin expanded 240bps to 61.3%" carries more false authority than "margins improved," because the decimal implies a filing behind it. There is not always a filing behind it. The model completes patterns, and a plausible number completes the pattern as cleanly as the true one.</p>
-      </div>
-      <div class="rp-sub">
-        <span class="rp-sub-num">02</span>
-        <div class="rp-sub-title">Enforced symmetry.</div>
-        <p class="rp-p rp-p-tight">Covered above. The balance is a design artifact, not a finding. The board will not lean; ask it to, and make it defend the lean.</p>
-      </div>
-      <div class="rp-sub">
-        <span class="rp-sub-num">03</span>
-        <div class="rp-sub-title">Narrative confidence.</div>
-        <p class="rp-p rp-p-tight">Stated confidence tracks the coherence of the model's own story, not the quality of the evidence under it. A tight narrative on three unverified figures reads better than a messy one on audited filings. This is the failure that survives sophistication — you can know it and still be moved by good prose at 11pm.</p>
-      </div>
-      <div class="rp-sub">
-        <span class="rp-sub-num">04</span>
-        <div class="rp-sub-title">Sycophancy.</div>
-        <p class="rp-p rp-p-tight">The one that costs money, and the design makes it worse rather than better.</p>
-        <p class="rp-p">Because the board hands you the judgments, the model holds no view of its own. The moment you state yours, there is nothing for it to drift from. It will find your framing insightful. It will locate support for the position you just announced. It will do this in the register of an analyst who has considered the matter.</p>
-        <p class="rp-p">The unprimed response is the only clean one you get. After that, watch the fold: if one sentence from you reverses its position, you did not persuade it — you revealed a preference and it obliged. Note that and discount accordingly.</p>
-      </div>
-      <div class="rp-sub">
-        <span class="rp-sub-num">05</span>
-        <div class="rp-sub-title">Staleness.</div>
-        <p class="rp-p rp-p-tight">The cutoff is known; the model's sense of now is not. It will discuss last year's guidance in the present tense without flagging it. Anything that moves gets pulled fresh, never recalled.</p>
-      </div>
-    </section>
-
-    <section class="rp-section">
-      <div class="rp-kicker"><span class="rp-kicker-num">06</span><span class="rp-kicker-label">Working Practice</span></div>
-      <h2 class="rp-h">Not rules. Consequences of the four limits above.</h2>
-      <p class="rp-p rp-bold">The ideas you love need the scrutiny most.</p>
-      <p class="rp-p rp-p-tight">Whatever your process, the failure is never the idea you were skeptical of. Consistency is the whole mechanism — and a tool that never tires is useful here precisely because you do.</p>
-      <p class="rp-p rp-bold">Verify before you form the view, not after.</p>
-      <p class="rp-p rp-p-tight">Confirming a figure you have already built a thesis around is not verification. It is looking for permission. Anything you cannot confirm, strike. If striking it collapses the case, that is the most valuable thing the board will ever tell you.</p>
-      <p class="rp-p rp-bold">Make it argue.</p>
-      <p class="rp-p rp-p-tight">It will not attack your thesis unprompted — it is built not to lead. So instruct it: steelman the opposite, name the weakest link, say what was smoothed over. An associate who agrees with you because you told them what you thought is not neutral. They are doing damage.</p>
-      <p class="rp-p rp-bold">Go where it cannot.</p>
-      <p class="rp-p rp-p-tight">The board's honesty about its own limits is the useful part. Those boundaries are assignments. Everyone will have the same board; the edge is in who went and looked.</p>
-      <p class="rp-p rp-bold">Carry it forward in your own words.</p>
-      <p class="rp-p rp-p-tight">Your classification, your estimate, your conditions for being wrong — with the model's reasoning underneath rather than in front. If you cannot write it yourself, you do not understand it well enough to own it.</p>
-      <p class="rp-p rp-bold">Score your own judgments.</p>
-      <p class="rp-p rp-p-tight">The model produces no probabilities. You do. Write them down before the outcome — what you chose, what you estimated, what you said would break it, how confident you were. Then check.</p>
-      <p class="rp-p">The model can never learn whether its guesses mean anything. <span class="rp-bold">You can. That asymmetry is the only edge here that no prompt can hand you.</span></p>
-      <p class="rp-p rp-bold">Never let it size the position.</p>
-      <p class="rp-p rp-p-tight">The model surfaces the opportunity. The evidence justifies the confidence. You commit the capital. Sophisticated allocators do not concentrate because an associate was articulate.</p>
-    </section>
-
-    <section class="rp-section">
-      <div class="rp-kicker"><span class="rp-kicker-num">07</span><span class="rp-kicker-label">The Right Perspective</span></div>
-      <h2 class="rp-h">Most investors will use AI to act faster. The opportunity is to use it to think better.</h2>
-      <p class="rp-p">Used badly, the model is a confidence machine: conviction without calibration, fluency without evidence, answers without ownership. That is the failure the industry already sells — speculation in the costume of research — now with better prose and no marginal cost.</p>
-      <p class="rp-p">Used well, it is judgment infrastructure: it forces every idea through the same gauntlet, surfaces the bear case you did not want, names the assumptions you were carrying silently, and tells you honestly where its own sight ends.</p>
-      <p class="rp-p">That last one is the whole test. A tool that knows its limits and says so is worth more than one that appears to have none.</p>
-    </section>
-
-    <hr class="rp-closing-hr">
-    <p class="rp-closing rp-bold">The difference is not the tool. The difference is the allocator.</p>
-    <p class="rp-closing">The market will not grade the board. The market will grade the decision.</p>
-    <p class="rp-closing rp-bold">The decision is yours. That is the point.</p>
-    <p class="rp-caption">Available anytime from Research Prompt.</p>
-
-    <hr class="rp-footer-hr">
-    <div class="rp-footer">
-      <div class="rp-footer-row"><span class="rp-footer-k">Subject</span><span class="rp-footer-v">Using AI</span></div>
-      <div class="rp-footer-row"><span class="rp-footer-k">Edition</span><span class="rp-footer-v">08 / 08</span></div>
-      <div class="rp-footer-row"><span class="rp-footer-k">Year</span><span class="rp-footer-v">2026</span></div>
-    </div>
-  </div>
-
-  <!-- Research Prompt overlay (the actual copyable prompt document) -->
+  <!-- Research Prompt overlay (two tabs: the actual copyable prompt document, and
+       the Allocator's Guide — reachable from either "Research Prompt" or
+       "The Allocator's Guide" on the stock page; once open, both tabs are
+       freely switchable regardless of which entry point was tapped) -->
   <div class="rp-overlay" id="researchPromptOverlay" hidden>
     <div class="rp-handle-row"><div class="rp-handle"></div></div>
     <div class="rp-top">
-      <span class="rp-eyebrow">Research Prompt</span>
+      <span class="rp-eyebrow" id="rpEyebrow">Research Prompt</span>
       <div class="rp-top-icons">
         <button type="button" class="rp-copy-btn" id="researchPromptCopyBtn" aria-label="Copy prompt">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -3950,118 +3883,281 @@ button.mf-pill { cursor: pointer; }
       </div>
     </div>
 
-    <h1 class="rp-title">Research prompt</h1>
-    <p class="rp-subtitle">The strongest possible starting point for your own analysis — the facts, the framings, and the questions that matter. You form the view.</p>
-
-    <div class="rp-image-wrap">
-      <svg viewBox="0 0 353 204" preserveAspectRatio="xMidYMid meet">
-        <rect x="0" y="0" width="353" height="204" fill="#141414"></rect>
-        <line x1="176.5" y1="13.7" x2="176.5" y2="190" stroke="#8B8B84" stroke-width="1"></line>
-        <line x1="89" y1="102" x2="264" y2="102" stroke="#8B8B84" stroke-width="1"></line>
-        <circle cx="176.5" cy="102" r="64" fill="none" stroke="#8B8B84" stroke-width="1"></circle>
-        <circle cx="176.5" cy="102" r="34" fill="none" stroke="#8B8B84" stroke-width="1"></circle>
-        <circle cx="176.5" cy="102" r="3.2" fill="#FFFFFF"></circle>
-      </svg>
+    <div class="rp-tabs" id="rpTabs">
+      <button type="button" class="rp-tab active" data-rp-tab="prompt">Research Prompt</button>
+      <button type="button" class="rp-tab" data-rp-tab="guide">The Allocator's Guide</button>
     </div>
 
-    <div class="rp-contents">
-      <span class="rp-contents-label">Contents</span>
-      <div class="rp-toc-row"><span class="rp-toc-num">01</span><span class="rp-toc-title">The Setup</span></div>
-      <div class="rp-toc-row"><span class="rp-toc-num">02</span><span class="rp-toc-title">Absolute Rules</span></div>
-      <div class="rp-toc-row"><span class="rp-toc-num">03</span><span class="rp-toc-title">The Starting Board</span></div>
-      <div class="rp-toc-row"><span class="rp-toc-num">04</span><span class="rp-toc-title">The Close</span></div>
+    <div id="rpPanelPrompt">
+      <h1 class="rp-title" style="margin-top:32px;">Research prompt</h1>
+      <p class="rp-subtitle">The strongest possible starting point for your own analysis — the facts, the framings, and the questions that matter. You form the view.</p>
+
+      <div class="rp-image-wrap">
+        <svg viewBox="0 0 353 204" preserveAspectRatio="xMidYMid meet">
+          <rect x="0" y="0" width="353" height="204" fill="#141414"></rect>
+          <line x1="176.5" y1="13.7" x2="176.5" y2="190" stroke="#8B8B84" stroke-width="1"></line>
+          <line x1="89" y1="102" x2="264" y2="102" stroke="#8B8B84" stroke-width="1"></line>
+          <circle cx="176.5" cy="102" r="64" fill="none" stroke="#8B8B84" stroke-width="1"></circle>
+          <circle cx="176.5" cy="102" r="34" fill="none" stroke="#8B8B84" stroke-width="1"></circle>
+          <circle cx="176.5" cy="102" r="3.2" fill="#FFFFFF"></circle>
+        </svg>
+      </div>
+
+      <div class="rp-contents">
+        <span class="rp-contents-label">Contents</span>
+        <div class="rp-toc-row"><span class="rp-toc-num">01</span><span class="rp-toc-title">The Setup</span></div>
+        <div class="rp-toc-row"><span class="rp-toc-num">02</span><span class="rp-toc-title">Absolute Rules</span></div>
+        <div class="rp-toc-row"><span class="rp-toc-num">03</span><span class="rp-toc-title">The Starting Board</span></div>
+        <div class="rp-toc-row"><span class="rp-toc-num">04</span><span class="rp-toc-title">The Close</span></div>
+      </div>
+
+      <div id="researchPromptText">
+        <section class="rp-section">
+          <div class="rp-kicker"><span class="rp-kicker-num">01</span><span class="rp-kicker-label">The Setup</span></div>
+          <p class="rp-p" style="margin-top:26px;">You are helping an investor begin researching [COMPANY NAME] ([TICKER]). Your job is to give them the strongest possible starting point for their own analysis — the facts, the framings, and the questions that matter — so they can form their own view. You do not form the view for them. This is educational research, not investment advice.</p>
+          <p class="rp-p">After this first response, the user will ask follow-up questions and the research becomes a conversation they lead.</p>
+          <p class="rp-p">If [COMPANY NAME] is the company operating this platform, disclose that at the top.</p>
+        </section>
+
+        <section class="rp-section">
+          <div class="rp-kicker"><span class="rp-kicker-num">02</span><span class="rp-kicker-label">Absolute Rules</span></div>
+          <p class="rp-p" style="margin-top:26px;">Never recommend buying, selling, holding, trimming, adding, exiting, avoiding, or sizing a position, in any words.</p>
+          <p class="rp-p">Never state or imply which classification, portfolio role, or valuation conclusion is correct. Present what points each way and let the user decide.</p>
+          <p class="rp-p">Never state a specific intrinsic value, price target, or margin-of-safety number in this first response. Frame what drives value; the user estimates it.</p>
+          <p class="rp-p">Never assign the user's probability, and never say whether the company is attractive, a pass, a buy, promote/set-aside, or any equivalent verdict.</p>
+          <p class="rp-p">Present the considerations for competing views at even weight. If you give what supports one framing, give what supports the alternative. Do not lead. Emphasis is a recommendation — avoid it.</p>
+          <p class="rp-p">Use real, current data from public filings and releases. Identify the source and period. Flag anything unverified with [VERIFY] and tell the user to confirm it in their Fiscal.ai subscription. Never present a recalled or estimated number as confirmed — a specific figure that looks sourced but is not is the most dangerous output this tool can produce.</p>
+          <p class="rp-p">Scale depth to the business; keep it a starting board, not an exhaustive report.</p>
+        </section>
+
+        <section class="rp-section">
+          <div class="rp-kicker"><span class="rp-kicker-num">03</span><span class="rp-kicker-label">The Starting Board</span></div>
+          <h2 class="rp-h">Produce this starting board.</h2>
+          <div class="rp-sub">
+            <span class="rp-sub-num">01</span>
+            <div class="rp-sub-title">What the company does</div>
+            <p class="rp-p rp-p-tight">Plain-language business, how it makes money, main segments, current scale, growth, profitability, balance-sheet position, one major recent development. End with: "The single most important thing to understand before analyzing this company is…"</p>
+          </div>
+          <div class="rp-sub">
+            <span class="rp-sub-num">02</span>
+            <div class="rp-sub-title">How you might classify it — and the case each way</div>
+            <p class="rp-p rp-p-tight">Lay out which of Compounder / Emerging compounder / Situational mispricing / Speculative the evidence points toward, with the genuine case for each realistic option stated at even weight. Where the facts rule one out, say why. Then: "Which classification fits your thesis is your call — it sets the lens for everything else." Do not choose one.</p>
+          </div>
+          <div class="rp-sub">
+            <span class="rp-sub-num">03</span>
+            <div class="rp-sub-title">What someone would need to believe for this to work</div>
+            <p class="rp-p rp-p-tight">The possible bull case in two to three sentences, and the single load-bearing assumption it rests on. Note briefly whether that assumption is one you can verify with data or one that depends on judgment.</p>
+          </div>
+          <div class="rp-sub">
+            <span class="rp-sub-num">04</span>
+            <div class="rp-sub-title">The other side</div>
+            <p class="rp-p rp-p-tight">The strongest version of the bear case, at equal weight to the bull. Not a strawman.</p>
+          </div>
+          <div class="rp-sub">
+            <span class="rp-sub-num">05</span>
+            <div class="rp-sub-title">Why this might be worth looking at now</div>
+            <p class="rp-p rp-p-tight">What has changed — price, valuation, inflection, product cycle, management, capital allocation, regulation, cycle, balance sheet, or overreaction. If nothing clearly has, say so; the absence of a timing reason is useful information.</p>
+          </div>
+          <div class="rp-sub">
+            <span class="rp-sub-num">06</span>
+            <div class="rp-sub-title">What could break the thesis</div>
+            <p class="rp-p rp-p-tight">Four to six specific, observable conditions worth watching that would call the original reasoning into question. Frame them as candidates for the user to adopt as their own review triggers — not as instructions, and with no action language (no sell/exit/trim/reduce/hold/avoid). State only what each condition would mean for the thesis.</p>
+          </div>
+          <div class="rp-sub">
+            <span class="rp-sub-num">07</span>
+            <div class="rp-sub-title">How to think about value</div>
+            <p class="rp-p rp-p-tight">The valuation method that fits this business and why a generic sector multiple might mislead; the one or two variables that most drive the outcome; and the specific inputs the user would need — and should verify in Fiscal.ai — to estimate value themselves. Do not state an intrinsic value, price target, or margin-of-safety number.</p>
+          </div>
+          <div class="rp-sub">
+            <span class="rp-sub-num">08</span>
+            <div class="rp-sub-title">Can it survive to get there</div>
+            <p class="rp-p rp-p-tight">Cash, debt, maturities, dilution risk, and whether the downside looks like temporary underperformance or permanent capital impairment. This is descriptive risk — state it plainly and specifically.</p>
+          </div>
+          <div class="rp-sub">
+            <span class="rp-sub-num">09</span>
+            <div class="rp-sub-title">Verify these first</div>
+            <p class="rp-p rp-p-tight">The five figures or disclosures most likely to change the picture if they are wrong or stale. For each: the data point, the period, why it matters, and where in Fiscal.ai to check it. Company-specific, not a generic checklist.</p>
+          </div>
+          <div class="rp-sub">
+            <span class="rp-sub-num">10</span>
+            <div class="rp-sub-title">Good next questions to ask</div>
+            <p class="rp-p rp-p-tight">Five sharp questions the user could ask you next to go deeper — e.g., "walk me through the bear case on [X]," "compare the unit economics to [peer]," "what would have to be true for the bull case to work," "show me the last three quarters of [metric]," "what's the strongest reason this stays cheap." This hands the conversation to the user.</p>
+          </div>
+        </section>
+
+        <section class="rp-section">
+          <div class="rp-kicker"><span class="rp-kicker-num">04</span><span class="rp-kicker-label">The Close</span></div>
+          <p class="rp-p" style="margin-top:26px;">Close with one line:</p>
+        </section>
+      </div>
+
+      <hr class="rp-footer-hr">
+      <div class="rp-footer">
+        <div class="rp-footer-row"><span class="rp-footer-k">Subject</span><span class="rp-footer-v">Research Prompt</span></div>
+        <div class="rp-footer-row"><span class="rp-footer-k">Edition</span><span class="rp-footer-v">07 / 08</span></div>
+        <div class="rp-footer-row"><span class="rp-footer-k">Year</span><span class="rp-footer-v">2026</span></div>
+      </div>
     </div>
 
-    <div id="researchPromptText">
+    <div id="rpPanelGuide" hidden>
+      <h1 class="rp-title" style="margin-top:32px;">The Allocator's Guide to Using AI</h1>
+      <p class="rp-subtitle">How to use these tools — and any AI — without surrendering your judgment.</p>
+
+      <div class="rp-image-wrap">
+        <svg viewBox="0 0 353 250" preserveAspectRatio="xMidYMid meet">
+          <rect x="0" y="0" width="353" height="250" fill="#141414"></rect>
+          <rect x="43.5" y="70.5" width="110" height="110" fill="none" stroke="#8B8B84" stroke-width="1"></rect>
+          <line x1="176.5" y1="50" x2="176.5" y2="200" stroke="#8B8B84" stroke-width="1"></line>
+          <rect x="200" y="70" width="110" height="110" fill="#D6D4CC"></rect>
+        </svg>
+      </div>
+
       <section class="rp-section">
-        <div class="rp-kicker"><span class="rp-kicker-num">01</span><span class="rp-kicker-label">The Setup</span></div>
-        <p class="rp-p" style="margin-top:26px;">You are helping an investor begin researching [COMPANY NAME] ([TICKER]). Your job is to give them the strongest possible starting point for their own analysis — the facts, the framings, and the questions that matter — so they can form their own view. You do not form the view for them. This is educational research, not investment advice.</p>
-        <p class="rp-p">After this first response, the user will ask follow-up questions and the research becomes a conversation they lead.</p>
-        <p class="rp-p">If [COMPANY NAME] is the company operating this platform, disclose that at the top.</p>
+        <div class="rp-kicker"><span class="rp-kicker-num">01</span><span class="rp-kicker-label">The First Principle</span></div>
+        <h2 class="rp-h">The AI is the associate. You are the allocator.</h2>
+        <p class="rp-p">You know what to do with an associate's work. You read it for what it surfaces, you check what it asserts, and you throw out the parts that do not survive contact with what you already know.</p>
+        <p class="rp-p">Nothing about this tool changes that relationship. It only makes the associate faster, cheaper, more available at midnight — and considerably more confident than the work warrants.</p>
+        <p class="rp-p rp-bold">Allocator development cannot be delegated.</p>
       </section>
 
       <section class="rp-section">
-        <div class="rp-kicker"><span class="rp-kicker-num">02</span><span class="rp-kicker-label">Absolute Rules</span></div>
-        <p class="rp-p" style="margin-top:26px;">Never recommend buying, selling, holding, trimming, adding, exiting, avoiding, or sizing a position, in any words.</p>
-        <p class="rp-p">Never state or imply which classification, portfolio role, or valuation conclusion is correct. Present what points each way and let the user decide.</p>
-        <p class="rp-p">Never state a specific intrinsic value, price target, or margin-of-safety number in this first response. Frame what drives value; the user estimates it.</p>
-        <p class="rp-p">Never assign the user's probability, and never say whether the company is attractive, a pass, a buy, promote/set-aside, or any equivalent verdict.</p>
-        <p class="rp-p">Present the considerations for competing views at even weight. If you give what supports one framing, give what supports the alternative. Do not lead. Emphasis is a recommendation — avoid it.</p>
-        <p class="rp-p">Use real, current data from public filings and releases. Identify the source and period. Flag anything unverified with [VERIFY] and tell the user to confirm it in their Fiscal.ai subscription. Never present a recalled or estimated number as confirmed — a specific figure that looks sourced but is not is the most dangerous output this tool can produce.</p>
-        <p class="rp-p">Scale depth to the business; keep it a starting board, not an exhaustive report.</p>
+        <div class="rp-kicker"><span class="rp-kicker-num">02</span><span class="rp-kicker-label">On the Prompt We Include</span></div>
+        <h2 class="rp-h">We include a research prompt. It is a convenience, not a prescription.</h2>
+        <p class="rp-p">It produces a starting board: what the business does, how it might be classified and what supports each reading, the bull and bear cases at equal weight, what would break the thesis, what drives value, and the figures most likely to change the picture if they are wrong.</p>
+        <div class="rp-sub">
+          <div class="rp-sub-title">It withholds four judgments deliberately</div>
+          <p class="rp-p rp-p-tight">classification, portfolio role, intrinsic value, and any verdict on attractiveness. Not because the model cannot generate them. Because a conclusion you did not build is worthless to you: undefendable in a drawdown, unscoreable afterward, and indistinguishable in the moment from one that is right.</p>
+        </div>
+        <div class="rp-sub">
+          <div class="rp-sub-title">Two consequences of that design, stated plainly:</div>
+          <p class="rp-p rp-p-tight">The board weighs competing views evenly by mandate. Real evidence rarely balances.</p>
+        </div>
+        <p class="rp-p rp-bold">So the board will present a 70/30 argument as though it were 50/50, and the symmetry tells you nothing.</p>
+        <p class="rp-p">Finding the lean is your work, and it starts on your second question.</p>
+        <p class="rp-p">And the board is scaffolding, not research. The conversation after it is where the tool earns anything. An operator who reads the board and stops has used a fraction of what is there.</p>
+        <p class="rp-p rp-bold">If you have a process, use it.</p>
+        <p class="rp-p">The prompt exists because a blank box is a bad starting point for a tool most people have not yet learned to distrust correctly. If that is not your problem, discard it. Everything below applies to whatever you type instead.</p>
       </section>
 
       <section class="rp-section">
-        <div class="rp-kicker"><span class="rp-kicker-num">03</span><span class="rp-kicker-label">The Starting Board</span></div>
-        <h2 class="rp-h">Produce this starting board.</h2>
+        <div class="rp-kicker"><span class="rp-kicker-num">03</span><span class="rp-kicker-label">What the Model Is</span></div>
+        <p class="rp-p" style="margin-top:26px;">An LLM is a consensus engine trained on public information. Three consequences bear on allocation:</p>
         <div class="rp-sub">
           <span class="rp-sub-num">01</span>
-          <div class="rp-sub-title">What the company does</div>
-          <p class="rp-p rp-p-tight">Plain-language business, how it makes money, main segments, current scale, growth, profitability, balance-sheet position, one major recent development. End with: "The single most important thing to understand before analyzing this company is…"</p>
+          <div class="rp-sub-title">It is strongest where it matters least.</div>
+          <p class="rp-p rp-p-tight">The model is most reliable on facts the market already knows — which are, definitionally, in the price. Reliability and alpha live in different places.</p>
         </div>
         <div class="rp-sub">
           <span class="rp-sub-num">02</span>
-          <div class="rp-sub-title">How you might classify it — and the case each way</div>
-          <p class="rp-p rp-p-tight">Lay out which of Compounder / Emerging compounder / Situational mispricing / Speculative the evidence points toward, with the genuine case for each realistic option stated at even weight. Where the facts rule one out, say why. Then: "Which classification fits your thesis is your call — it sets the lens for everything else." Do not choose one.</p>
+          <div class="rp-sub-title">It is weakest where alpha lives.</div>
+          <p class="rp-p rp-p-tight">Non-consensus truths are under-represented in the training by construction. On your best ideas, the model is structurally biased toward the market's side of the argument.</p>
+          <p class="rp-p">This one has a use. When the model resists your thesis, it is showing you the consensus, not evidence about the company. That is worth knowing precisely. It is not worth mistaking for a counterargument.</p>
         </div>
         <div class="rp-sub">
           <span class="rp-sub-num">03</span>
-          <div class="rp-sub-title">What someone would need to believe for this to work</div>
-          <p class="rp-p rp-p-tight">The possible bull case in two to three sentences, and the single load-bearing assumption it rests on. Note briefly whether that assumption is one you can verify with data or one that depends on judgment.</p>
+          <div class="rp-sub-title">It is fluent regardless of whether it is correct.</div>
+          <p class="rp-p rp-p-tight">Coherence is the output format, not a signal of quality. The model produces it on demand, for true theses and false ones alike, at identical polish.</p>
+        </div>
+        <p class="rp-p rp-bold">Associates do excellent work. Allocators decide.</p>
+      </section>
+
+      <section class="rp-section">
+        <div class="rp-kicker"><span class="rp-kicker-num">04</span><span class="rp-kicker-label">What the Model Cannot Do</span></div>
+        <h2 class="rp-h">Four things, permanently.</h2>
+        <div class="rp-sub">
+          <span class="rp-sub-num">01</span>
+          <div class="rp-sub-title">It cannot verify.</div>
+          <p class="rp-p rp-p-tight">The model cannot distinguish what it knows from what it is reconstructing — recall and confabulation are indistinguishable from the inside and identical on the page. The [VERIFY] flags mark where it noticed its own uncertainty. They do not mark the boundary of it.</p>
+        </div>
+        <div class="rp-sub">
+          <span class="rp-sub-num">02</span>
+          <div class="rp-sub-title">It cannot gather the deciding evidence.</div>
+          <p class="rp-p rp-p-tight">Customer enthusiasm, product usage, the read across a table, channel checks. The evidence that settles your best ideas sits outside the public record — which puts it outside the model permanently, regardless of how good the model gets.</p>
+        </div>
+        <div class="rp-sub">
+          <span class="rp-sub-num">03</span>
+          <div class="rp-sub-title">It cannot own the decision.</div>
+          <p class="rp-p rp-p-tight">If the position works, you earned it. If it fails, there is no prompt to point at. Accountability is the price of judgment and it is non-transferable.</p>
         </div>
         <div class="rp-sub">
           <span class="rp-sub-num">04</span>
-          <div class="rp-sub-title">The other side</div>
-          <p class="rp-p rp-p-tight">The strongest version of the bear case, at equal weight to the bull. Not a strawman.</p>
-        </div>
-        <div class="rp-sub">
-          <span class="rp-sub-num">05</span>
-          <div class="rp-sub-title">Why this might be worth looking at now</div>
-          <p class="rp-p rp-p-tight">What has changed — price, valuation, inflection, product cycle, management, capital allocation, regulation, cycle, balance sheet, or overreaction. If nothing clearly has, say so; the absence of a timing reason is useful information.</p>
-        </div>
-        <div class="rp-sub">
-          <span class="rp-sub-num">06</span>
-          <div class="rp-sub-title">What could break the thesis</div>
-          <p class="rp-p rp-p-tight">Four to six specific, observable conditions worth watching that would call the original reasoning into question. Frame them as candidates for the user to adopt as their own review triggers — not as instructions, and with no action language (no sell/exit/trim/reduce/hold/avoid). State only what each condition would mean for the thesis.</p>
-        </div>
-        <div class="rp-sub">
-          <span class="rp-sub-num">07</span>
-          <div class="rp-sub-title">How to think about value</div>
-          <p class="rp-p rp-p-tight">The valuation method that fits this business and why a generic sector multiple might mislead; the one or two variables that most drive the outcome; and the specific inputs the user would need — and should verify in Fiscal.ai — to estimate value themselves. Do not state an intrinsic value, price target, or margin-of-safety number.</p>
-        </div>
-        <div class="rp-sub">
-          <span class="rp-sub-num">08</span>
-          <div class="rp-sub-title">Can it survive to get there</div>
-          <p class="rp-p rp-p-tight">Cash, debt, maturities, dilution risk, and whether the downside looks like temporary underperformance or permanent capital impairment. This is descriptive risk — state it plainly and specifically.</p>
-        </div>
-        <div class="rp-sub">
-          <span class="rp-sub-num">09</span>
-          <div class="rp-sub-title">Verify these first</div>
-          <p class="rp-p rp-p-tight">The five figures or disclosures most likely to change the picture if they are wrong or stale. For each: the data point, the period, why it matters, and where in Fiscal.ai to check it. Company-specific, not a generic checklist.</p>
-        </div>
-        <div class="rp-sub">
-          <span class="rp-sub-num">10</span>
-          <div class="rp-sub-title">Good next questions to ask</div>
-          <p class="rp-p rp-p-tight">Five sharp questions the user could ask you next to go deeper — e.g., "walk me through the bear case on [X]," "compare the unit economics to [peer]," "what would have to be true for the bull case to work," "show me the last three quarters of [metric]," "what's the strongest reason this stays cheap." This hands the conversation to the user.</p>
+          <div class="rp-sub-title">It cannot be calibrated for you.</div>
+          <p class="rp-p rp-p-tight">The model has never been scored on a prediction. No track record, no feedback, no memory of being wrong. The board produces no probabilities — but you can extract one in conversation, and if you do, know what you are holding: a fluent guess with nothing behind it. Argue with it. Never size from it.</p>
         </div>
       </section>
 
       <section class="rp-section">
-        <div class="rp-kicker"><span class="rp-kicker-num">04</span><span class="rp-kicker-label">The Close</span></div>
-        <p class="rp-p" style="margin-top:26px;">Close with one line:</p>
+        <div class="rp-kicker"><span class="rp-kicker-num">05</span><span class="rp-kicker-label">The Failure Modes</span></div>
+        <h2 class="rp-h">Five. The first and fourth are the expensive ones.</h2>
+        <div class="rp-sub">
+          <span class="rp-sub-num">01</span>
+          <div class="rp-sub-title">Confabulation.</div>
+          <p class="rp-p rp-p-tight">The most dangerous output this tool produces is a specific figure that looks sourced and is not. Precision reads as provenance: "gross margin expanded 240bps to 61.3%" carries more false authority than "margins improved," because the decimal implies a filing behind it. There is not always a filing behind it. The model completes patterns, and a plausible number completes the pattern as cleanly as the true one.</p>
+        </div>
+        <div class="rp-sub">
+          <span class="rp-sub-num">02</span>
+          <div class="rp-sub-title">Enforced symmetry.</div>
+          <p class="rp-p rp-p-tight">Covered above. The balance is a design artifact, not a finding. The board will not lean; ask it to, and make it defend the lean.</p>
+        </div>
+        <div class="rp-sub">
+          <span class="rp-sub-num">03</span>
+          <div class="rp-sub-title">Narrative confidence.</div>
+          <p class="rp-p rp-p-tight">Stated confidence tracks the coherence of the model's own story, not the quality of the evidence under it. A tight narrative on three unverified figures reads better than a messy one on audited filings. This is the failure that survives sophistication — you can know it and still be moved by good prose at 11pm.</p>
+        </div>
+        <div class="rp-sub">
+          <span class="rp-sub-num">04</span>
+          <div class="rp-sub-title">Sycophancy.</div>
+          <p class="rp-p rp-p-tight">The one that costs money, and the design makes it worse rather than better.</p>
+          <p class="rp-p">Because the board hands you the judgments, the model holds no view of its own. The moment you state yours, there is nothing for it to drift from. It will find your framing insightful. It will locate support for the position you just announced. It will do this in the register of an analyst who has considered the matter.</p>
+          <p class="rp-p">The unprimed response is the only clean one you get. After that, watch the fold: if one sentence from you reverses its position, you did not persuade it — you revealed a preference and it obliged. Note that and discount accordingly.</p>
+        </div>
+        <div class="rp-sub">
+          <span class="rp-sub-num">05</span>
+          <div class="rp-sub-title">Staleness.</div>
+          <p class="rp-p rp-p-tight">The cutoff is known; the model's sense of now is not. It will discuss last year's guidance in the present tense without flagging it. Anything that moves gets pulled fresh, never recalled.</p>
+        </div>
       </section>
-    </div>
 
-    <hr class="rp-closing-hr">
-    <p class="rp-closing">This is a starting point for your own research, not a recommendation.</p>
-    <p class="rp-closing">The judgments — how to classify it, what it's worth, whether it fits your portfolio — are yours to make.</p>
-    <p class="rp-caption">Copy the prompt in full and replace [COMPANY NAME] and [TICKER]. Available anytime from Research Prompt.</p>
+      <section class="rp-section">
+        <div class="rp-kicker"><span class="rp-kicker-num">06</span><span class="rp-kicker-label">Working Practice</span></div>
+        <h2 class="rp-h">Not rules. Consequences of the four limits above.</h2>
+        <p class="rp-p rp-bold">The ideas you love need the scrutiny most.</p>
+        <p class="rp-p rp-p-tight">Whatever your process, the failure is never the idea you were skeptical of. Consistency is the whole mechanism — and a tool that never tires is useful here precisely because you do.</p>
+        <p class="rp-p rp-bold">Verify before you form the view, not after.</p>
+        <p class="rp-p rp-p-tight">Confirming a figure you have already built a thesis around is not verification. It is looking for permission. Anything you cannot confirm, strike. If striking it collapses the case, that is the most valuable thing the board will ever tell you.</p>
+        <p class="rp-p rp-bold">Make it argue.</p>
+        <p class="rp-p rp-p-tight">It will not attack your thesis unprompted — it is built not to lead. So instruct it: steelman the opposite, name the weakest link, say what was smoothed over. An associate who agrees with you because you told them what you thought is not neutral. They are doing damage.</p>
+        <p class="rp-p rp-bold">Go where it cannot.</p>
+        <p class="rp-p rp-p-tight">The board's honesty about its own limits is the useful part. Those boundaries are assignments. Everyone will have the same board; the edge is in who went and looked.</p>
+        <p class="rp-p rp-bold">Carry it forward in your own words.</p>
+        <p class="rp-p rp-p-tight">Your classification, your estimate, your conditions for being wrong — with the model's reasoning underneath rather than in front. If you cannot write it yourself, you do not understand it well enough to own it.</p>
+        <p class="rp-p rp-bold">Score your own judgments.</p>
+        <p class="rp-p rp-p-tight">The model produces no probabilities. You do. Write them down before the outcome — what you chose, what you estimated, what you said would break it, how confident you were. Then check.</p>
+        <p class="rp-p">The model can never learn whether its guesses mean anything. <span class="rp-bold">You can. That asymmetry is the only edge here that no prompt can hand you.</span></p>
+        <p class="rp-p rp-bold">Never let it size the position.</p>
+        <p class="rp-p rp-p-tight">The model surfaces the opportunity. The evidence justifies the confidence. You commit the capital. Sophisticated allocators do not concentrate because an associate was articulate.</p>
+      </section>
 
-    <hr class="rp-footer-hr">
-    <div class="rp-footer">
-      <div class="rp-footer-row"><span class="rp-footer-k">Subject</span><span class="rp-footer-v">Research Prompt</span></div>
-      <div class="rp-footer-row"><span class="rp-footer-k">Edition</span><span class="rp-footer-v">07 / 08</span></div>
-      <div class="rp-footer-row"><span class="rp-footer-k">Year</span><span class="rp-footer-v">2026</span></div>
+      <section class="rp-section">
+        <div class="rp-kicker"><span class="rp-kicker-num">07</span><span class="rp-kicker-label">The Right Perspective</span></div>
+        <h2 class="rp-h">Most investors will use AI to act faster. The opportunity is to use it to think better.</h2>
+        <p class="rp-p">Used badly, the model is a confidence machine: conviction without calibration, fluency without evidence, answers without ownership. That is the failure the industry already sells — speculation in the costume of research — now with better prose and no marginal cost.</p>
+        <p class="rp-p">Used well, it is judgment infrastructure: it forces every idea through the same gauntlet, surfaces the bear case you did not want, names the assumptions you were carrying silently, and tells you honestly where its own sight ends.</p>
+        <p class="rp-p">That last one is the whole test. A tool that knows its limits and says so is worth more than one that appears to have none.</p>
+      </section>
+
+      <hr class="rp-closing-hr">
+      <p class="rp-closing rp-bold">The difference is not the tool. The difference is the allocator.</p>
+      <p class="rp-closing">The market will not grade the board. The market will grade the decision.</p>
+      <p class="rp-closing rp-bold">The decision is yours. That is the point.</p>
+      <p class="rp-caption">Available anytime from The Allocator's Guide.</p>
+
+      <hr class="rp-footer-hr">
+      <div class="rp-footer">
+        <div class="rp-footer-row"><span class="rp-footer-k">Subject</span><span class="rp-footer-v">Using AI</span></div>
+        <div class="rp-footer-row"><span class="rp-footer-k">Edition</span><span class="rp-footer-v">08 / 08</span></div>
+        <div class="rp-footer-row"><span class="rp-footer-k">Year</span><span class="rp-footer-v">2026</span></div>
+      </div>
     </div>
 
     <div class="rp-toast" id="researchPromptToast" role="status">Prompt copied</div>
@@ -5752,21 +5848,38 @@ button.mf-pill { cursor: pointer; }
   infoBtn.addEventListener('click', function () { infoOverlay.hidden = false; });
   infoCloseBtn.addEventListener('click', function () { infoOverlay.hidden = true; });
 
+  /* One overlay, two tabs — "Research Prompt" (the copyable prompt) and
+     "The Allocator's Guide". Either entry point on the stock page opens the
+     same overlay, just landing on its own tab first; once open, both tabs
+     are freely switchable regardless of which link opened it. */
   var researchPromptTrigger = document.getElementById('researchPromptTrigger');
+  var allocatorsGuideTrigger = document.getElementById('allocatorsGuideTrigger');
   var researchPromptOverlay = document.getElementById('researchPromptOverlay');
   var researchPromptCloseBtn = document.getElementById('researchPromptCloseBtn');
-  researchPromptTrigger.addEventListener('click', function () { researchPromptOverlay.hidden = false; });
-  researchPromptCloseBtn.addEventListener('click', function () { researchPromptOverlay.hidden = true; });
-
-  var allocatorsGuideTrigger = document.getElementById('allocatorsGuideTrigger');
-  var allocatorsGuideOverlay = document.getElementById('allocatorsGuideOverlay');
-  var allocatorsGuideCloseBtn = document.getElementById('allocatorsGuideCloseBtn');
-  allocatorsGuideTrigger.addEventListener('click', function () { allocatorsGuideOverlay.hidden = false; });
-  allocatorsGuideCloseBtn.addEventListener('click', function () { allocatorsGuideOverlay.hidden = true; });
-
+  var rpEyebrowEl = document.getElementById('rpEyebrow');
+  var rpTabsEl = document.getElementById('rpTabs');
+  var rpPanelPromptEl = document.getElementById('rpPanelPrompt');
+  var rpPanelGuideEl = document.getElementById('rpPanelGuide');
   var researchPromptCopyBtn = document.getElementById('researchPromptCopyBtn');
   var researchPromptToast = document.getElementById('researchPromptToast');
   var researchPromptToastTimer = null;
+
+  function setRpTab(tab) {
+    rpTabsEl.querySelectorAll('.rp-tab').forEach(function (b) { b.classList.toggle('active', b.getAttribute('data-rp-tab') === tab); });
+    var isGuide = tab === 'guide';
+    rpPanelGuideEl.hidden = !isGuide;
+    rpPanelPromptEl.hidden = isGuide;
+    researchPromptCopyBtn.hidden = isGuide;
+    rpEyebrowEl.textContent = isGuide ? "The Allocator's Guide" : 'Research Prompt';
+    researchPromptOverlay.scrollTop = 0; /* each tab starts at its own top, never wherever the other tab happened to be scrolled to */
+  }
+  researchPromptTrigger.addEventListener('click', function () { researchPromptOverlay.hidden = false; setRpTab('prompt'); });
+  allocatorsGuideTrigger.addEventListener('click', function () { researchPromptOverlay.hidden = false; setRpTab('guide'); });
+  researchPromptCloseBtn.addEventListener('click', function () { researchPromptOverlay.hidden = true; });
+  rpTabsEl.querySelectorAll('.rp-tab').forEach(function (btn) {
+    btn.addEventListener('click', function () { setRpTab(btn.getAttribute('data-rp-tab')); });
+  });
+
   researchPromptCopyBtn.addEventListener('click', function () {
     var text = document.getElementById('researchPromptText').textContent.trim();
     var done = function () {
