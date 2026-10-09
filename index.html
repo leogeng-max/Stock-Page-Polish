@@ -1887,6 +1887,291 @@ button.mf-pill { cursor: pointer; }
 
 .pos-detail-disclosure { margin-top: 40px; font-size: 11px; color: #565b5e; letter-spacing: -0.22px; line-height: 1.4; }
 
+/* ---------- AI Forecast (stock-page section + sequential overlay) ---------- */
+.fc-section { margin: 28px 20px 0; }
+.fc-card { background: #0a0a0a; border: 1px solid rgba(255,255,255,0.11); padding: 20px; }
+.fc-entry { display: flex; align-items: center; justify-content: space-between; gap: 16px; width: 100%; padding: 0; background: none; border: 0; text-align: left; color: inherit; font-family: inherit; cursor: pointer; }
+.fc-entry__copy { display: block; min-width: 0; }
+.fc-entry .section-header { transition: gap .25s ease; }
+.fc-entry:hover .section-header { gap: 7px; }
+.fc-entry__desc { display: block; margin-top: 7px; font-size: 12px; color: #929292; letter-spacing: -0.24px; line-height: 1.45; }
+.fc-entry:focus-visible, .fc-btn:focus-visible, .fc-link:focus-visible, .fc-tab:focus-visible, .fc-row-btn:focus-visible { outline: 1px solid #ffffff; outline-offset: 4px; }
+
+/* Entry animation: a small orbit. Three satellites on two rings around a core that pings. */
+.fc-orbit { position: relative; flex: 0 0 60px; width: 60px; height: 60px; margin: -4px 0; }
+.fc-orbit__ring { position: absolute; border-radius: 50%; border: 1px solid rgba(255,255,255,0.13); }
+.fc-orbit__ring--in { inset: 16px; }
+.fc-orbit__ring--out { inset: 1px; }
+.fc-orbit__arm { position: absolute; animation: fcSpin 6s linear infinite; }
+.fc-orbit__arm::after { content: ''; position: absolute; left: 50%; top: -1.5px; width: 3px; height: 3px; margin-left: -1.5px; border-radius: 50%; background: #fff; }
+.fc-orbit__arm--in { inset: 16px; }
+.fc-orbit__arm--out { inset: 1px; animation-duration: 13s; animation-direction: reverse; }
+.fc-orbit__arm--out2 { inset: 1px; animation-duration: 13s; animation-direction: reverse; animation-delay: -6.5s; }
+.fc-orbit__arm--out2::after { background: #c9a24b; }
+.fc-orbit__core { position: absolute; left: 50%; top: 50%; width: 4px; height: 4px; margin: -2px 0 0 -2px; border-radius: 50%; background: #fff; animation: fcCore 3s ease-in-out infinite; }
+.fc-orbit__ping { position: absolute; left: 50%; top: 50%; width: 60px; height: 60px; margin: -30px 0 0 -30px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.5); opacity: 0; animation: fcPing 3s cubic-bezier(.2,.6,.3,1) infinite; }
+@keyframes fcSpin { to { transform: rotate(360deg); } }
+@keyframes fcCore { 0%, 100% { transform: scale(1); opacity: .9; } 8% { transform: scale(1.35); opacity: 1; } 30% { transform: scale(1); opacity: .9; } }
+@keyframes fcPing { 0% { transform: scale(.15); opacity: .6; } 70%, 100% { transform: scale(1); opacity: 0; } }
+.fc-entry:hover .fc-orbit__arm--in { animation-duration: 3.2s; }
+@media (prefers-reduced-motion: reduce) { .fc-orbit__arm, .fc-orbit__core, .fc-orbit__ping { animation: none; } }
+
+.fc-num { white-space: nowrap; flex-shrink: 0; font-size: 30px; font-weight: 400; letter-spacing: -0.9px; color: #ffffff; line-height: 1; font-variant-numeric: tabular-nums; }
+.fc-num--sm { font-size: 22px; letter-spacing: -0.6px; }
+.fc-num .u { font-size: 0.6em; color: #929292; margin-left: 1px; letter-spacing: 0; }
+
+/* Track: the range visual shared by the entry card, landing, record and what-changed */
+.fc-track { position: relative; height: 46px; transition: height .4s cubic-bezier(.2,.8,.2,1); }
+.fc-track.has-you { height: 66px; }
+.fc-track__stem { position: absolute; top: 24px; height: 8px; width: 1px; margin-left: -0.5px; background: rgba(255,255,255,0.5); transition: left .9s cubic-bezier(.2,.8,.2,1), opacity .4s ease; }
+.fc-track__rail { position: absolute; left: 0; right: 0; top: 23px; height: 1px; background: rgba(255,255,255,0.22); }
+.fc-track__band {
+  position: absolute; top: 18px; height: 11px; border-radius: 6px;
+  background: rgba(255,255,255,0.13); border: 1px solid rgba(255,255,255,0.18);
+  transform-origin: center; transition: left .9s cubic-bezier(.2,.8,.2,1), width .9s cubic-bezier(.2,.8,.2,1), opacity .5s ease, transform .9s cubic-bezier(.2,.8,.2,1);
+}
+.fc-track__dot {
+  position: absolute; top: 18px; width: 11px; height: 11px; margin-left: -5.5px; border-radius: 50%;
+  background: #ffffff; box-shadow: 0 0 0 2px #0a0a0a;
+  transition: left .9s cubic-bezier(.2,.8,.2,1), transform .45s cubic-bezier(.3,1.5,.5,1), opacity .4s ease, box-shadow .3s ease;
+}
+.fc-track__val {
+  position: absolute; top: 2px; transform: translateX(-50%); font-size: 10px; color: #c7c7c7; letter-spacing: -0.1px;
+  font-variant-numeric: tabular-nums; transition: left .9s cubic-bezier(.2,.8,.2,1), opacity .4s ease, color .2s ease;
+}
+.fc-track__val.alt { top: -9px; }
+.fc-track--labels { margin-top: 12px; }
+.fc-track__dot.is-ghost { background: transparent; border: 1px dashed #6b6b6b; box-shadow: none; }
+.fc-track__ref { position: absolute; top: 12px; height: 23px; margin-left: -0.5px; border-left: 1px dashed #c9a24b; transition: left .9s cubic-bezier(.2,.8,.2,1); }
+.fc-track__you {
+  position: absolute; top: 34px; width: 13px; height: 13px; margin-left: -6.5px; transform: rotate(45deg);
+  border: 1.5px solid #ffffff; background: #000000; transition: left .9s cubic-bezier(.2,.8,.2,1), opacity .4s ease;
+}
+.fc-track__you-lbl { position: absolute; top: 52px; transform: translateX(-50%); font-size: 10px; color: #ffffff; letter-spacing: -0.1px; transition: left .9s cubic-bezier(.2,.8,.2,1), opacity .4s ease; white-space: nowrap; }
+.fc-track .is-hidden { opacity: 0; pointer-events: none; }
+.fc-track--pre .fc-track__dot { opacity: 0; transform: translateY(-14px) scale(.4); }
+.fc-track--pre .fc-track__val { opacity: 0; }
+.fc-track--pre .fc-track__band { opacity: 0; transform: scaleX(.15); }
+.fc-track.is-dim .fc-track__dot:not(.is-focus) { opacity: .28; }
+.fc-track__dot.is-focus { transform: scale(1.5); box-shadow: 0 0 0 2px #0a0a0a, 0 0 0 5px rgba(255,255,255,0.22); }
+.fc-track__axis { display: flex; justify-content: space-between; margin-top: 8px; font-size: 10px; color: #929292; letter-spacing: -0.2px; position: relative; height: 12px; }
+.fc-track__axis .ref { position: absolute; transform: translateX(-50%); color: #c9a24b; white-space: nowrap; transition: left .9s cubic-bezier(.2,.8,.2,1); }
+.fc-legend { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 14px; font-size: 11px; color: #929292; letter-spacing: -0.22px; }
+.fc-legend i { display: inline-block; vertical-align: -1px; margin-right: 6px; }
+.fc-legend .k-dot { width: 8px; height: 8px; border-radius: 50%; background: #fff; }
+.fc-legend .k-ref { width: 0; height: 11px; border-left: 1px dashed #c9a24b; margin-right: 7px; }
+.fc-legend .k-you { width: 8px; height: 8px; border: 1.5px solid #fff; transform: rotate(45deg); margin-right: 8px; }
+
+/* Overlay frame + view router */
+.fc-overlay { padding-bottom: 32px; }
+.fc-overlay .fin-overlay-header { min-height: 32px; }
+.fc-views { position: relative; }
+.fc-view { display: none; }
+.fc-view.is-active { display: block; animation: fcViewIn .34s cubic-bezier(.2,.8,.2,1) both; }
+.fc-views.is-back .fc-view.is-active { animation-name: fcViewInBack; }
+@keyframes fcViewIn { from { opacity: 0; transform: translateX(22px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes fcViewInBack { from { opacity: 0; transform: translateX(-22px); } to { opacity: 1; transform: translateX(0); } }
+.fc-rise { opacity: 0; transform: translateY(8px); }
+.fc-view.is-active .fc-rise { animation: fcRise .5s cubic-bezier(.2,.8,.2,1) both; animation-delay: calc(var(--i, 0) * 70ms + 80ms); }
+@keyframes fcRise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+.fc-h { font-size: 17px; line-height: 1.35; letter-spacing: -0.34px; color: #ffffff; font-weight: 400; }
+.fc-h--lg { font-size: 19px; letter-spacing: -0.4px; }
+.fc-sub { margin-top: 8px; font-size: 12px; color: #929292; letter-spacing: -0.24px; line-height: 1.55; }
+.fc-label { font-size: 11px; color: #929292; letter-spacing: -0.22px; text-transform: capitalize; }
+.fc-tag { display: inline-block; font-size: 9.5px; letter-spacing: 0.2px; text-transform: uppercase; color: #929292; border: 1px solid rgba(255,255,255,0.16); padding: 2px 6px; line-height: 1.2; white-space: nowrap; }
+.fc-tag--declared { color: #ffffff; border-color: rgba(255,255,255,0.5); }
+.fc-tag--observed { color: #c9a24b; border-color: rgba(201,162,75,0.45); }
+.fc-hr { height: 1px; background: rgba(255,255,255,0.1); margin: 24px 0; border: 0; }
+.fc-stack > * + * { margin-top: 16px; }
+.fc-block { margin-top: 24px; }
+.fc-block--lg { margin-top: 32px; }
+.fc-note { font-size: 12px; color: #c7c7c7; letter-spacing: -0.24px; line-height: 1.6; }
+.fc-note b { color: #ffffff; font-weight: 500; }
+.fc-disclosure { margin-top: 32px; font-size: 11px; color: #7a7f82; letter-spacing: -0.22px; line-height: 1.5; }
+
+.fc-btnrow { display: flex; gap: 10px; margin-top: 24px; }
+.fc-btn {
+  flex: 1; min-height: 44px; padding: 0 14px; font-family: inherit; font-size: 13px; font-weight: 500; letter-spacing: -0.14px;
+  background: transparent; color: #ffffff; border: 1px solid rgba(255,255,255,0.28); cursor: pointer; text-align: center;
+  transition: background .18s ease, border-color .18s ease, transform .12s ease, opacity .18s ease;
+}
+.fc-btn:hover { border-color: rgba(255,255,255,0.5); }
+.fc-btn:active { transform: scale(0.985); }
+.fc-btn--primary { background: #ffffff; color: #000000; border-color: #ffffff; }
+.fc-btn--primary:hover { background: #e9e9e9; border-color: #e9e9e9; }
+.fc-btn--block { width: 100%; flex: none; }
+.fc-link { background: none; border: none; padding: 0; font-family: inherit; font-size: 12px; color: #929292; letter-spacing: -0.24px; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgba(255,255,255,0.3); }
+.fc-link:hover { color: #ffffff; }
+.fc-link-center { display: block; margin: 20px auto 0; }
+
+/* Model list rows (landing) */
+.fc-model-list { margin-top: 18px; }
+.fc-row-btn { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 13px 0; background: none; border: 0; border-top: 1px solid rgba(255,255,255,0.08); color: #ffffff; font-family: inherit; font-size: 14px; letter-spacing: -0.28px; cursor: pointer; text-align: left; }
+.fc-row-btn:first-child { border-top: 0; }
+.fc-row-btn .l { display: flex; align-items: center; gap: 10px; }
+.fc-row-btn .pip { width: 7px; height: 7px; border-radius: 50%; background: #565b5e; transition: background .2s ease, transform .2s ease; }
+.fc-row-btn.is-focus .pip, .fc-row-btn:hover .pip { background: #ffffff; transform: scale(1.3); }
+.fc-row-btn .r { font-weight: 500; font-variant-numeric: tabular-nums; }
+.fc-row-btn .d { font-size: 11px; color: #929292; margin-right: 8px; font-weight: 400; }
+.fc-meta { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 22px; font-size: 11px; color: #929292; letter-spacing: -0.22px; }
+
+.fc-insight { margin-top: 24px; padding: 16px 18px; background: #0a0a0a; border: 1px solid rgba(255,255,255,0.11); }
+.fc-insight__t { font-size: 13px; color: #ffffff; letter-spacing: -0.15px; line-height: 1.5; }
+.fc-insight__d { margin-top: 6px; font-size: 12px; color: #929292; letter-spacing: -0.24px; line-height: 1.55; }
+
+.fc-youbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; margin-top: 24px; padding: 14px 18px; background: #0a0a0a; border: 1px solid rgba(255,255,255,0.11); color: #fff; font-family: inherit; cursor: pointer; text-align: left; }
+.fc-youbar[hidden] { display: none; }
+.fc-youbar .l { display: flex; align-items: center; gap: 10px; font-size: 13px; letter-spacing: -0.15px; }
+.fc-youbar .r { display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 500; }
+.fc-youbar .r .chev { color: #929292; font-weight: 300; font-size: 16px; }
+
+/* Tabs (why they differ) */
+.fc-tabs { position: relative; display: flex; gap: 0; margin-top: 22px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.fc-tab { flex: 1; background: none; border: 0; padding: 0 0 10px; font-family: inherit; font-size: 13px; font-weight: 500; color: #767676; cursor: pointer; text-align: center; transition: color .2s ease; }
+.fc-tab.is-active { color: #ffffff; }
+.fc-tabs__ink { position: absolute; bottom: -1px; height: 2px; background: #fff; border-radius: 2px; transition: left .32s cubic-bezier(.2,.8,.2,1), width .32s cubic-bezier(.2,.8,.2,1); }
+.fc-pane { display: none; margin-top: 22px; }
+.fc-pane.is-active { display: block; animation: fcRise .38s cubic-bezier(.2,.8,.2,1) both; }
+.fc-lens { padding: 16px 18px; background: #0a0a0a; border: 1px solid rgba(255,255,255,0.11); display: flex; gap: 18px; }
+.fc-lens + .fc-lens { margin-top: 10px; }
+.fc-lens__who { flex: 0 0 74px; }
+.fc-lens__name { font-size: 11px; color: #929292; letter-spacing: -0.22px; }
+.fc-lens__val { margin-top: 4px; font-size: 20px; letter-spacing: -0.5px; color: #fff; font-variant-numeric: tabular-nums; }
+.fc-lens__txt { font-size: 13px; line-height: 1.5; color: #c7c7c7; letter-spacing: -0.15px; }
+
+.fc-matrix { background: #0a0a0a; border: 1px solid rgba(255,255,255,0.11); padding: 6px 18px 4px; }
+.fc-mx-row { display: grid; grid-template-columns: 1.35fr 1fr 1fr 1fr; align-items: center; column-gap: 6px; padding: 13px 0; border-top: 1px solid rgba(255,255,255,0.08); }
+.fc-mx-row:first-child { border-top: 0; }
+.fc-mx-head { padding: 12px 0 10px; font-size: 11px; color: #929292; letter-spacing: -0.22px; }
+.fc-mx-f { font-size: 13px; color: #ffffff; letter-spacing: -0.15px; line-height: 1.3; }
+.fc-mx-f .w { display: block; margin-top: 4px; font-size: 9.5px; letter-spacing: .2px; text-transform: uppercase; color: #c9a24b; }
+.fc-mx-c { display: flex; flex-direction: column; gap: 5px; }
+.fc-mx-c .t { font-size: 11px; color: #c7c7c7; letter-spacing: -0.15px; }
+.fc-pips { display: flex; gap: 3px; }
+.fc-pips i { width: 14px; height: 4px; background: rgba(255,255,255,0.14); transform-origin: left; transform: scaleX(.2); opacity: 0; }
+.fc-pane.is-active .fc-pips i.on { background: #fff; animation: fcPip .45s cubic-bezier(.2,.8,.2,1) both; animation-delay: calc(var(--d, 0) * 40ms + 120ms); }
+.fc-pane.is-active .fc-pips i { opacity: 1; transform: scaleX(1); }
+@keyframes fcPip { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+.fc-ev { background: #0a0a0a; border: 1px solid rgba(255,255,255,0.11); padding: 0 18px; }
+.fc-ev__row { padding: 15px 0; border-top: 1px solid rgba(255,255,255,0.08); }
+.fc-ev__row:first-child { border-top: 0; }
+.fc-ev__t { font-size: 14px; color: #fff; letter-spacing: -0.28px; }
+.fc-ev__m { margin-top: 5px; font-size: 11px; color: #929292; letter-spacing: -0.22px; }
+.fc-ev__foot { padding: 14px 0 16px; border-top: 1px solid rgba(255,255,255,0.08); font-size: 11px; color: #929292; letter-spacing: -0.22px; }
+
+/* Method */
+.fc-steps { margin-top: 24px; }
+.fc-step { display: flex; gap: 16px; padding: 16px 0; border-top: 1px solid rgba(255,255,255,0.08); }
+.fc-step:first-child { border-top: 0; }
+.fc-step__n { flex: 0 0 22px; font-size: 11px; color: #929292; letter-spacing: -0.22px; padding-top: 2px; }
+.fc-step__t { font-size: 14px; color: #fff; letter-spacing: -0.28px; }
+.fc-step__d { margin-top: 5px; font-size: 12px; color: #929292; letter-spacing: -0.24px; line-height: 1.55; }
+
+/* Outlook */
+.fc-dial { text-align: left; padding: 22px 20px 20px; }
+.fc-dial__num { font-size: 48px; letter-spacing: -1.6px; line-height: 1; font-weight: 400; color: #fff; font-variant-numeric: tabular-nums; }
+.fc-dial__num .u { font-size: 24px; color: #929292; margin-left: 2px; letter-spacing: 0; }
+.fc-dial__lbl { margin-top: 10px; font-size: 13px; color: #c7c7c7; letter-spacing: -0.15px; min-height: 18px; transition: color .2s ease; }
+.fc-range { position: relative; margin-top: 28px; height: 28px; }
+.fc-range input { position: absolute; inset: 0; width: 100%; height: 28px; margin: 0; opacity: 0; cursor: pointer; z-index: 3; touch-action: pan-y; }
+.fc-range__rail { position: absolute; left: 0; right: 0; top: 13px; height: 2px; background: rgba(255,255,255,0.16); }
+.fc-range__fill { position: absolute; left: 0; top: 13px; height: 2px; background: #fff; }
+.fc-range__tick { position: absolute; top: 9px; width: 1px; height: 10px; background: rgba(255,255,255,0.22); }
+.fc-range__thumb { position: absolute; top: 4px; width: 20px; height: 20px; margin-left: -10px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 4px #0a0a0a, 0 2px 10px rgba(0,0,0,.5); transition: transform .15s ease, box-shadow .2s ease; z-index: 2; pointer-events: none; }
+.fc-range.is-drag .fc-range__thumb { transform: scale(1.18); box-shadow: 0 0 0 4px #0a0a0a, 0 0 0 8px rgba(255,255,255,0.14); }
+.fc-range input:focus-visible ~ .fc-range__thumb { outline: 1px solid #fff; outline-offset: 5px; }
+.fc-range__ends { display: flex; justify-content: space-between; margin-top: 12px; font-size: 11px; color: #929292; letter-spacing: -0.22px; }
+.fc-field-lbl { display: flex; justify-content: space-between; align-items: baseline; margin-top: 28px; font-size: 13px; color: #fff; letter-spacing: -0.15px; }
+.fc-field-lbl span { font-size: 11px; color: #929292; }
+.fc-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.fc-chip { font-family: inherit; font-size: 12px; letter-spacing: -0.1px; padding: 6px 12px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.15); background: transparent; color: #c7c7c7; cursor: pointer; transition: all .18s ease; }
+.fc-chip:hover { border-color: rgba(255,255,255,0.4); color: #fff; }
+.fc-textarea { display: block; width: 100%; margin-top: 12px; min-height: 92px; resize: none; padding: 14px 16px; font-family: inherit; font-size: 13px; line-height: 1.5; color: #fff; background: #0a0a0a; border: 1px solid rgba(255,255,255,0.14); border-radius: 0; letter-spacing: -0.15px; }
+.fc-textarea::placeholder { color: #6b6b6b; }
+.fc-textarea:focus { outline: none; border-color: rgba(255,255,255,0.5); }
+.fc-count { margin-top: 6px; text-align: right; font-size: 11px; color: #6b6b6b; font-variant-numeric: tabular-nums; }
+.fc-blind { display: flex; gap: 12px; align-items: flex-start; margin-top: 22px; padding: 14px 16px; background: #0a0a0a; border: 1px solid rgba(255,255,255,0.11); font-size: 12px; line-height: 1.55; letter-spacing: -0.24px; color: #c7c7c7; }
+.fc-blind svg { flex: 0 0 16px; margin-top: 1px; }
+
+/* Record */
+.fc-lock { display: flex; align-items: center; gap: 8px; font-size: 11px; letter-spacing: .6px; text-transform: uppercase; color: #c7c7c7; }
+.fc-lock svg { flex: 0 0 14px; }
+.fc-lock .shackle { transform-box: fill-box; transform-origin: 0% 100%; transition: transform .5s cubic-bezier(.3,1.4,.5,1); }
+.fc-lock.is-open .shackle { transform: translateY(-2.2px) rotate(-18deg); }
+.fc-lock .id { margin-left: auto; letter-spacing: 0; color: #929292; font-size: 10.5px; text-transform: none; }
+.fc-rec-top { display: flex; align-items: baseline; gap: 12px; margin-top: 18px; flex-wrap: wrap; }
+.fc-rec-when { font-size: 12px; color: #929292; letter-spacing: -0.24px; }
+.fc-quote { margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 14px; line-height: 1.55; color: #e3e2e2; letter-spacing: -0.2px; }
+.fc-quote.is-empty { color: #6b6b6b; }
+.fc-table { margin-top: 10px; }
+.fc-tr { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 12px 0; border-top: 1px solid rgba(255,255,255,0.08); font-size: 14px; letter-spacing: -0.28px; color: #fff; }
+.fc-tr:first-child { border-top: 0; }
+.fc-tr .l { display: flex; align-items: center; gap: 10px; }
+.fc-tr .r { font-variant-numeric: tabular-nums; }
+.fc-tr .r .tag { margin-right: 10px; vertical-align: 1px; }
+.fc-hist { margin-top: 14px; }
+.fc-hist-head { display: flex; justify-content: space-between; align-items: baseline; }
+.fc-vers { display: flex; align-items: center; gap: 8px; margin-top: 24px; }
+.fc-vers[hidden], .fc-super[hidden], .fc-rec-tags[hidden], .fc-dial__delta[hidden], .fc-why[hidden] { display: none; }
+.fc-vers__lbl { margin-right: 4px; font-size: 11px; color: #929292; letter-spacing: -0.22px; }
+.fc-chip.is-on { background: #ffffff; color: #000000; border-color: #ffffff; }
+.fc-vers + .fc-card { margin-top: 12px; }
+.fc-super { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin: -4px 0 16px; padding: 10px 12px; border: 1px dashed rgba(255,255,255,0.22); font-size: 12px; color: #c7c7c7; letter-spacing: -0.2px; }
+.fc-rec-tags { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 12px; font-size: 12px; color: #929292; letter-spacing: -0.24px; }
+.fc-tag--informed { color: #c7c7c7; border-style: dashed; }
+.fc-dial__delta { margin-top: 6px; font-size: 12px; color: #929292; letter-spacing: -0.24px; }
+.fc-btn[disabled] { opacity: .35; cursor: not-allowed; }
+.fc-btn[disabled]:hover { border-color: rgba(255,255,255,0.28); }
+.fc-btn--primary[disabled]:hover { background: #ffffff; }
+.fc-hist__item { position: relative; padding: 0 0 18px 22px; }
+.fc-hist__item::before { content: ''; position: absolute; left: 3px; top: 9px; bottom: -4px; width: 1px; background: rgba(255,255,255,0.14); }
+.fc-hist__item:last-child { padding-bottom: 0; }
+.fc-hist__item:last-child::before { display: none; }
+.fc-hist__dot { position: absolute; left: 0; top: 5px; width: 7px; height: 7px; border-radius: 50%; background: #fff; }
+.fc-hist__dot.hollow { background: #000; border: 1.5px solid #fff; }
+.fc-hist__t { font-size: 14px; color: #fff; letter-spacing: -0.28px; }
+.fc-hist__d { margin-top: 3px; font-size: 11px; color: #929292; letter-spacing: -0.22px; }
+.fc-hist__n { margin-top: 6px; font-size: 13px; color: #c7c7c7; line-height: 1.5; letter-spacing: -0.15px; }
+.fc-hist__item.is-new { animation: fcRise .5s cubic-bezier(.2,.8,.2,1) both; }
+.fc-composer[hidden] { display: none; }
+.fc-composer { margin-top: 20px; animation: fcRise .35s cubic-bezier(.2,.8,.2,1) both; }
+.fc-composer .fc-btnrow { margin-top: 12px; }
+
+/* What changed */
+.fc-delta-table { margin-top: 20px; }
+.fc-dt { display: grid; grid-template-columns: 1.2fr 1fr 1fr 1fr; align-items: center; padding: 12px 0; border-top: 1px solid rgba(255,255,255,0.08); font-size: 14px; letter-spacing: -0.28px; font-variant-numeric: tabular-nums; }
+.fc-dt:first-child { border-top: 0; font-size: 11px; color: #929292; letter-spacing: -0.22px; padding-top: 0; }
+.fc-dt > :not(:first-child) { text-align: right; }
+.fc-dt .was { color: #929292; }
+.fc-dt .now { font-weight: 600; }
+.fc-dt .chg { color: #c7c7c7; }
+.fc-why { margin-top: 20px; padding: 16px 18px; background: #0a0a0a; border: 1px solid rgba(255,255,255,0.11); }
+.fc-why__row { display: flex; justify-content: space-between; gap: 14px; padding: 9px 0; font-size: 12px; letter-spacing: -0.24px; color: #929292; border-top: 1px solid rgba(255,255,255,0.07); }
+.fc-why__row:first-of-type { border-top: 0; }
+.fc-why__row b { color: #fff; font-weight: 500; text-align: right; }
+.fc-ev-chg { margin-top: 10px; }
+.fc-ev-chg .fc-ev__row { padding: 13px 0; }
+.fc-judge { display: flex; gap: 10px; margin-top: 12px; }
+.fc-judge .fc-btn { min-height: 40px; font-size: 12px; }
+.fc-judge .fc-btn.is-on { background: #fff; color: #000; border-color: #fff; }
+.fc-judge-ack { margin-top: 12px; font-size: 12px; color: #929292; letter-spacing: -0.24px; }
+.fc-judge-ack[hidden] { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .fc-view.is-active, .fc-pane.is-active, .fc-view.is-active .fc-rise, .fc-hist__item.is-new, .fc-composer { animation: none; opacity: 1; transform: none; }
+  .fc-rise { opacity: 1; transform: none; }
+  .fc-track__band, .fc-track__dot, .fc-track__val, .fc-track__ref, .fc-track__you, .fc-track__you-lbl, .fc-tabs__ink, .fc-track__axis .ref { transition: none; }
+  .fc-pane.is-active .fc-pips i.on { animation: none; }
+}
+
+.fc-track--pre .fc-track__ref { opacity: 0; }
+.fc-track__ref { transition: left .9s cubic-bezier(.2,.8,.2,1), opacity .6s ease .5s; }
+.fc-overlay:not([hidden]) { animation: fcSheet .4s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes fcSheet { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .fc-overlay:not([hidden]) { animation: none; } }
+
 /* ---------- Financials detail overlay ---------- */
 .fin-overlay-header {
   display: flex;
@@ -3306,6 +3591,28 @@ button.mf-pill { cursor: pointer; }
 
   <div class="divider" style="margin-top:40px;"></div>
 
+  <!-- AI Forecast section -->
+  <div class="fc-section" id="fcSection">
+    <button type="button" class="fc-entry" id="fcEntry" aria-label="Open AI Forecast for KSTL">
+      <span class="fc-entry__copy">
+        <span class="section-header">AI Forecast <span class="chev">›</span></span>
+        <span class="fc-entry__desc" id="fcEntryDesc">Model estimates, evidence and your own outlook</span>
+      </span>
+      <span class="fc-orbit" aria-hidden="true">
+        <span class="fc-orbit__ring fc-orbit__ring--out"></span>
+        <span class="fc-orbit__ring fc-orbit__ring--in"></span>
+        <span class="fc-orbit__arm fc-orbit__arm--out"></span>
+        <span class="fc-orbit__arm fc-orbit__arm--out2"></span>
+        <span class="fc-orbit__arm fc-orbit__arm--in"></span>
+        <span class="fc-orbit__ping"></span>
+        <span class="fc-orbit__core"></span>
+      </span>
+    
+    </button>
+  </div>
+
+  <div class="divider" style="margin-top:40px;"></div>
+
   <!-- News section -->
   <div class="news-section">
     <div class="section-header">News</div>
@@ -4179,6 +4486,255 @@ button.mf-pill { cursor: pointer; }
       <div class="mf-row"><span class="mf-row__name">Kill Criteria</span><button type="button" class="mf-pill" id="mfKillPill" data-hidden="true">Hidden</button></div>
       <div class="mf-row"><span class="mf-row__name">Prediction</span><span class="mf-pill" data-hidden="false">Shown</span></div>
       <div class="mf-row"><span class="mf-row__name">Source</span><span class="mf-pill" data-hidden="false">Shown</span></div>
+    </div>
+  </div>
+
+  <!-- AI Forecast overlay (sequential flow: landing → why → method → outlook → record → what changed) -->
+  <div class="ir-overlay fc-overlay" id="fcOverlay" role="dialog" aria-label="AI Forecast" hidden>
+    <div class="fin-overlay-header">
+      <button type="button" class="ir-back-btn" id="fcBackBtn" aria-label="Back">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M10.5 3L5.5 8L10.5 13" stroke="#C7C7C7" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <span class="ir-overlay__title" id="fcTitle">AI Forecast</span>
+      <span class="fin-overlay-ticker" style="margin-left:auto;"><span class="sep">KSTL</span></span>
+    </div>
+
+    <div class="fc-views" id="fcViews">
+
+      <!-- 1 · Landing -->
+      <section class="fc-view" data-view="landing">
+        <div class="fc-card fc-block fc-rise" style="--i:0;">
+          <div class="fc-label">The question</div>
+          <div class="fc-h fc-h--lg" style="margin-top:12px;">Will Kestrel’s total return beat the S&amp;P 500 Total Return Index over the next 3 years?</div>
+          <div class="fc-sub">Includes dividends · Oct 6, 2026 – Oct 6, 2029</div>
+          <hr class="fc-hr" style="margin:20px 0;">
+          <div class="fc-label">Model estimates range</div>
+          <div style="margin-top:10px;"><span class="fc-num" id="fcLandRange">42–51<span class="u">%</span></span></div>
+          <div class="fc-sub" id="fcLandSub">estimated probability · not a prediction of price</div>
+        </div>
+
+        <div class="fc-card fc-block fc-rise" style="--i:1;">
+          <div id="fcLandTrack"></div>
+          <div class="fc-legend">
+            <span><i class="k-dot"></i>Model estimate</span>
+            <span><i class="k-ref"></i><span id="fcLandRefLbl">Historical reference 38%</span></span>
+            <span id="fcLandLegendYou" hidden><i class="k-you"></i>Your outlook</span>
+          </div>
+          <div class="fc-meta"><span>By model <span class="fc-tag">AI-inferred</span></span><span id="fcLandAsOf">As of Oct 6, 2026, 9:30 ET</span></div>
+          <div class="fc-model-list" id="fcLandList"></div>
+        </div>
+
+        <button type="button" class="fc-youbar fc-rise" style="--i:2;" id="fcYouBar" hidden>
+          <span class="l">
+            <svg width="13" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><rect x="2" y="6" width="10" height="7" rx="1.2" stroke="#fff"/><path d="M4.2 6V4.2a2.8 2.8 0 0 1 5.6 0V6" stroke="#fff"/></svg>
+            Your outlook <span class="fc-tag fc-tag--declared">Declared</span>
+          </span>
+          <span class="r"><span id="fcYouVal">52%</span><span class="chev">›</span></span>
+        </button>
+
+        <div class="fc-insight fc-rise" style="--i:3;">
+          <div class="fc-insight__t" id="fcLandInsightT"></div>
+          <div class="fc-insight__d" id="fcLandInsightD"></div>
+        </div>
+
+        <div class="fc-btnrow fc-rise" style="--i:4;">
+          <button type="button" class="fc-btn" id="fcLandWhy">Why they differ</button>
+          <button type="button" class="fc-btn fc-btn--primary" id="fcLandPrimary">Record my view</button>
+        </div>
+        <button type="button" class="fc-link fc-link-center fc-rise" style="--i:5;" id="fcLandMethod">How these estimates are made</button>
+
+        <p class="fc-disclosure fc-rise" style="--i:6;">Illustrative data. Decision-support tool, not a recommendation. Estimates can be wrong and don’t consider whether this investment is suitable for you. The historical reference is the share of large U.S. technology companies that outperformed the S&amp;P 500 over rolling 3-year periods.</p>
+      </section>
+
+      <!-- 3 · Why the models differ -->
+      <section class="fc-view" data-view="why">
+        <div class="fc-tabs" id="fcTabs" role="tablist">
+          <button type="button" class="fc-tab is-active" role="tab" data-tab="summary">Summary</button>
+          <button type="button" class="fc-tab" role="tab" data-tab="diff">Differences</button>
+          <button type="button" class="fc-tab" role="tab" data-tab="evidence">Evidence</button>
+          <span class="fc-tabs__ink" id="fcTabInk"></span>
+        </div>
+
+        <div class="fc-pane is-active" data-pane="summary">
+          <div id="fcLensList"></div>
+        </div>
+
+        <div class="fc-pane" data-pane="diff">
+          <div class="fc-matrix" id="fcMatrix"></div>
+          <p class="fc-note" style="margin-top:14px;color:#929292;font-size:11px;">How much weight each model gives a factor, from its stated reasoning. Marked rows are where the models are furthest apart.</p>
+        </div>
+
+        <div class="fc-pane" data-pane="evidence">
+          <div class="fc-ev">
+            <div class="fc-ev__row"><div class="fc-ev__t">Q2 FY2027 earnings release</div><div class="fc-ev__m">Company filing · Aug 2026</div></div>
+            <div class="fc-ev__row"><div class="fc-ev__t">Analyst consensus estimates</div><div class="fc-ev__m">Consensus aggregate · Oct 2026</div></div>
+            <div class="fc-ev__row"><div class="fc-ev__t">Hyperscaler capex guidance</div><div class="fc-ev__m">Company disclosures · Q3 2026</div></div>
+            <div class="fc-ev__row"><div class="fc-ev__t">Competitor product announcements</div><div class="fc-ev__m">Press releases · Sep 2026</div></div>
+            <div class="fc-ev__foot">All three models received the same evidence set.</div>
+          </div>
+        </div>
+
+        <div class="fc-insight">
+          <div class="fc-insight__t"><b style="font-weight:600;">Same evidence, different weighting.</b></div>
+          <div class="fc-insight__d">Disagreement shows where the outcome is uncertain. It is not a signal to act. <span id="fcWhyWidest"></span></div>
+        </div>
+        <div class="fc-btnrow">
+          <button type="button" class="fc-btn fc-btn--primary" id="fcWhyRecord">Record my view</button>
+        </div>
+        <p class="fc-disclosure">Educational comparison · Not a recommendation</p>
+      </section>
+
+      <!-- 4 · How estimates are made -->
+      <section class="fc-view" data-view="method">
+        <div class="fc-block fc-rise" style="--i:0;">
+          <div class="fc-h fc-h--lg">Three models, one question, one evidence set.</div>
+          <div class="fc-sub">The range you see is the lowest and highest estimate. It is not averaged.</div>
+        </div>
+        <div class="fc-steps fc-rise" style="--i:1;">
+          <div class="fc-step"><span class="fc-step__n">01</span><div><div class="fc-step__t">Same question</div><div class="fc-step__d">Each model is asked the same thing, over the same period and against the same benchmark, with dividends included.</div></div></div>
+          <div class="fc-step"><span class="fc-step__n">02</span><div><div class="fc-step__t">Same evidence</div><div class="fc-step__d">Filings, consensus, company guidance and market data as of the estimate date. The full set is listed under Evidence.</div></div></div>
+          <div class="fc-step"><span class="fc-step__n">03</span><div><div class="fc-step__t">Independent estimates</div><div class="fc-step__d">Each model returns its own probability without seeing the others. Differences come from weighting, not different facts.</div></div></div>
+          <div class="fc-step"><span class="fc-step__n">04</span><div><div class="fc-step__t">Range, not a point</div><div class="fc-step__d">II reports the spread. It does not average the models or pick a favourite.</div></div></div>
+          <div class="fc-step"><span class="fc-step__n">05</span><div><div class="fc-step__t">Historical reference</div><div class="fc-step__d">The share of large U.S. technology companies that outperformed the S&amp;P 500 over rolling 3-year periods. A base rate, not a forecast for Kestrel.</div></div></div>
+        </div>
+        <div class="fc-insight fc-rise" style="--i:2;">
+          <div class="fc-insight__t">Three kinds of numbers</div>
+          <div class="fc-insight__d" style="line-height:2;">
+            <span class="fc-tag">AI-inferred</span> produced by a model<br>
+            <span class="fc-tag fc-tag--observed">Observed</span> measured from historical data<br>
+            <span class="fc-tag fc-tag--declared">Declared</span> recorded by you
+          </div>
+        </div>
+        <p class="fc-disclosure fc-rise" style="--i:3;">Estimates can be wrong and don’t consider whether this investment is suitable for you. An estimated probability is not a prediction of price.</p>
+      </section>
+
+      <!-- 5 · Your outlook -->
+      <section class="fc-view" data-view="outlook">
+        <div class="fc-block fc-rise" style="--i:0;">
+          <div class="fc-h fc-h--lg">In your view, how likely is Kestrel to beat the S&amp;P 500 (total return) by Oct 2029?</div>
+        </div>
+        <div class="fc-card fc-dial fc-block fc-rise" style="--i:1;">
+          <div class="fc-dial__num" id="fcOutNum">50<span class="u">%</span></div>
+          <div class="fc-dial__lbl" id="fcOutLbl">About even</div>
+          <div class="fc-dial__delta" id="fcOutDelta" hidden></div>
+          <div class="fc-range" id="fcRange">
+            <div class="fc-range__rail"></div>
+            <span class="fc-range__tick" style="left:0"></span><span class="fc-range__tick" style="left:25%"></span><span class="fc-range__tick" style="left:50%"></span><span class="fc-range__tick" style="left:75%"></span><span class="fc-range__tick" style="left:calc(100% - 1px)"></span>
+            <div class="fc-range__fill" id="fcRangeFill"></div>
+            <input type="range" id="fcRangeInput" min="0" max="100" step="1" value="50" aria-label="Your estimated probability">
+            <div class="fc-range__thumb" id="fcRangeThumb"></div>
+          </div>
+          <div class="fc-range__ends"><span>0% · Very unlikely</span><span>100% · Very likely</span></div>
+        </div>
+
+        <div class="fc-why fc-rise" style="--i:2;" id="fcReviseCtx" hidden></div>
+
+        <div class="fc-rise" style="--i:2;">
+          <div class="fc-field-lbl"><div><span id="fcFieldLbl" style="font-size:13px;color:#fff;margin:0;">Why?</span> <span style="margin-left:4px;">optional</span></div></div>
+          <div class="fc-chips" id="fcChips">
+            <button type="button" class="fc-chip" data-chip="Valuation">Valuation</button>
+            <button type="button" class="fc-chip" data-chip="Product roadmap">Product roadmap</button>
+            <button type="button" class="fc-chip" data-chip="Margin pace">Margin pace</button>
+          </div>
+          <textarea class="fc-textarea" id="fcNote" maxlength="500" placeholder="What you weigh differently from the models"></textarea>
+          <div class="fc-count" id="fcCount">0/500</div>
+        </div>
+
+        <div class="fc-blind fc-rise" style="--i:3;">
+          <span id="fcBlindIcon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2 2l12 12M6.6 3.6A6.7 6.7 0 0 1 8 3.5c3 0 5.2 2 6.3 4.5-.5 1.1-1.2 2-2 2.7M9.4 9.4A2 2 0 0 1 6.6 6.6M4 5.3C3.1 6 2.4 6.9 1.7 8c1.1 2.5 3.3 4.5 6.3 4.5.8 0 1.5-.1 2.1-.4" stroke="#929292" stroke-width="1.2" stroke-linecap="round"/></svg></span>
+          <span id="fcBlindTxt">Model estimates are hidden here so they don’t influence your number. They appear beside it once you save.</span>
+        </div>
+
+        <button type="button" class="fc-btn fc-btn--primary fc-btn--block fc-rise" style="--i:4;margin-top:24px;" id="fcSave">Save my outlook</button>
+        <button type="button" class="fc-link fc-link-center fc-rise" style="--i:5;" id="fcNotNow">Not now</button>
+        <p class="fc-disclosure fc-rise" style="--i:6;">This is your view, not a recommendation from II.</p>
+      </section>
+
+      <!-- 6 · Saved record -->
+      <section class="fc-view" data-view="record">
+        <div class="fc-card fc-block fc-rise" style="--i:0;">
+          <div class="fc-lock is-open" id="fcRecLock">
+            <svg width="14" height="15" viewBox="0 0 14 15" fill="none" aria-hidden="true"><rect x="2" y="7" width="10" height="7" rx="1.2" stroke="#c7c7c7"/><g class="shackle"><path d="M4.2 7V5.2a2.8 2.8 0 0 1 5.6 0V7" stroke="#c7c7c7"/></g></svg>
+            <span id="fcRecLockLbl">Locked record</span> <span class="fc-tag fc-tag--declared" style="margin-left:auto;">Declared by you</span>
+          </div>
+          <div class="fc-rec-top">
+            <span class="fc-num" id="fcRecNum">52<span class="u">%</span></span>
+            <span class="fc-rec-when" id="fcRecWhen">Oct 6, 2026 · 10:14 ET</span>
+          </div>
+          <div class="fc-rec-tags" id="fcRecTags" hidden></div>
+          <div class="fc-quote" id="fcRecQuote"></div>
+        </div>
+
+        <div class="fc-card fc-block fc-rise" style="--i:1;">
+          <div class="fc-label">Where you sit</div>
+          <div style="margin-top:12px;" id="fcRecTrack"></div>
+          <div class="fc-note" style="margin-top:14px;" id="fcRecCmp"></div>
+        </div>
+
+        <div class="fc-card fc-block fc-rise" style="--i:2;">
+          <div class="fc-label" style="text-transform:uppercase;letter-spacing:.6px;">What was known at the time <span id="fcKnownAsOf" style="text-transform:none;letter-spacing:0;margin-left:6px;"></span></div>
+          <div class="fc-table" id="fcRecTable"></div>
+          <button type="button" class="fc-link" style="margin-top:6px;" id="fcRecEvidence">View evidence snapshot</button>
+        </div>
+
+        <div class="fc-block fc-rise" style="--i:3;">
+          <div class="fc-label" style="text-transform:uppercase;letter-spacing:.6px;">History</div>
+          <div class="fc-hist" id="fcHist"></div>
+        </div>
+
+        <div class="fc-btnrow fc-rise" style="--i:4;" id="fcRecActions">
+          <button type="button" class="fc-btn" id="fcRevise">Revise outlook</button>
+          <button type="button" class="fc-btn fc-btn--primary" id="fcRecChanged">What’s changed</button>
+        </div>
+        <p class="fc-disclosure fc-rise" style="--i:5;">Saved for your records. Entries can’t be edited or deleted. Revising your outlook adds a new dated entry to your history. Not a recommendation.</p>
+      </section>
+
+      <!-- 7 · What changed -->
+      <section class="fc-view" data-view="changed">
+        <div class="fc-block fc-rise" style="--i:0;">
+          <div class="fc-h fc-h--lg">Model estimates were updated after Q3 earnings</div>
+          <div class="fc-sub">Oct 24, 2026 · 4:42 PM ET</div>
+        </div>
+
+        <div class="fc-why fc-rise" style="--i:1;">
+          <div class="fc-label" style="margin-bottom:6px;text-transform:uppercase;letter-spacing:.6px;">Why you’re seeing this</div>
+          <div class="fc-why__row"><span>Trigger</span><b>Range moved 5 pp or more</b></div>
+          <div class="fc-why__row"><span>Model range</span><b>42–51% → 39–45%</b></div>
+          <div class="fc-why__row"><span>Your position</span><b>42.2% of portfolio · +7.5 pp vs S&amp;P</b></div>
+          <div class="fc-why__row"><span>Your recorded outlook</span><b id="fcChgWhyYou">52% · Oct 6</b></div>
+        </div>
+
+        <div class="fc-card fc-block fc-rise" style="--i:2;">
+          <div id="fcChgTrack"></div>
+          <div class="fc-delta-table" id="fcChgTable"></div>
+          <div class="fc-note" style="margin-top:12px;color:#929292;font-size:11px;">Change in percentage points · Range now 39–45%</div>
+        </div>
+
+        <div class="fc-card fc-block fc-rise" style="--i:3;">
+          <div class="fc-label" style="text-transform:uppercase;letter-spacing:.6px;">New evidence</div>
+          <div class="fc-ev-chg">
+            <div class="fc-ev__row"><div class="fc-ev__t">Revenue expectations lowered</div><div class="fc-ev__m">Analyst consensus cut FY2027 estimates · Oct 22</div></div>
+            <div class="fc-ev__row"><div class="fc-ev__t">Gross-margin guidance lower</div><div class="fc-ev__m">Company guidance below prior expectations · Oct 24 call</div></div>
+            <div class="fc-ev__row"><div class="fc-ev__t">Valuation moved</div><div class="fc-ev__m">Share price up about 18% since last estimate · market data</div></div>
+            <div class="fc-ev__row"><div class="fc-ev__t">Competitive position</div><div class="fc-ev__m">No material change</div></div>
+          </div>
+        </div>
+
+        <div class="fc-insight fc-rise" style="--i:4;">
+          <div class="fc-insight__t" id="fcChgInsightT"></div>
+          <div class="fc-insight__d" id="fcChgInsightD"></div>
+          <div class="fc-label" style="margin-top:16px;text-transform:none;">Does this change your view?</div>
+          <div class="fc-judge">
+            <button type="button" class="fc-btn" data-judge="Matters">Matters</button>
+            <button type="button" class="fc-btn" data-judge="Doesn’t matter">Doesn’t matter</button>
+          </div>
+          <div class="fc-judge-ack" id="fcJudgeAck" hidden></div>
+        </div>
+
+        <button type="button" class="fc-link fc-link-center fc-rise" style="--i:5;" id="fcChgFull">See full analysis</button>
+        <p class="fc-disclosure fc-rise" style="--i:6;">Updates reflect new evidence and can be wrong. Not a recommendation.</p>
+      </section>
+
     </div>
   </div>
 
@@ -7099,6 +7655,516 @@ button.mf-pill { cursor: pointer; }
        viewing — the field itself stays hidden either way. */
     killNudgeEl.hidden = true;
   });
+
+  /* ---------- AI Forecast: section + sequential overlay ---------- */
+  var FC = {
+    ref: 38,
+    models: [
+      { id: 'chatgpt', name: 'ChatGPT', base: 47, now: 41, lens: 'Weighs long-term AI infrastructure demand and Kestrel’s competitive position more heavily.' },
+      { id: 'claude',  name: 'Claude',  base: 42, now: 39, lens: 'Weighs valuation, competitive risk and the pace of margin expansion more heavily.' },
+      { id: 'gemini',  name: 'Gemini',  base: 51, now: 45, lens: 'Weighs global AI adoption, data-centre growth and the product roadmap more heavily.' }
+    ],
+    factors: [
+      { name: 'Data-centre demand',   v: [3, 2, 3] },
+      { name: 'Competitive position', v: [3, 2, 2] },
+      { name: 'Valuation',            v: [1, 3, 1] },
+      { name: 'Margin pace',          v: [2, 3, 2] },
+      { name: 'Product roadmap',      v: [2, 1, 3] }
+    ],
+    updated: false,
+    rec: null,
+    versions: [],
+    events: [],
+    viewN: 1,
+    reviseMode: false,
+    seenUpdate: false,
+    judged: null,
+    clock: 14,
+    clockB: 1
+  };
+  var FC_LEVEL = ['', 'Low', 'Medium', 'High'];
+  var FC_TITLES = { landing: 'AI Forecast', why: 'Why the models differ', method: 'How estimates are made', outlook: 'Your outlook', record: 'Your record', changed: 'What changed' };
+  var fcReduced = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+
+  function fcById(id) { return document.getElementById(id); }
+  function fcVal(m) { return FC.updated ? m.now : m.base; }
+  function fcRange(useNow) {
+    var vs = FC.models.map(function (m) { return useNow ? m.now : m.base; });
+    return { lo: Math.min.apply(null, vs), hi: Math.max.apply(null, vs) };
+  }
+  function fcCur() { return fcRange(FC.updated); }
+  function fcPos(v) { return ((v - 20) / 50 * 100) + '%'; }
+  function fcSigned(n) { return (n > 0 ? '+' : n < 0 ? '−' : '') + Math.abs(n); }
+  function fcEsc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+  function fcWhenNext() {
+    if (FC.seenUpdate) { var s = 'Oct 24, 2026 · 5:' + ('0' + FC.clockB).slice(-2) + ' PM ET'; FC.clockB += 3; return s; }
+    FC.clock += 3;
+    return 'Oct 6, 2026 · 10:' + ('0' + FC.clock).slice(-2) + ' ET';
+  }
+
+  function fcTween(ms, step, done) {
+    if (fcReduced) { step(1); if (done) done(); return; }
+    var t0 = null;
+    function frame(ts) {
+      if (t0 === null) t0 = ts;
+      var p = Math.min(1, (ts - t0) / ms);
+      step(1 - Math.pow(1 - p, 3));
+      if (p < 1) requestAnimationFrame(frame); else if (done) done();
+    }
+    requestAnimationFrame(frame);
+  }
+  function fcCountRange(node, lo, hi, ms) {
+    fcTween(ms || 850, function (e) {
+      node.innerHTML = Math.round(20 + (lo - 20) * e) + '–' + Math.round(20 + (hi - 20) * e) + '<span class="u">%</span>';
+    });
+  }
+  function fcCountPct(node, v, ms) {
+    fcTween(ms || 700, function (e) { node.innerHTML = Math.round(v * e) + '<span class="u">%</span>'; });
+  }
+
+  /* Track: the shared range visual (rail, band, model dots, historical reference, "you") */
+  function fcTrack(host, o) {
+    var t = { now: null, host: host };
+    host.innerHTML =
+      '<div class="fc-track fc-track--pre' + (o.labels ? ' fc-track--labels' : '') + '" role="img">' +
+        '<div class="fc-track__rail"></div><div class="fc-track__band"></div><div class="fc-track__ref"></div>' +
+        FC.models.map(function (m) { return '<div class="fc-track__dot is-ghost is-hidden" data-g="' + m.id + '"></div>'; }).join('') +
+        FC.models.map(function (m) {
+          return '<div class="fc-track__dot" data-id="' + m.id + '"></div>' + (o.labels ? '<div class="fc-track__val" data-v="' + m.id + '"></div>' : '');
+        }).join('') +
+        '<div class="fc-track__stem is-hidden"></div><div class="fc-track__you is-hidden"></div><div class="fc-track__you-lbl is-hidden"></div>' +
+      '</div>' +
+      (o.axis ? '<div class="fc-track__axis"><span>20%</span><span class="ref">Historical ' + FC.ref + '%</span><span>70%</span></div>' : '');
+    var tr = host.querySelector('.fc-track');
+    var band = tr.querySelector('.fc-track__band');
+    var ref = tr.querySelector('.fc-track__ref');
+    var you = tr.querySelector('.fc-track__you');
+    var stem = tr.querySelector('.fc-track__stem');
+    var youLbl = tr.querySelector('.fc-track__you-lbl');
+    var axisRef = host.querySelector('.fc-track__axis .ref');
+    var dots = {}, ghosts = {}, vals = {};
+    FC.models.forEach(function (m) {
+      dots[m.id] = tr.querySelector('[data-id="' + m.id + '"]');
+      ghosts[m.id] = tr.querySelector('[data-g="' + m.id + '"]');
+      vals[m.id] = tr.querySelector('[data-v="' + m.id + '"]');
+    });
+
+    t.update = function () {
+      var useNow = t.now === null ? (o.now === 'auto' ? FC.updated : !!o.now) : t.now;
+      var r = fcRange(useNow);
+      function vals_(i) { return useNow ? FC.models[i].now : FC.models[i].base; }
+      band.style.left = fcPos(r.lo);
+      band.style.width = ((r.hi - r.lo) / 50 * 100) + '%';
+      ref.style.left = fcPos(FC.ref);
+      if (axisRef) axisRef.style.left = fcPos(FC.ref);
+      FC.models.forEach(function (m) {
+        var v = useNow ? m.now : m.base;
+        dots[m.id].style.left = fcPos(v);
+        if (vals[m.id]) { vals[m.id].style.left = fcPos(v); vals[m.id].textContent = v; }
+        ghosts[m.id].style.left = fcPos(m.base);
+        ghosts[m.id].classList.toggle('is-hidden', !(o.ghosts && useNow));
+      });
+      if (o.labels) {
+        var last = [-99, -99];
+        FC.models.map(function (m, i) { return { id: m.id, v: vals_(i) }; }).sort(function (a, b) { return a.v - b.v; }).forEach(function (it) {
+          var lane = (it.v - last[0] >= 4) ? 0 : (it.v - last[1] >= 4 ? 1 : 0);
+          last[lane] = it.v;
+          vals[it.id].classList.toggle('alt', lane === 1);
+        });
+      }
+      var yv = (t.youV != null) ? t.youV : (FC.rec ? FC.rec.v : null);
+      var showYou = o.you !== false && yv != null;
+      tr.classList.toggle('has-you', showYou);
+      stem.classList.toggle('is-hidden', !showYou);
+      you.classList.toggle('is-hidden', !showYou);
+      youLbl.classList.toggle('is-hidden', !showYou);
+      if (showYou) {
+        you.style.left = fcPos(yv);
+        stem.style.left = fcPos(yv);
+        youLbl.style.left = fcPos(yv);
+        youLbl.textContent = 'You ' + yv + '%';
+      }
+      tr.setAttribute('aria-label', 'Model estimates ' + r.lo + ' to ' + r.hi + ' percent; historical reference ' + FC.ref + ' percent' + (showYou ? '; your outlook ' + yv + ' percent' : ''));
+    };
+    t.reset = function () { tr.classList.add('fc-track--pre'); };
+    t.reveal = function () {
+      var i = 0;
+      FC.models.forEach(function (m) {
+        var d = (260 + i * 120) + 'ms';
+        dots[m.id].style.transitionDelay = d;
+        if (vals[m.id]) vals[m.id].style.transitionDelay = d;
+        i++;
+      });
+      tr.classList.remove('fc-track--pre');
+      setTimeout(function () {
+        FC.models.forEach(function (m) { dots[m.id].style.transitionDelay = ''; if (vals[m.id]) vals[m.id].style.transitionDelay = ''; });
+      }, 1300);
+    };
+    t.setNow = function (b) { t.now = b; t.update(); };
+    t.focus = function (id) {
+      tr.classList.toggle('is-dim', !!id);
+      FC.models.forEach(function (m) { dots[m.id].classList.toggle('is-focus', m.id === id); });
+    };
+    t.update();
+    return t;
+  }
+
+  var fcOverlayEl = fcById('fcOverlay');
+  var fcViewsEl = fcById('fcViews');
+  var fcTitleEl = fcById('fcTitle');
+  var fcTracks = {
+    land:  fcTrack(fcById('fcLandTrack'),  { axis: true, labels: true,  ghosts: true,  now: 'auto' }),
+    rec:   fcTrack(fcById('fcRecTrack'),   { axis: true, labels: false, ghosts: false, now: false }),
+    chg:   fcTrack(fcById('fcChgTrack'),   { axis: true, labels: true,  ghosts: true,  now: false })
+  };
+  var fcStack = [];
+  var fcFocusId = null;
+
+  /* ----- Stock-page entry card ----- */
+  function fcRenderEntry() {
+    fcById('fcEntryDesc').textContent = FC.rec ? 'Your outlook is recorded · ' + FC.rec.v + '%' : 'Model estimates, evidence and your own outlook';
+  }
+
+  /* ----- Landing ----- */
+  function fcPrepLanding() {
+    var r = fcCur();
+    var tr = fcTracks.land;
+    tr.reset(); tr.update();
+    fcFocusId = null; tr.focus(null);
+    fcById('fcLandSub').textContent = FC.updated ? 'updated after Q3 earnings · was 42–51%' : 'estimated probability · not a prediction of price';
+    fcById('fcLandAsOf').textContent = FC.updated ? 'As of Oct 24, 2026, 4:42 PM ET' : 'As of Oct 6, 2026, 9:30 ET';
+    fcById('fcLandLegendYou').hidden = !FC.rec;
+    fcById('fcLandList').innerHTML = FC.models.map(function (m) {
+      return '<button type="button" class="fc-row-btn" data-id="' + m.id + '" aria-pressed="false"><span class="l"><span class="pip"></span>' + m.name + '</span>' +
+        '<span class="r">' + (FC.updated ? '<span class="d">was ' + m.base + '%</span>' : '') + fcVal(m) + '%</span></button>';
+    }).join('');
+    var youBar = fcById('fcYouBar');
+    youBar.hidden = !FC.rec;
+    if (FC.rec) fcById('fcYouVal').textContent = FC.rec.v + '%';
+    var vs = FC.models.map(fcVal);
+    var allAbove = vs.every(function (v) { return v > FC.ref; });
+    var allBelow = vs.every(function (v) { return v < FC.ref; });
+    var lo = Math.min.apply(null, vs) - FC.ref, hi = Math.max.apply(null, vs) - FC.ref;
+    var head = (r.hi - r.lo) + ' pp spread across 3 models.';
+    var rel = allAbove ? ' All three estimates sit above the ' + FC.ref + '% historical reference (' + fcSigned(lo) + ' to ' + fcSigned(hi) + ' pp).'
+            : allBelow ? ' All three estimates sit below the ' + FC.ref + '% historical reference (' + fcSigned(lo) + ' to ' + fcSigned(hi) + ' pp).'
+            : ' The estimates straddle the ' + FC.ref + '% historical reference.';
+    fcById('fcLandInsightT').textContent = head + rel;
+    fcById('fcLandInsightD').textContent = 'Widest disagreement: valuation and product roadmap.';
+    fcById('fcLandPrimary').textContent = FC.rec ? 'View my record' : 'Record my view';
+    fcById('fcLandRange').innerHTML = '20–20<span class="u">%</span>';
+  }
+  function fcPlayLanding() {
+    var r = fcCur();
+    fcTracks.land.reveal();
+    fcCountRange(fcById('fcLandRange'), r.lo, r.hi, 900);
+  }
+  function fcFocusModel(id) {
+    fcFocusId = (fcFocusId === id) ? null : id;
+    fcTracks.land.focus(fcFocusId);
+    fcById('fcLandList').querySelectorAll('.fc-row-btn').forEach(function (b) {
+      var on = b.getAttribute('data-id') === fcFocusId;
+      b.classList.toggle('is-focus', on);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+  }
+
+  /* ----- Why they differ ----- */
+  function fcSetTab(name) {
+    var tabs = fcById('fcTabs');
+    tabs.querySelectorAll('.fc-tab').forEach(function (b) {
+      var on = b.getAttribute('data-tab') === name;
+      b.classList.toggle('is-active', on);
+      b.setAttribute('aria-selected', on ? 'true' : 'false');
+      if (on) {
+        var ink = fcById('fcTabInk');
+        ink.style.left = b.offsetLeft + 'px';
+        ink.style.width = b.offsetWidth + 'px';
+      }
+    });
+    fcViewsEl.querySelectorAll('.fc-pane').forEach(function (p) {
+      p.classList.toggle('is-active', p.getAttribute('data-pane') === name);
+    });
+  }
+  function fcPrepWhy() {
+    fcById('fcLensList').innerHTML = FC.models.map(function (m) {
+      return '<div class="fc-lens"><div class="fc-lens__who"><div class="fc-lens__name">' + m.name + '</div><div class="fc-lens__val">' + fcVal(m) + '%</div></div><div class="fc-lens__txt">' + m.lens + '</div></div>';
+    }).join('');
+    var rows = '<div class="fc-mx-row fc-mx-head"><span>Factor</span>' + FC.models.map(function (m) { return '<span>' + m.name + '</span>'; }).join('') + '</div>';
+    var widest = [];
+    FC.factors.forEach(function (f) {
+      var spread = Math.max.apply(null, f.v) - Math.min.apply(null, f.v);
+      if (spread >= 2) widest.push(f.name.toLowerCase());
+      rows += '<div class="fc-mx-row"><span class="fc-mx-f">' + f.name + (spread >= 2 ? '<span class="w">Widest gap</span>' : '') + '</span>' +
+        f.v.map(function (lv, i) {
+          return '<span class="fc-mx-c"><span class="fc-pips">' + [1, 2, 3].map(function (n) { return '<i' + (n <= lv ? ' class="on" style="--d:' + (n + i) + '"' : '') + '></i>'; }).join('') + '</span><span class="t">' + FC_LEVEL[lv] + '</span></span>';
+        }).join('') + '</div>';
+    });
+    fcById('fcMatrix').innerHTML = rows;
+    fcById('fcWhyWidest').textContent = 'Widest gaps: ' + widest.join(' and ') + '.';
+  }
+
+  /* ----- Outlook ----- */
+  function fcOutLabel(v) {
+    return v < 10 ? 'Very unlikely' : v < 30 ? 'Unlikely' : v < 45 ? 'Somewhat unlikely' : v <= 55 ? 'About even' : v < 70 ? 'Somewhat likely' : v < 90 ? 'Likely' : 'Very likely';
+  }
+  function fcIsRevise() { return FC.reviseMode && !!FC.rec; }
+  function fcSyncSlider() {
+    var inp = fcById('fcRangeInput');
+    var v = +inp.value;
+    fcById('fcOutNum').innerHTML = v + '<span class="u">%</span>';
+    fcById('fcOutLbl').textContent = fcOutLabel(v);
+    fcById('fcRangeFill').style.width = v + '%';
+    var w = fcById('fcRange').clientWidth || 290;
+    fcById('fcRangeThumb').style.left = (v / 100 * w) + 'px';
+    if (fcIsRevise()) {
+      var d = v - FC.rec.v;
+      var dl = fcById('fcOutDelta');
+      dl.hidden = false;
+      dl.textContent = d === 0 ? 'Same as your current outlook. Move the slider to declare a new number.' : fcSigned(d) + ' pp vs your current outlook (' + FC.rec.v + '%)';
+      fcById('fcSave').disabled = d === 0;
+    }
+  }
+  var FC_EYE_OFF = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2 2l12 12M6.6 3.6A6.7 6.7 0 0 1 8 3.5c3 0 5.2 2 6.3 4.5-.5 1.1-1.2 2-2 2.7M9.4 9.4A2 2 0 0 1 6.6 6.6M4 5.3C3.1 6 2.4 6.9 1.7 8c1.1 2.5 3.3 4.5 6.3 4.5.8 0 1.5-.1 2.1-.4" stroke="#929292" stroke-width="1.2" stroke-linecap="round"/></svg>';
+  var FC_EYE_ON = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M1.7 8C2.8 5.5 5 3.5 8 3.5s5.2 2 6.3 4.5c-1.1 2.5-3.3 4.5-6.3 4.5S2.8 10.5 1.7 8Z" stroke="#c9a24b" stroke-width="1.2" stroke-linejoin="round"/><circle cx="8" cy="8" r="2" stroke="#c9a24b" stroke-width="1.2"/></svg>';
+  function fcPrepOutlook() {
+    var rev = fcIsRevise();
+    fcById('fcRangeInput').value = rev ? FC.rec.v : 50;
+    fcById('fcNote').value = '';
+    fcById('fcCount').textContent = '0/500';
+    fcById('fcOutDelta').hidden = !rev;
+    fcById('fcReviseCtx').hidden = !rev;
+    fcById('fcFieldLbl').textContent = rev ? 'What changed?' : 'Why?';
+    fcById('fcNote').placeholder = rev ? 'What made you change your number' : 'What you weigh differently from the models';
+    fcById('fcSave').textContent = rev ? 'Save revision' : 'Save my outlook';
+    fcById('fcSave').disabled = rev;
+    fcById('fcNotNow').textContent = rev ? 'Cancel' : 'Not now';
+    fcById('fcBlindIcon').innerHTML = rev ? FC_EYE_ON : FC_EYE_OFF;
+    fcById('fcBlindTxt').textContent = rev
+      ? 'You can see model estimates here, so this version will be tagged “Revised after seeing estimates”. Earlier versions stay unchanged.'
+      : 'Model estimates are hidden here so they don’t influence your number. They appear beside it once you save.';
+    if (rev) {
+      var nowR = fcRange(FC.seenUpdate);
+      fcById('fcReviseCtx').innerHTML =
+        '<div class="fc-label" style="margin-bottom:6px;text-transform:uppercase;letter-spacing:.6px;">Visible while you revise</div>' +
+        '<div class="fc-why__row"><span>Your current outlook</span><b>' + FC.rec.v + '% <span class="fc-tag fc-tag--declared" style="margin-left:6px;">Declared</span></b></div>' +
+        '<div class="fc-why__row"><span>Model estimates' + (FC.seenUpdate ? ' (Oct 24)' : ' (Oct 6)') + '</span><b>' + nowR.lo + '–' + nowR.hi + '% <span class="fc-tag" style="margin-left:6px;">AI-inferred</span></b></div>' +
+        '<div class="fc-why__row"><span>Historical reference</span><b>' + FC.ref + '% <span class="fc-tag fc-tag--observed" style="margin-left:6px;">Observed</span></b></div>';
+    }
+  }
+  function fcSyncCount() { fcById('fcCount').textContent = fcById('fcNote').value.length + '/500'; }
+
+  /* ----- Record ----- */
+  function fcPrepRecord() {
+    if (!FC.rec) return;
+    FC.reviseMode = false;
+    var ver = FC.rec;
+    var snapNow = ver.snap === 'now';
+    fcById('fcRecLock').classList.add('is-open');
+    fcById('fcRecWhen').textContent = ver.when;
+    fcById('fcRecNum').innerHTML = '0<span class="u">%</span>';
+    var q = fcById('fcRecQuote');
+    q.classList.toggle('is-empty', !ver.note);
+    q.textContent = ver.note ? '“' + ver.note + '”' : 'No note added.';
+
+    var tags = fcById('fcRecTags');
+    var tagHtml = '';
+    if (ver.informed) tagHtml += '<span class="fc-tag fc-tag--informed">Revised after seeing estimates</span>';
+    if (ver.prev != null) tagHtml += '<span>' + fcSigned(ver.v - ver.prev) + ' pp vs your last (' + ver.prev + '%)</span>';
+    tags.hidden = !tagHtml;
+    tags.innerHTML = tagHtml;
+
+    var tr = fcTracks.rec; tr.now = snapNow; tr.youV = ver.v; tr.reset(); tr.update();
+    var r = fcRange(snapNow);
+    var vsRef = ver.v - FC.ref;
+    var where = ver.v > r.hi ? '<b>' + (ver.v - r.hi) + ' pp above</b> the highest model estimate'
+              : ver.v < r.lo ? '<b>' + (r.lo - ver.v) + ' pp below</b> the lowest model estimate'
+              : '<b>Inside</b> the model range';
+    fcById('fcRecCmp').innerHTML = where + ' and <b>' + fcSigned(vsRef) + ' pp</b> vs the ' + FC.ref + '% historical reference.';
+    fcById('fcKnownAsOf').textContent = snapNow ? 'As of Oct 24, 2026' : 'As of Oct 6, 2026';
+    var rows = FC.models.map(function (m) {
+      return '<div class="fc-tr"><span class="l">' + m.name + ' estimate</span><span class="r"><span class="fc-tag tag">AI-inferred</span>' + (snapNow ? m.now : m.base) + '%</span></div>';
+    }).join('');
+    rows += '<div class="fc-tr"><span class="l">Historical reference</span><span class="r"><span class="fc-tag fc-tag--observed tag">Observed</span>' + FC.ref + '%</span></div>';
+    fcById('fcRecTable').innerHTML = rows;
+    fcRenderHist();
+  }
+  function fcPlayRecord() {
+    fcCountPct(fcById('fcRecNum'), FC.rec.v, 900);
+    setTimeout(function () { fcById('fcRecLock').classList.remove('is-open'); }, fcReduced ? 0 : 520);
+    fcTracks.rec.reveal();
+  }
+  function fcRenderHist(newest) {
+    var evs = FC.events;
+    fcById('fcHist').innerHTML = evs.map(function (e, i) {
+      var t, d, nt = '', hollow = true;
+      if (e.kind === 'version') {
+        var v = e.ver; hollow = false;
+        t = v.n === 1 ? 'Outlook recorded · ' + v.v + '%' : 'Revised · ' + v.v + '% (' + fcSigned(v.v - v.prev) + ' pp)';
+        d = v.when + ' · Declared by you' + (v.informed ? ' · Revised after seeing estimates' : '');
+        nt = v.note;
+      } else { t = e.t; d = e.when; nt = e.note; }
+      return '<div class="fc-hist__item' + (newest && i === evs.length - 1 ? ' is-new' : '') + '"><span class="fc-hist__dot' + (hollow ? ' hollow' : '') + '"></span><div class="fc-hist__t">' + fcEsc(t) + '</div><div class="fc-hist__d">' + fcEsc(d) + '</div>' + (nt ? '<div class="fc-hist__n">' + fcEsc(nt) + '</div>' : '') + '</div>';
+    }).join('');
+  }
+
+  /* ----- What changed ----- */
+  function fcPrepChanged() {
+    FC.seenUpdate = true;
+    var tr = fcTracks.chg; tr.now = false; tr.reset(); tr.update();
+    var rows = '<div class="fc-dt"><span>Model</span><span>Before</span><span>Now</span><span>Change</span></div>' +
+      FC.models.map(function (m) {
+        return '<div class="fc-dt"><span>' + m.name + '</span><span class="was">' + m.base + '%</span><span class="now">' + m.now + '%</span><span class="chg">' + fcSigned(m.now - m.base) + '</span></div>';
+      }).join('');
+    fcById('fcChgTable').innerHTML = rows;
+    var nowR = fcRange(true);
+    if (FC.rec) {
+      fcById('fcChgWhyYou').textContent = FC.rec.v + '% · Oct 6';
+      var before = FC.rec.v - fcRange(false).hi, after = FC.rec.v - nowR.hi;
+      fcById('fcChgInsightT').textContent = FC.rec.v > nowR.hi
+        ? 'Your recorded outlook is now ' + after + ' pp above the top of the model range' + (before > 0 ? ' (was ' + before + ' pp).' : ' (was inside it).')
+        : FC.rec.v < nowR.lo ? 'Your recorded outlook is now ' + (nowR.lo - FC.rec.v) + ' pp below the bottom of the model range.'
+        : 'Your recorded outlook is still inside the model range.';
+      fcById('fcChgInsightD').textContent = 'The models moved; your record has not. Whether the new evidence changes your reasoning is your call.';
+    } else {
+      fcById('fcChgWhyYou').textContent = 'None recorded';
+      fcById('fcChgInsightT').textContent = 'The model range moved ' + (fcRange(false).hi - nowR.hi) + ' pp lower at the top.';
+      fcById('fcChgInsightD').textContent = 'You have not recorded an outlook on Kestrel, so there is nothing to compare against.';
+    }
+    fcViewsEl.querySelectorAll('[data-judge]').forEach(function (b) { b.classList.toggle('is-on', FC.judged === b.getAttribute('data-judge')); });
+    var ack = fcById('fcJudgeAck');
+    ack.hidden = !FC.judged;
+    if (FC.judged) ack.textContent = 'Noted · ' + (FC.rec ? 'added to your record history.' : 'saved for this update.');
+  }
+  function fcPlayChanged() {
+    fcTracks.chg.reveal();
+    setTimeout(function () { fcTracks.chg.setNow(true); }, fcReduced ? 0 : 1100);
+  }
+
+  /* ----- Router ----- */
+  function fcShow(name, back) {
+    fcViewsEl.classList.toggle('is-back', !!back);
+    fcViewsEl.querySelectorAll('.fc-view').forEach(function (v) { v.classList.remove('is-active'); });
+    var view = fcViewsEl.querySelector('[data-view="' + name + '"]');
+    if (name === 'landing') fcPrepLanding();
+    if (name === 'why') fcPrepWhy();
+    if (name === 'outlook') fcPrepOutlook();
+    if (name === 'record') fcPrepRecord();
+    if (name === 'changed') fcPrepChanged();
+    view.classList.add('is-active');
+    fcOverlayEl.scrollTop = 0;
+    fcTitleEl.textContent = (name === 'outlook' && fcIsRevise()) ? 'Revise outlook' : FC_TITLES[name];
+    if (name === 'why') fcSetTab('summary');
+    if (name === 'outlook') fcSyncSlider();
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        if (name === 'landing') fcPlayLanding();
+        if (name === 'record') fcPlayRecord();
+        if (name === 'changed') fcPlayChanged();
+        if (name === 'why') fcSetTab(fcViewsEl.querySelector('.fc-tab.is-active').getAttribute('data-tab'));
+        if (name === 'outlook') fcSyncSlider();
+      });
+    });
+  }
+  function fcGo(name) { fcStack.push(name); fcShow(name, false); }
+  function fcReplaceTop(name) { fcStack.pop(); fcStack.push(name); fcShow(name, false); }
+  function fcBack() {
+    if (fcStack.length <= 1) { fcClose(); return; }
+    fcStack.pop();
+    fcShow(fcStack[fcStack.length - 1], true);
+  }
+  function fcOpen() { fcStack = ['landing']; fcOverlayEl.hidden = false; fcShow('landing', false); }
+  function fcClose() { fcOverlayEl.hidden = true; fcRenderEntry(false); }
+
+  fcById('fcEntry').addEventListener('click', fcOpen);
+  fcById('fcBackBtn').addEventListener('click', fcBack);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !fcOverlayEl.hidden) fcBack(); });
+
+  fcById('fcLandList').addEventListener('click', function (e) {
+    var b = e.target.closest('.fc-row-btn');
+    if (b) fcFocusModel(b.getAttribute('data-id'));
+  });
+  fcById('fcLandWhy').addEventListener('click', function () { fcGo('why'); });
+  fcById('fcLandMethod').addEventListener('click', function () { fcGo('method'); });
+  fcById('fcLandPrimary').addEventListener('click', function () { fcGo(FC.rec ? 'record' : 'outlook'); });
+  fcById('fcYouBar').addEventListener('click', function () { fcGo('record'); });
+  fcById('fcWhyRecord').addEventListener('click', function () { fcGo(FC.rec ? 'record' : 'outlook'); });
+
+  fcById('fcTabs').addEventListener('click', function (e) {
+    var b = e.target.closest('.fc-tab');
+    if (b) fcSetTab(b.getAttribute('data-tab'));
+  });
+
+  var fcRangeWrap = fcById('fcRange');
+  var fcRangeInput = fcById('fcRangeInput');
+  fcRangeInput.addEventListener('input', fcSyncSlider);
+  fcRangeInput.addEventListener('pointerdown', function () { fcRangeWrap.classList.add('is-drag'); });
+  ['pointerup', 'pointercancel', 'blur'].forEach(function (ev) { fcRangeInput.addEventListener(ev, function () { fcRangeWrap.classList.remove('is-drag'); }); });
+  fcById('fcNote').addEventListener('input', fcSyncCount);
+  fcById('fcChips').addEventListener('click', function (e) {
+    var c = e.target.closest('.fc-chip');
+    if (!c) return;
+    var note = fcById('fcNote');
+    var tag = c.getAttribute('data-chip') + ': ';
+    if (note.value.indexOf(tag) === -1) note.value = (note.value ? note.value.replace(/\s+$/, '') + '\n' : '') + tag;
+    note.focus();
+    note.setSelectionRange(note.value.length, note.value.length);
+    fcSyncCount();
+  });
+  fcById('fcNotNow').addEventListener('click', fcBack);
+  fcById('fcSave').addEventListener('click', function () {
+    var v = +fcRangeInput.value, note = fcById('fcNote').value.trim();
+    if (fcIsRevise()) {
+      if (v === FC.rec.v) return;
+      var ver = { n: FC.versions.length + 1, v: v, prev: FC.rec.v, note: note, when: fcWhenNext(), informed: true, snap: FC.seenUpdate ? 'now' : 'base' };
+      FC.versions.push(ver);
+      FC.events.push({ kind: 'version', ver: ver });
+      FC.rec = ver;
+      FC.reviseMode = false;
+      fcStack.pop();
+      fcShow('record', false);
+      return;
+    }
+    var v1 = { n: 1, v: v, prev: null, note: note, when: 'Oct 6, 2026 · 10:14 ET', informed: false, snap: 'base' };
+    FC.versions = [v1];
+    FC.events = [{ kind: 'version', ver: v1 }];
+    FC.rec = v1;
+    FC.judged = null;
+    FC.clock = 14;
+    FC.clockB = 1;
+    fcReplaceTop('record');
+  });
+  fcById('fcRevise').addEventListener('click', function () {
+    FC.reviseMode = true;
+    fcGo('outlook');
+  });
+
+  fcById('fcRecEvidence').addEventListener('click', function () {
+    fcGo('why');
+    requestAnimationFrame(function () { requestAnimationFrame(function () { fcSetTab('evidence'); }); });
+  });
+  fcById('fcRecChanged').addEventListener('click', function () { fcGo('changed'); });
+
+  fcViewsEl.addEventListener('click', function (e) {
+    var j = e.target.closest('[data-judge]');
+    if (!j) return;
+    FC.judged = j.getAttribute('data-judge');
+    fcViewsEl.querySelectorAll('[data-judge]').forEach(function (b) { b.classList.toggle('is-on', b === j); });
+    var ack = fcById('fcJudgeAck');
+    ack.hidden = false;
+    ack.textContent = 'Noted · ' + (FC.rec ? 'added to your record history.' : 'saved for this update.');
+    if (FC.rec) {
+      FC.events = FC.events.filter(function (f) { return f.kind !== 'judge'; });
+      FC.events.push({ kind: 'judge', t: 'Marked the Oct 24 update “' + FC.judged + '”', when: 'Oct 24, 2026 · 4:50 PM ET', note: '' });
+    }
+  });
+  fcById('fcChgFull').addEventListener('click', function () {
+    FC.updated = true;
+    fcStack = ['landing'];
+    fcShow('landing', true);
+  });
+
+  fcRenderEntry();
 
   applyPageState('full');
 })();
